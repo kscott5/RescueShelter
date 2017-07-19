@@ -3,7 +3,11 @@
         "target": "es6",
         "module": "commonjs",
         "outDir": "built",
-        "rootDir": "./"
+        "rootDir": "./",
+        "noImplicitAny": false
+    },
+    "typeAcquisition": {
+        "enable": true
     },
     "exclude": [
         "node_modules"

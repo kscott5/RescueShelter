@@ -4,6 +4,7 @@
   "description": "Simple application using Express and React",
   "main": "app.js",
   "scripts": {
+    "compile-ts": "tsc -p tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Karega K. Scott",
