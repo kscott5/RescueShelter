@@ -4,7 +4,9 @@
         "module": "commonjs",
         "outDir": "built",
         "rootDir": "./",
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "jsx": "react",
+        "strict": true
     },
     "typeAcquisition": {
         "enable": true

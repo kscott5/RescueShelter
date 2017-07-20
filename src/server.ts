@@ -2,6 +2,7 @@
 
 import * as express from "express";
 import * as logger from "morgan";
+import * as path from "path";
 
 enum ViewEngineType {
     Jade, HandleBars, React
@@ -12,6 +13,7 @@ enum LoggerType {
 };
 
 let serverApp = express();
+declare let __dirname; // variable initialize by NodeJS Path Module
 
 /**
  * Express Http server for the Rescue Shelter App
@@ -32,8 +34,12 @@ class Server {
         
         this.setAccessControlsAllowed(port);
         
-        serverApp.get('/', function(req, res){
-            res.send('Welcome to Express using Typescript!');
+        // NOTE: serverApp.engine is for server-side templating renders
+
+        serverApp.use("/app", express.static(__dirname+"/react"));
+
+        serverApp.get("/", function(req, res){
+            res.send("Hello");
         });
 
         serverApp.listen(port,function(){
@@ -44,12 +50,11 @@ class Server {
      * Sets the access controlled allow for headers, methods, etc...
      */
     private setAccessControlsAllowed(port: Number) {
-        
-        serverApp.use(function(req,res,next){
-            res.setHeader("Access-Control-Allow-Origin", "http://localhost:"+port);
-            res.setHeader("Access-Control-Allow-Methods", "GET");
+       /* serverApp.use(function(req,res,next){
+            res.setHeader("Access-Control-Allow-Origin", "http://localhost:"+ port);
+            res.setHeader("Access-Control-Allow-Methods", ["GET", "HEAD", "POST"]);
             res.setHeader("Access-Control-Allow-Headers", "content-type");
-        })
+        })*/
         
     }
 }
