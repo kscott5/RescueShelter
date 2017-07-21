@@ -36,12 +36,11 @@ class Server {
         
         // NOTE: serverApp.engine is for server-side templating renders
 
-        serverApp.use("/app", express.static(__dirname+"/react"));
+        let staticPath = __dirname +  "\react";
+        console.log(staticPath);
 
-        serverApp.get("/", function(req, res){
-            res.send("Hello");
-        });
-
+        serverApp.use("/", express.static(staticPath));
+        
         serverApp.listen(port,function(){
             console.log('Rescue Shelter listening on port: '+ port);
         })
