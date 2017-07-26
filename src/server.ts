@@ -3,6 +3,7 @@
 import * as express from "express";
 import * as logger from "morgan";
 import * as path from "path";
+import * as cons from "consolidate";
 
 enum ViewEngineType {
     Jade, HandleBars, React
@@ -35,16 +36,40 @@ class Server {
         this.setAccessControlsAllowed(port);
         
         // NOTE: serverApp.engine is for server-side templating renders
+        this.setEngine();
 
-        let staticPath = __dirname +  "\react";
-        console.log(staticPath);
-
-        serverApp.use("/", express.static(staticPath));
+        let publicPath = path.join(__dirname, 'public');
+        serverApp.use("/", express.static(publicPath));
+        console.log("wwwroot: " + publicPath);
         
+        let reactPath = path.join(__dirname, 'components');
+        serverApp.use("/react", express.static(reactPath));
+        console.log("react-components: " + reactPath);
+        
+        let scriptsPath = path.join(__dirname, '..', 'node_modules');
+        serverApp.use("/scripts", express.static(scriptsPath));
+        console.log("javascripts: " + scriptsPath);
+        
+        serverApp.get("/index.html", function(req,res, next) {
+            next();
+        });
+
         serverApp.listen(port,function(){
             console.log('Rescue Shelter listening on port: '+ port);
-        })
+        });
     }
+    /**
+     * @returns void
+     */
+    private setEngine() : void {
+        let viewsPath = path.join(__dirname, 'react', 'components');
+        console.log("setEngine: " + viewsPath);
+
+        serverApp.engine("react", cons.react);
+        serverApp.set("view engine", "jsx");
+        serverApp.set("views", viewsPath );
+    }
+
     /**
      * Sets the access controlled allow for headers, methods, etc...
      */

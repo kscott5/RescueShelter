@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
-        "outDir": "built",
+        //"outDir": "built",
         "rootDir": "./",
         "noImplicitAny": false,
         "jsx": "react",
