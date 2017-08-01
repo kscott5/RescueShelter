@@ -1,7 +1,13 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom"
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import './assets/index.css';
+
+import Layout from './shared/layout'
+
+import registerServiceWorker from '../registerServiceWorker';
 
 ReactDOM.render(
-   <h1>TODO: Configure &lt;scripts/&gt; &amp; &lt;styles/&gt;</h1>,
-    document.getElementById("reactRoot")
-);
+    <Layout>
+    </Layout>, 
+    document.getElementById('root'));
+registerServiceWorker();

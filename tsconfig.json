@@ -6,12 +6,16 @@
         "rootDir": "./",
         "noImplicitAny": false,
         "jsx": "react",
-        "strict": true
+        "strict": false,
+        "allowJs": false
     },
     "typeAcquisition": {
         "enable": true
     },
     "exclude": [
-        "node_modules"
+        "config",
+        "node_modules",
+        "public",
+        "scripts"
     ]
 }
