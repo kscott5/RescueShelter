@@ -16,6 +16,9 @@
         "config",
         "node_modules",
         "public",
-        "scripts"
+        "scripts",
+        "logs",
+        "build",
+        "data"
     ]
 }

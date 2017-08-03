@@ -1,6 +1,25 @@
 import * as mongoose from "mongoose";
 import * as member from "./member";
 
+class animal {
+     get name(): String{
+        return this.name;
+     };
+     set name(value: String) {
+         this.name = value;
+     }
+     
+    type: String;
+    endangered: Boolean;
+    description: String;
+    population: Number;
+    dates: {
+        created: Date,
+        modified: Date,
+        modifiedBy: {}
+    };
+}
+
 var animalSchema = new mongoose.Schema({
     name: String,
     type: String,    
@@ -14,6 +33,6 @@ var animalSchema = new mongoose.Schema({
     }
 });
 
-var animal = mongoose.model("Animal", animalSchema);
+var animalModel = mongoose.model("Animal", animalSchema);
 
-export default animal;
+export {animal, animalModel, animalSchema};

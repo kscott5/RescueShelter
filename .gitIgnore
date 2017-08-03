@@ -1,4 +1,6 @@
 built
+logs
+data
 node_modules
 bower_components
 package-lock.json
@@ -9,3 +11,4 @@ src/**/*.js
 .env.development.local
 .env.test.local
 .env.production.local
+*.pid

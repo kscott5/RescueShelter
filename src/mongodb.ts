@@ -1,4 +1,5 @@
 import * as mongoDB from "mongodb";
+import * as mongose from "mongoose";
 
 export class MongoDB {
     uri: String;
