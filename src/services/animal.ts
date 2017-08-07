@@ -1,10 +1,37 @@
 import * as mongoose from "mongoose";
-import * as model from "../models/animal";
 
-export class AnimalService {
-    private __db = mongoose.createConnection("127.0.0.1", "rescueshelter", 3303);
+export namespace AnimalService {
+    export const name = 'animal';
 
-    addItem(item: model.animal, callback: Function) {
-       model.animalModel.collection.insertOne(item, callback)
+    let __db = mongoose.createConnection("127.0.0.1", "rescueshelter", 3303);
+
+    let schema = new mongoose.Schema({
+        name: String,
+        endangered: Boolean,
+        description: String,
+        population: Number,
+        schemaVersion: String,
+        dates: {
+            created: Date ,
+            modified: Date,
+            modifiedBy: mongoose.SchemaTypes.ObjectId
+        }
+    });
+    schema.path("schemaVersion").default(function(){return "1.0.0.0";});
+    schema.path("dates.created").default(function(){return Date.now();});
+    schema.path("dates.modified").default(function(){return Date.now();});
+    
+    let model =  __db.model(AnimalService.name, schema);
+
+    export function addItem(item: Object, callback: Function) {
+        var data = model.collection.insertOne(item, callback);
     }
+
+    export function getAnimalByName(name: String) {
+        return 'TODO getAnimalByName';
+    }
+
+    export function getAnimals() {
+        return 'TODO getAnimals';
+    }    
 }

@@ -3,21 +3,22 @@ import * as ReactDOM from "react-dom";
 
 import Header from "./header";
 import Footer from "./footer";
+import Navigation from "./navigation";
 
-export default class Layout extends React.Component {
-     RenderContent() {
-         return <div className="App">
-        <div className="App-header">        
-          <h2>Welcome to Rescue Shelter</h2>
-        </div>
-      </div>;
+class Layout extends React.Component {
+    component: React.Component;
+    
+     constructor() {
+        super();
     }
 
     render() {
         return <div id='layout' name='layout'>
             <Header/>
-            <this.RenderContent/>
+            <Navigation/>            
             <Footer/>
         </div>;
     }
 }
+
+export {Layout as default, Layout};

@@ -3,12 +3,19 @@
 import * as express from "express";
 import * as logger from "morgan";
 import * as path from "path";
+import * as bodyParser from "body-parser";
+
+import {AnimalService} from "./services/animal";
 
 enum LoggerType {
     Development, Staging, Production
 };
 
 let apiServer = express();
+
+// Parser for various different custom JSON types as JSON
+let jsonBodyParser = bodyParser.json({type: 'application/json'});
+
 declare let __dirname; // variable initialize by NodeJS Path Module
 
 /**
@@ -20,10 +27,10 @@ class Server {
     /**
      * Starts the express http server
      * @param  {LoggerType=LoggerType.Development} loggerType
-     * @param  {Number=3002} port
+     * @param  {Number=3302} port
      * @returns void
      */
-    start(loggerType: LoggerType = LoggerType.Development, port: Number = 3002) : void {
+    start(loggerType: LoggerType = LoggerType.Development, port: Number = 3302) : void {
         apiServer.use(logger("Development")); // TODO: Use LoggerType Enum
         
         this.setAccessControlsAllowed(port);
@@ -36,9 +43,12 @@ class Server {
             res.sendFile("api.html");
         });
 
-        apiServer.post("/rs/new/animal/", function(req,res){
+        apiServer.post("/rs/new/animal/", jsonBodyParser, function(req,res){
+            if(!req.body) res.status(404);
             
-        })
+            res.send({message: 'TODO add server response to /rs/new/animal => ' + req.body.animal.name});
+        });
+
         apiServer.get("/rs/all/animals", function(req,res){
 
         });

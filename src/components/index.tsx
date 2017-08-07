@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {HashRouter} from "react-router-dom";
+
 import './assets/index.css';
 
 import Layout from './shared/layout'
@@ -7,7 +9,8 @@ import Layout from './shared/layout'
 import registerServiceWorker from '../registerServiceWorker';
 
 ReactDOM.render(
-    <Layout>
-    </Layout>, 
+    <HashRouter>
+        <Layout/>
+    </HashRouter> ,
     document.getElementById('root'));
 registerServiceWorker();
