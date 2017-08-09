@@ -50,6 +50,8 @@ class Server {
         });
 
         apiServer.get("/rs/all/animals", function(req,res){
+           if(!req.body) res.status(404);
+           res.send("Get all animals");
 
         });
 
