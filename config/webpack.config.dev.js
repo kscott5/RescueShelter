@@ -128,7 +128,7 @@ module.exports = {
       // typscript loader
       {
         test: /\.(ts|tsx)$/,
-        loader: required.resolve('ts-loader')
+        loader: require.resolve('ts-loader')
       },
       // ** ADDING/UPDATING LOADERS **
       // The "file" loader handles all assets unless explicitly excluded.
