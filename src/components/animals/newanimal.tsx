@@ -1,17 +1,32 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-class NewAnimal extends React.Component {
-    name: String;
-    description: String;
-    population: Number;
-    endangered: Boolean;
+import {Form, FormInput, FormTextArea, FormCheckbox, FormButton} from "semantic-ui-react";
 
-    addAnimal() {
+class NewAnimal extends React.Component {
+    state;
+    constructor(props) {
+        super(props);
+
+        this.state = { 
+            animal: {
+               name: '', 
+               description: '', 
+               population: 0,
+               endangered: false
+            }
+        };
+
+        this.onSaveNewAnimal = this.onSaveNewAnimal.bind(this);
+    }
+
+    onSaveNewAnimal(e) {
+        const animal = this.state.animal;
+
         var post = new XMLHttpRequest();
         try {
             post.open('POST', 'http://localhost:3302/rs/new/animal');
-            post.send('{animal:{}}');
+            post.send({animal});
             console.log(post.status + ': ' + post.statusText);
         } catch(err) {
             console.log(err);
@@ -19,14 +34,16 @@ class NewAnimal extends React.Component {
     }
 
     render() {
+        let animal = this.state.animal;
+
         return (
-            <form method="post">
-                <input id='name' name='name' type='text' value={this.name}/>
-                <input id='description' name='description' type='textarea' value={this.description}/>
-                <input id='population' name='population' type='number' min='1'/>
-                <input id='endangered' name='endangered' type='checkbox' checked={this.endangered}/>
-                <input id='addanimal' name='addanimal' type='submit' onSubmit={this.addAnimal}/>
-            </form>
+            <Form>
+                <FormInput id='name' name='name' placeholder='Animal Name' type='text' value={animal.name}/>
+                <FormTextArea id='description' name='description' placeholder='Animal Description' type='textarea' value={animal.description}/>
+                <FormInput id='population' name='population' placeholder='Animal Population' type='number' min='1' value={animal.population}/>
+                <FormCheckbox id='endangered' name='endangered' type='checkbox' checked={animal.endangered}/>
+                <FormButton id='addanimal' name='addanimal' value='Save' onClick={this.onSaveNewAnimal}/>
+            </Form>
         );
     }
 }

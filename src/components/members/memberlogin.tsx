@@ -1,19 +1,26 @@
 import * as React from "react";
 import * as ReactDom from "react-dom"
+import {Segment, Container, Form, FormInput, FormButton} from "semantic-ui-react";
 
 class LoginMember extends React.Component {
+    state;
     constructor(props) {
         super(props);
-        // TODO: Handle data changes and commits
+        this.state = {login: 
+            {username:'', 
+             password: '', 
+             loginLabel: 'Login', 
+             forgotLabel: 'Forgot It'}
+        };
     }
-    /**
-     */
+    
     render()  {
-        return <form>
-            <input type="text" id="username" name="username" value=""/>
-            <input type="password" id="password" name="password" value="" />
-            <input type="submit" value="{this.props.login}"/>
-        </form>;           
+        const login = this.state;
+        return (<Form>
+            <FormInput type="text" id="username" placeholder="UserName" name="username" value={login.username}/>
+            <FormInput type="password" id="password" placeholder="Password" name="password" value={login.password} />
+            <FormButton value={login.loginLabel}/> <FormButton value={login.loginLabel} />
+        </Form>);           
     }
 }
 

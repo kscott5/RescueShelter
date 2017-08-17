@@ -1,9 +1,10 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import Header from "./header";
-import Footer from "./footer";
-import Navigation from "./navigation";
+import {Segment, Container} from "semantic-ui-react";
+
+import {NavRoutes} from "./navroutes";
+import {NavLinks} from "./navlinks";
 
 class Layout extends React.Component {
     component: React.Component;
@@ -13,11 +14,12 @@ class Layout extends React.Component {
     }
 
     render() {
-        return <div id='layout' name='layout'>
-            <Header/>
-            <Navigation/>            
-            <Footer/>
-        </div>;
+        return (
+            <div>
+                <NavLinks/>
+                <NavRoutes/>
+            </div>
+        );
     }
 }
 

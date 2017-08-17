@@ -6,5 +6,5 @@ import {LoginMember} from "./memberlogin";
 import {ListMembers} from "./listmembers";
 
 export function ListMembersView() { return <ListMembers/>;}
-export function AddNewMemberView() { return <div/>;}
-export function LoginMemberView() { return <div/>;}
+export function AddNewMemberView() { return <NewMember/>;}
+export function LoginMemberView() { return <LoginMember/>;}
