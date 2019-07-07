@@ -26,7 +26,7 @@ class NewAnimal extends React.Component {
         var post = new XMLHttpRequest();
         try {
             post.open('POST', 'http://localhost:3302/rs/new/animal');
-            post.send({animal});
+            post.send(animal);
             console.log(post.status + ': ' + post.statusText);
         } catch(err) {
             console.log(err);

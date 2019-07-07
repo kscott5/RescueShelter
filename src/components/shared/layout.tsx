@@ -9,8 +9,8 @@ import {NavLinks} from "./navlinks";
 class Layout extends React.Component {
     component: React.Component;
     
-     constructor() {
-        super();
+     constructor(props) {
+        super(props);
     }
 
     render() {

@@ -2,13 +2,14 @@ import * as mongoDB from "mongodb";
 import * as mongose from "mongoose";
 
 export class MongoDB {
-    uri: String;
+    uri: string;
     
     /**
      * Constructor for Rescue Shelter MongoDB
      * @param uri Connection string to data store
      */
-    constructor(uri: String = "mongodb://localhost:27017/rescueshelter") {
+    constructor(uri: string = "mongodb://localhost:27017/rescueshelter") {
+        this.uri = uri;
     }
 
     /**
