@@ -1,3 +1,4 @@
+build
 built
 logs
 data
@@ -12,3 +13,5 @@ src/**/*.js
 .env.test.local
 .env.production.local
 *.pid
+yarn-error.log
+yarn.lock
