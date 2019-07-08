@@ -1,6 +1,7 @@
 "use strict";
 
 import * as express from "express";
+import * as helmet from "helmet";
 import * as logger from "morgan";
 import * as path from "path";
 import * as bodyParser from "body-parser";
@@ -13,15 +14,12 @@ enum LoggerType {
 
 let apiServer = express();
 
-// Parser for various different custom JSON types as JSON
-let jsonBodyParser = bodyParser.json({type: 'application/json'});
-
 declare let __dirname; // variable initialize by NodeJS Path Module
 
 /**
  * Express Http server for the Rescue Shelter App
  */
-class Server {
+export class Server {
     private port: number;
 
     /**
@@ -34,26 +32,24 @@ class Server {
         apiServer.use(logger("Development")); // TODO: Use LoggerType Enum
         
         this.setAccessControlsAllowed(port);
+        apiServer.use(helmet.contentSecurityPolicy({
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'"],
+                styleSrc: ["'self'"],
+                imgSrc: ["'self'"]
+            }
+        }));
         
-        let publicPath = path.join(__dirname, 'public');
-        apiServer.use("/", express.static(publicPath));
+        let publicPath = path.join(__dirname, '../public');
+        apiServer.use(express.static(publicPath));
         console.log("wwwroot: " + publicPath);
         
-        apiServer.get("/api.html", function(req,res, next) {
-            res.sendFile("api.html");
+        apiServer.get("/apis.html", function(req,res, next) {
+            res.sendFile("apis.html");
         });
 
-        apiServer.post("/rs/new/animal/", jsonBodyParser, function(req,res){
-            if(!req.body) res.status(404);
-            
-            res.send({message: 'TODO add server response to /rs/new/animal => ' + req.body.animal.name});
-        });
-
-        apiServer.get("/rs/all/animals", function(req,res){
-           if(!req.body) res.status(404);
-           res.send("Get all animals");
-
-        });
+        AnimalService.publishWebAPI(apiServer);
 
         apiServer.listen(port,function(){
             console.log('Rescue Shelter listening on port: '+ port);
@@ -65,6 +61,7 @@ class Server {
      */
     private setAccessControlsAllowed(port: Number) {
        /* serverApp.use(function(req,res,next){
+           
             res.setHeader("Access-Control-Allow-Origin", "http://localhost:"+ port);
             res.setHeader("Access-Control-Allow-Methods", ["GET", "HEAD", "POST"]);
             res.setHeader("Access-Control-Allow-Headers", "content-type");
