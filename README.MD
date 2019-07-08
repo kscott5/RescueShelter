@@ -1,11 +1,14 @@
 # Rescue Shelter
-Simple Single Page Application SPA that uses
+Simple Single Page Application SPA that uses  
+- NodeJS
 - React
 - Semantic-UI-React
 - HTML5, CSS3 & Javascript
 - ExpressJS Web API 
 - Mongoose CRUD
 - Mongo Docker Container  
+
+NOTE: The app.js could function within a serverless cloud environment or API explorer. However, this is a small application with limit features. These environment require registration, access tokens and more.  
  
   
   
@@ -13,6 +16,8 @@ Simple Single Page Application SPA that uses
 >[Visual Code](https://code.visualstudio.com/)  
 >[Chrome extensions](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en)  
 >[Mongo Docker Hub](https://hub.docker.com/_/mongo)  
+>[Serverless](https://serverless.com/)  
+>[Swagger](https://swagger.io/)  
 
 # Terminal or powershell 
 ```shell
@@ -37,4 +42,29 @@ node src/app.js
 
 # start the web app on localhost:33001 in different shell
 npm run start or yarn start
+```  
+
+# Visual Code - Debugging configuration tip
+launch.json
 ```
+"configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "http://localhost:3301",
+            "preLaunchTask": "npm: start",
+            "webRoot": "${workspaceFolder}/src"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/src/app.js",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/src/**/*.js"
+            ]
+        }
+    ]
+```  

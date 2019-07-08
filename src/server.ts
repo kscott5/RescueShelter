@@ -2,9 +2,8 @@
 
 import * as express from "express";
 import * as helmet from "helmet";
-import * as logger from "morgan";
+import * as morgan from "morgan";
 import * as path from "path";
-import * as bodyParser from "body-parser";
 
 import {AnimalService} from "./services/animal";
 
@@ -29,9 +28,8 @@ export class Server {
      * @returns void
      */
     start(loggerType: LoggerType = LoggerType.Development, port: Number = 3302) : void {
-        apiServer.use(logger("Development")); // TODO: Use LoggerType Enum
-        
-        this.setAccessControlsAllowed(port);
+        apiServer.use(morgan("dev")); // TODO: Use LoggerType Enum
+
         apiServer.use(helmet.contentSecurityPolicy({
             directives: {
                 defaultSrc: ["'self'"],
@@ -54,19 +52,6 @@ export class Server {
         apiServer.listen(port,function(){
             console.log('Rescue Shelter listening on port: '+ port);
         });
-    }
-    
-    /**
-     * Sets the access controlled allow for headers, methods, etc...
-     */
-    private setAccessControlsAllowed(port: Number) {
-       /* serverApp.use(function(req,res,next){
-           
-            res.setHeader("Access-Control-Allow-Origin", "http://localhost:"+ port);
-            res.setHeader("Access-Control-Allow-Methods", ["GET", "HEAD", "POST"]);
-            res.setHeader("Access-Control-Allow-Headers", "content-type");
-        })*/
-        
     }
 }
 
