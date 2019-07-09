@@ -2,6 +2,7 @@
 
 import * as express from "express";
 import * as helmet from "helmet";
+import * as cors from "cors";
 import * as morgan from "morgan";
 import * as path from "path";
 
@@ -30,6 +31,19 @@ export class Server {
     start(loggerType: LoggerType = LoggerType.Development, port: Number = 3302) : void {
         apiServer.use(morgan("dev")); // TODO: Use LoggerType Enum
 
+        var whitelist = ['http://localhost:3301']
+        var corsOptions = {
+            origin: function (origin, callback) {
+                if (whitelist.indexOf(origin) !== -1) {
+                    callback(null, true)
+                } else {
+                    callback(new Error('Not allowed by CORS'))
+                }
+            }
+        };
+        
+        apiServer.use(cors(corsOptions));
+        
         apiServer.use(helmet.contentSecurityPolicy({
             directives: {
                 defaultSrc: ["'self'"],
