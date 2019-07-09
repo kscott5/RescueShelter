@@ -1,11 +1,12 @@
 # Rescue Shelter
 Simple Single Page Application SPA that uses  
+- Simple Happy Path Use Cases 
 - NodeJS
 - React
 - Semantic-UI-React
 - HTML5, CSS3 & Javascript
 - ExpressJS Web API 
-- Mongoose CRUD
+- Mongoose CRUD with indexes, text search
 - Mongo Docker Container  
 
 NOTE: The app.js could function within a serverless cloud environment or API explorer. However, this is a small application with limit features. These environment require registration, access tokens and more.  
