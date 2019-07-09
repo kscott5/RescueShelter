@@ -18,6 +18,10 @@ NOTE: The app.js could function within a serverless cloud environment or API exp
 >[Mongo Docker Hub](https://hub.docker.com/_/mongo)  
 >[Serverless](https://serverless.com/)  
 >[Swagger](https://swagger.io/)  
+>[Regexr](http://regexr.com/)  
+>[jsfiddle](http://jsfiddle.net/)  
+>[codepend.io](https://codepen.io/)  
+
 
 # Terminal or powershell 
 ```shell
@@ -100,3 +104,4 @@ shouldComponentUpdate(nextProps, nextState, nextContext) {
         (this.context !== nextContext);
 }
 ```
+
