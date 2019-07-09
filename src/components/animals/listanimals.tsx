@@ -13,7 +13,7 @@ class ListAnimals extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:3302/api/animals?limit=10")
+        fetch("http://localhost:3302/api/animals?limit=100")
             .then(response =>response.json())
             .then(response => this.setState(response))
             .catch(error => console.log(error));
