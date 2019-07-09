@@ -5,7 +5,7 @@ import {Route} from "react-router-dom";
 import {Segment, Container} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
-import * as Members from "../members/index";
+import * as Contributors from "../contributors/index";
 
 class NavRoutes extends React.Component {
     render() {
@@ -15,7 +15,7 @@ class NavRoutes extends React.Component {
                     <Route exact path="/"/>
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
                     <Route exact path="/animals/new" component={Animals.AddNewAnimalView}/>
-                    <Route exact path="/members" component={Members.ListMembersView}/>
+                    <Route exact path="/contributors" component={Contributors.ListContributorsView}/>
                 </Container>
             </Segment>
         );

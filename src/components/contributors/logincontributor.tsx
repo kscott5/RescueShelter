@@ -2,16 +2,25 @@ import * as React from "react";
 import * as ReactDom from "react-dom"
 import {Segment, Container, Form, FormInput, FormButton} from "semantic-ui-react";
 
-class LoginMember extends React.Component {
-    state;
+class LoginContributor extends React.Component {
+    state = {
+        username:'', 
+        password: '', 
+        loginLabel: 'Login', 
+        forgotLabel: 'Forgot It'
+    };
+
     constructor(props) {
-        super(props);
-        this.state = {login: 
-            {username:'', 
-             password: '', 
-             loginLabel: 'Login', 
-             forgotLabel: 'Forgot It'}
-        };
+        super(props);        
+    }
+
+    componentDidMount() {        
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return (nextProps !== this.props) || 
+            (nextState !== this.state) || 
+            (nextContext !== this.context);
     }
     
     render()  {
@@ -24,4 +33,4 @@ class LoginMember extends React.Component {
     }
 }
 
-export {LoginMember as default, LoginMember};
+export {LoginContributor as default, LoginContributor as LoginContributor};

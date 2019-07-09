@@ -5,7 +5,7 @@ import {Link, HashRouter} from "react-router-dom";
 import {Segment, Container, Menu} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
-import * as Members from "../members/index";
+import * as Members from "../contributors/index";
 
 class NavLinks extends React.Component {
     state;
@@ -31,7 +31,7 @@ class NavLinks extends React.Component {
                     <Menu inverted pointing secondary size='large'>
                         <Menu.Item id='home' name='home' as='div' active={activeMenuItem ==='home'} onClick={this.onMenuItemClicked}><Link to="/">Home</Link></Menu.Item>
                         <Menu.Item id='animals' name='animals' as='div' active={activeMenuItem ==='animals'} onClick={this.onMenuItemClicked}><Link to="/animals">Animals</Link></Menu.Item>
-                        <Menu.Item id='members' name='members' as='div' active={activeMenuItem ==='members'} onClick={this.onMenuItemClicked}><Link to="/members">Members</Link></Menu.Item>
+                        <Menu.Item id='members' name='members' as='div' active={activeMenuItem ==='contributors'} onClick={this.onMenuItemClicked}><Link to="/contributors">Contributors</Link></Menu.Item>
                     </Menu>
                     
                 </Container>
