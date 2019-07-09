@@ -26,8 +26,6 @@ class NewAnimal extends React.Component {
     }
 
     onSaveNewAnimal(event, data) {
-        console.log(event);
-        
         const animal = this.state;
         fetch("http://localhost:3302/api/animal/new", {
             method: 'POST',
@@ -36,7 +34,9 @@ class NewAnimal extends React.Component {
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json())
-        .then(response => this.message = response )
+        .then(response => {
+            this.message = response; 
+            window.location.href='/#/animals'; })
         .catch(error => this.error = error);
         
     }
