@@ -72,6 +72,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
+    "clean": "rm ./build -r & rm ./built -r & find ./src -name *.js -delete",
     "compile": "tsc -p tsconfig.json",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
