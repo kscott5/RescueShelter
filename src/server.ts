@@ -31,18 +31,18 @@ export class Server {
     start(loggerType: LoggerType = LoggerType.Development, port: Number = 3302) : void {
         apiServer.use(morgan("dev")); // TODO: Use LoggerType Enum
 
-        var whitelist = ['http://localhost:3301']
-        var corsOptions = {
-            origin: function (origin, callback) {
-                if (whitelist.indexOf(origin) !== -1) {
-                    callback(null, true)
-                } else {
-                    callback(new Error('Not allowed by CORS'))
-                }
+        var whitelist = ['http://host:port'];
+        var corsOptionsDelegate = function (req, callback) {
+            //http://regexr.com/4h6ph
+            var localhost = /((http([s]){0,1}:\/\/){0,1}(localhost|127.0.0.1){1}(([:]){0,1}[\0-9]{4}){0,1}\/{0,1}){1}/g;
+            if (localhost.test(req.headers.host) === true || whitelist.indexOf(req.headers.origin) === 0) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
             }
         };
-        
-        apiServer.use(cors(corsOptions));
+        apiServer.use(cors(corsOptionsDelegate));
         
         apiServer.use(helmet.contentSecurityPolicy({
             directives: {

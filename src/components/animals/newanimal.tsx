@@ -64,11 +64,12 @@ class NewAnimal extends React.Component {
     onChange(event, data) {
         let stateObj = this.state;
 
-        if(data.id === 'contributor') {
+        if (data.id === 'endangered') {
+            stateObj.animal[data.id] = (data.checked || false);
+        } else if(data.id === 'contributor') {
             stateObj.contributor = data.value;
         } else {
-            stateObj.animal[data.id] = /* value or checked is not undefined */
-                (data.value || data.checked || false /*element checkbox default*/);
+            stateObj.animal[data.id] = data.value;
         }  
 
         this.setState(stateObj);
