@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 import {Button, Container, Grid, Image} from 'semantic-ui-react';
 
@@ -35,21 +35,19 @@ class ListAnimals extends React.Component {
         console.log(data["animinalId"]);        
     }
 
-    buttonAs() {
-        return(<Link to="/animals/new" >New</Link>);
-    }
-
     render() {
         const documentItems = this.state.documents.map((document)=>
             <div key={document._id}>
                 <span>{document.name}</span>
                 <span>{document.description}</span>
+                <Image src={document.imageSrc}/>
             </div>);
+        
         
         return (
             <Container>
                 <h2>Animal Rescurers! We need YOU!</h2>
-                
+                <Link to="/animals/new" >New</Link>
                 {documentItems}
             </Container>
         );
