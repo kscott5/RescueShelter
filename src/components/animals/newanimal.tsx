@@ -3,9 +3,24 @@ import * as ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom';
 
 import {Form, FormInput, FormTextArea, FormCheckbox, FormButton} from "semantic-ui-react";
+import { stat } from "fs";
 
 class NewAnimal extends React.Component {
-    state = {name:'', description: '', endangered: false, imageSrc: ''};
+    state = {
+        animal: 
+        {
+            name:'', description: '', endangered: false, imageSrc: '', 
+            contributors: [], 
+        },
+        contributor: '',
+        toString: function() {
+            if(this.contributor.trim().length > 0)            
+                this.animal.contributors = [this.contributor];
+                
+            return JSON.stringify(this.animal);
+        }
+    };
+
     message = {};
     error = {};
 
@@ -26,10 +41,15 @@ class NewAnimal extends React.Component {
     }
 
     onSaveNewAnimal(event, data) {
-        const animal = this.state;
+        const stateObj = this.state;
+        console.log(stateObj.toString());
+
+        var form = document.querySelector("form");
+        if(!form.checkValidity()) return;
+
         fetch("http://localhost:3302/api/animal/new", {
             method: 'POST',
-            body: JSON.stringify(animal),
+            body: stateObj.toString(), // returns JSON.stringify 
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -42,13 +62,21 @@ class NewAnimal extends React.Component {
     }
 
     onChange(event, data) {
-        let animal = this.state;
-        animal[data.id] = data.value;
-        this.setState(animal);
+        let stateObj = this.state;
+
+        if(data.id === 'contributor') {
+            stateObj.contributor = data.value;
+        } else {
+            stateObj.animal[data.id] = /* value or checked is not undefined */
+                (data.value || data.checked || false /*element checkbox default*/);
+        }  
+
+        this.setState(stateObj);
     }
 
     render() {
-        let animal = this.state;
+        let animal = this.state.animal;
+        let contributor = this.state.contributor;
 
         return (
             <Form>
@@ -56,6 +84,7 @@ class NewAnimal extends React.Component {
                 <FormTextArea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' type='textarea' value={animal.description}/>
                 <FormInput id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={animal.imageSrc}/>
                 <FormCheckbox id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={animal.endangered}/>
+                <FormInput id='contributor' onChange={this.onChange} name='contributor' type='email' value={contributor}/>
                 <FormButton id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</FormButton>
             </Form>
         );
