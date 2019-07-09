@@ -6,7 +6,7 @@ import * as cors from "cors";
 import * as morgan from "morgan";
 import * as path from "path";
 
-import {AnimalService} from "./services/animal";
+import {AnimalService} from "./services/animalservice";
 
 enum LoggerType {
     Development, Staging, Production
