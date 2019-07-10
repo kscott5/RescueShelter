@@ -18,7 +18,6 @@ class NavLinks extends React.Component {
 
     onMenuItemClicked(e, {name}) {
         this.state = {activeMenuItem: name};
-        console.log(this.state);
     }
 
     render() {

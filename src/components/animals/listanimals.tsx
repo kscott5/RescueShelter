@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Link} from 'react-router-dom';
 
-import {Button, Container, Grid, Image} from 'semantic-ui-react';
+import {Container, Image} from 'semantic-ui-react';
 
 class ListAnimals extends React.Component {
     state = { documents: [], pages: 1, pageIndex: 1};
@@ -41,13 +41,14 @@ class ListAnimals extends React.Component {
                 <span>{document.name}</span>
                 <span>{document.description}</span>
                 <Image src={document.imageSrc}/>
-            </div>);
-        
+                <Link to={`/animal/${document._id}`}>Edit</Link>        
+            </div>
+        );
         
         return (
             <Container>
                 <h2>Animal Rescurers! We need YOU!</h2>
-                <Link to="/animals/new" >New</Link>
+                <Link to="/animal" >New</Link>
                 {documentItems}
             </Container>
         );

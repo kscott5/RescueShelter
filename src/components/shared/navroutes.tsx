@@ -14,7 +14,8 @@ class NavRoutes extends React.Component {
                 <Container>
                     <Route exact path="/"/>
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
-                    <Route exact path="/animals/new" component={Animals.AddNewAnimalView}/>
+                    <Route exact path="/animal" component={Animals.NewEditAnimalView}/>
+                    <Route exact path="/animal/:id" component={Animals.NewEditAnimalView}/>
                     <Route exact path="/contributors" component={Contributors.ListContributorsView}/>
                 </Container>
             </Segment>
