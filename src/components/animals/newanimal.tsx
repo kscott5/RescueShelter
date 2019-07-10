@@ -5,6 +5,7 @@ import {Form, FormInput, FormTextArea, FormCheckbox, FormButton} from "semantic-
 
 class NewAnimal extends React.Component<any> {
     state = {
+        id: '',
         animal: 
         {
             name:'', description: '', endangered: false, imageSrc: '', 
@@ -12,30 +13,31 @@ class NewAnimal extends React.Component<any> {
         },
         contributor: '',
         toString: function() {
-            if(this.animal.contributors.indexOf(this.contributor.trim()) !== 0) 
-                this.animal.contributors.push([this.contributor]);
+            var arr = this.animal.contributors;
+            var email = this.contributor.trim();
+            if(email != "" && arr.indexOf(email.trim()) !== 0) 
+                arr.push(this.contributor);
                 
             return JSON.stringify(this.animal);
         }
     };
 
-    animalId = '';
     message = '';
     error = '';
     
     constructor(props) {
         super(props);
 
-        this.animalId=this.props.animalId; 
+        this.state.id = this.props.animalId;
         this.onSaveNewAnimal = this.onSaveNewAnimal.bind(this);
         this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {
-        if(this.animalId == "0") return;
+        if(this.state.id == "0") return;
 
         // edit existing details
-        fetch(`http://localhost:3302/api/animal/${this.animalId}`)
+        fetch(`http://localhost:3302/api/animal/${this.state.id}`)
             .then(response =>response.json())
             .then(response => this.setState({["animal"]: response, ["contributor"]: ''}))
             .catch(error => console.log(error));
@@ -53,8 +55,8 @@ class NewAnimal extends React.Component<any> {
         var form = document.querySelector("form");
         if(!form.checkValidity()) return;
 
-        var url = `http://localhost:3302/api/animal/${this.animalId}`;
-        if(this.animalId == "0")
+        var url = `http://localhost:3302/api/animal/${stateObj.id}`;
+        if(stateObj.id == "0")
             url = `http://localhost:3302/api/animal/new`;
 
         fetch(url, {
@@ -65,9 +67,7 @@ class NewAnimal extends React.Component<any> {
             }
         }).then(response => response.json())
         .then(response => {
-            console.log(response);
-            this.animalId = response._id;
-            this.forceUpdate();
+            this.setState({["id"]: response._id, ["animal"]: response, ["contributor"]: ''});
 
             /*window.location.href='/#/animals';*/ })
         .catch(error => this.error = error);
@@ -102,6 +102,7 @@ class NewAnimal extends React.Component<any> {
         
         return (
             <div>
+                <div className="ui error">{this.error}</div>
                 <Form>
                     <FormInput id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={animal.name}/>
                     <FormTextArea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' type='textarea' value={animal.description}/>
