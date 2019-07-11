@@ -4,7 +4,7 @@ data
 node_modules
 bower_components
 package-lock.json
-.vscode
+#.vscode
 src/**/*.js
 *.log
 .env.local
