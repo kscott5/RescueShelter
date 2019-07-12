@@ -6,7 +6,7 @@
         {
             "label": "PreLaunchTask",
             "type": "shell",            
-            "command": "bash ./preLaunchTask.sh",
+            "command": "bash ./preLaunchTask.sh --webapi",
             "options": {
                 "cwd": "${workspaceFolder}/.."
             }
