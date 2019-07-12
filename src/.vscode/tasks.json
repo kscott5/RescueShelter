@@ -10,6 +10,14 @@
             "options": {
                 "cwd": "${workspaceFolder}/.."
             }
+        },
+        {
+            "label": "PostDebugTask",
+            "type": "shell",            
+            "command": "bash ./postDebugTask.sh --webapi",
+            "options": {
+                "cwd": "${workspaceFolder}/.."
+            }
         }
     ]
 }

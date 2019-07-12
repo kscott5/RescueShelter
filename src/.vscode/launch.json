@@ -9,7 +9,8 @@
             "request": "launch",
             "name": "Rescue Web API",
             "program": "${workspaceFolder}/app.js",
-            "preLaunchTask": "PreLaunchTask"            
+            "preLaunchTask": "PreLaunchTask",
+            "postDebugTask": "PostDebugTask"            
         }
     ]
 }
