@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch React Chrome",
             "url": "http://localhost:3301",
-            "preLaunchTask": "PreLaunchTask",
+            "preLaunchTask": "npm: start",
             "webRoot": "${workspaceFolder}/src"
         }
     ]

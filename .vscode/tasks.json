@@ -5,11 +5,16 @@
     "tasks": [
         {
             "label": "PreLaunchTask",
-            "type": "shell",            
+            "type": "shell",
             "command": "bash ./preLaunchTask.sh --webapp",
             "options": {
                 "cwd": "${workspaceFolder}"
             }
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "problemMatcher": []
         }
     ]
 }
