@@ -55,7 +55,7 @@ export namespace AnimalService {
         var animal = new model(item);
 
         model.findOneAndUpdate({_id: animal._id}, animal, {rawResult: true} ,(err,doc,res)=>{
-            callback(err, doc);
+            callback(err, doc.value);
         });
     }
 
