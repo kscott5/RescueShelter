@@ -70,8 +70,8 @@ class NewAnimal extends React.Component<any> {
     }
 
     stateToJson() {        
-        let animal = this.state["animal"];
-        let contributors = this.state["contributor"].trim().split(',');
+        var animal = this.state["animal"];
+        var contributors = this.state["contributor"].trim().split(',');
 
         for(var index in contributors) {
             // Validate contributor email address with regex
@@ -166,10 +166,9 @@ class NewAnimal extends React.Component<any> {
                     <FormInput id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
                     <FormCheckbox id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
                     <FormInput id='contributor' onChange={this.onChange} name='contributor' placeholder="contributor@email.com" type='text'  value={this.state.contributor}/>
+                    {contributors}    
                     <FormButton id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</FormButton>
-                </Form>
-
-                {contributors}
+                </Form>                
             </div>
         );
     }
