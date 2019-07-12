@@ -12,6 +12,14 @@
             }
         },
         {
+            "label": "PostDebugTask",
+            "type": "shell",            
+            "command": "bash ./postDebugTask.sh --webapp",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
             "type": "npm",
             "script": "start",
             "problemMatcher": []
