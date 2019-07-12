@@ -92,7 +92,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.newAnimal(req.body, function(error, data){
-                var results = data | error;
+                var results = data || error;
 
                 console.log(results);
 
@@ -109,7 +109,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.saveAnimal(req.body, function(error,data){
-                var results = data | error;
+                var results = data || error;
 
                 console.log(results);
                 
@@ -130,7 +130,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.getAnimal(req.params.id, function(error,data){
-                var results = data | error;
+                var results = data || error;
 
                 console.log(results);
                 
@@ -148,7 +148,7 @@ export namespace AnimalService {
 
            res.status(200);
            AnimalService.getAnimals(function(error, data){
-            var results = data | error;
+            var results = data || error;
 
             console.log(results);
 
