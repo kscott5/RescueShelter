@@ -43,7 +43,7 @@ export namespace AnimalService {
     export function newAnimal(item: any, callback?: Function) {
         console.log(item);
         var animal = new model(item);
-        
+                
         animal.save(null,(err,product)=>{
             callback(err, product);
         });
@@ -92,8 +92,11 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.newAnimal(req.body, function(error, data){
-                if(error) res.json(error);
-                if(data) res.json(data);
+                var results = data | error;
+
+                console.log(results);
+
+                res.json(results);
             });
         });
 
@@ -106,8 +109,11 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.saveAnimal(req.body, function(error,data){
-                if(error) res.json(error);
-                if(data) res.json();
+                var results = data | error;
+
+                console.log(results);
+                
+                res.json(results);
             });
         });
 
@@ -124,8 +130,11 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.getAnimal(req.params.id, function(error,data){
-                if(error) res.json(error);
-                if(data) res.json(data);
+                var results = data | error;
+
+                console.log(results);
+                
+                res.json(results);
             });
         });
 
@@ -139,8 +148,11 @@ export namespace AnimalService {
 
            res.status(200);
            AnimalService.getAnimals(function(error, data){
-               if(error) res.json(error);
-               if(data) res.json(data);
+            var results = data | error;
+
+            console.log(results);
+
+            res.json(results);
            }, page, limit, phrase);
         });
     } 
