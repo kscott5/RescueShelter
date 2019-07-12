@@ -12,16 +12,18 @@ Simple Single Page Application SPA that uses
 NOTE: The app.js could function within a serverless cloud environment or API explorer. However, this is a small application with limit features. These environment require registration, access tokens and more.  
  
   
-  
->[Markdown Guide](https://guides.github.com/features/mastering-markdown/)  
->[Visual Code](https://code.visualstudio.com/)  
+  Tools | Javascript | Database  | Live Code Testing  
+  ------- | ---------- | -------- | -------  
+ [Markdown Guide](https://guides.github.com/features/mastering-markdown/) | [ReactJS](https://reactjs.org/) | [MongoDB Ecosystem](https://docs.mongodb.com/ecosystem/drivers/) | [jsfiddle](http://jsfiddle.net/)  
+ [GitHub](https://github.com/) | [Mozilla Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | [Mongo Docker Hub](https://hub.docker.com/_/mongo) | [codepend.io](https://codepen.io/)  
+ [Visual Code](https://code.visualstudio.com/) | [Typescript](https://www.typescriptlang.org/) | [Mongoose JS](https://mongoosejs.com/) | [Regexr](http://regexr.com/)  
+ [Powershell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6) | | | 
+ [Docker](https://www.docker.com/) | | |
+
+### More
 >[Chrome extensions](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en)  
->[Mongo Docker Hub](https://hub.docker.com/_/mongo)  
 >[Serverless](https://serverless.com/)  
 >[Swagger](https://swagger.io/)  
->[Regexr](http://regexr.com/)  
->[jsfiddle](http://jsfiddle.net/)  
->[codepend.io](https://codepen.io/)  
 
 
 # Terminal or powershell 
