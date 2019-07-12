@@ -3,6 +3,9 @@ import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 
 export namespace AnimalService {
+    mongoose.set('debug', true);
+    mongoose.set('useFindAndModify', false);
+
     let __selectionFields = '_id name description imageSrc contributors';
     let __connectionString = 'mongodb://localhost:27017/rescueshelter';
 
@@ -41,9 +44,8 @@ export namespace AnimalService {
     };
 
     export function newAnimal(item: any, callback?: Function) {
-        console.log(item);
         var animal = new model(item);
-                
+             
         animal.save(null,(err,product)=>{
             callback(err, product);
         });
@@ -52,8 +54,8 @@ export namespace AnimalService {
     export function saveAnimal(item: any, callback?: Function) {
         var animal = new model(item);
 
-        animal.update(animal, (err, product)=>{
-            callback(err, product);
+        model.findOneAndUpdate({_id: animal._id}, animal, {rawResult: true} ,(err,doc,res)=>{
+            callback(err, doc);
         });
     }
 
@@ -65,6 +67,7 @@ export namespace AnimalService {
         var condition = (phrase)? {$text: {$search: phrase}}: {};
 
         model.find(condition)
+            .lean()
             .limit(limit)
             .select(__selectionFields)
             .exec(function(error, data) {
@@ -76,7 +79,7 @@ export namespace AnimalService {
     /**
      * @description Pushlishes the available Web API URLs for items
      */
-    export function publishWebAPI(app: Application) {        
+    export function publishWebAPI(app: Application) {
         // Parser for various different custom JSON types as JSON
         var jsonBodyParser = bodyParser.json({type: 'application/json'});
     
@@ -93,9 +96,6 @@ export namespace AnimalService {
             res.status(200);
             AnimalService.newAnimal(req.body, function(error, data){
                 var results = data || error;
-
-                console.log(results);
-
                 res.json(results);
             });
         });
@@ -110,9 +110,6 @@ export namespace AnimalService {
             res.status(200);
             AnimalService.saveAnimal(req.body, function(error,data){
                 var results = data || error;
-
-                console.log(results);
-                
                 res.json(results);
             });
         });
@@ -131,9 +128,6 @@ export namespace AnimalService {
             res.status(200);
             AnimalService.getAnimal(req.params.id, function(error,data){
                 var results = data || error;
-
-                console.log(results);
-                
                 res.json(results);
             });
         });
@@ -147,13 +141,13 @@ export namespace AnimalService {
            var phrase = req.query.phrase || null;
 
            res.status(200);
-           AnimalService.getAnimals(function(error, data){
-            var results = data || error;
-
-            console.log(results);
-
-            res.json(results);
-           }, page, limit, phrase);
+           AnimalService.getAnimals(
+               function(error, data) {
+                    var results = data || error;
+                    res.json(results);
+                }, 
+                page, limit, phrase
+            );
         });
     } 
 } // end namespace AnimalService
