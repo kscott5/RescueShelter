@@ -16,6 +16,7 @@ fi
 npm run clean
 npm run compile
 
+echo "Configure the mongodb docker container"
 sudo docker rm mongo_dev -f
 sudo docker run -d --rm -p 27017:27017 --name mongo_dev mongo
 
