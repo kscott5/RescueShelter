@@ -74,7 +74,14 @@ export namespace AnimalService {
                 var results = new Pagination(1,1, data);
                 callback(error,results)
             });
-    }    
+    } 
+
+    function jsonResponse(error, data) {
+        return {
+            ok: !error,
+            data: error || data,
+        }
+    }
     
     /**
      * @description Pushlishes the available Web API URLs for items
@@ -95,7 +102,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.newAnimal(req.body, function(error, data){
-                var results = data || error;
+                var results = jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -109,7 +116,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.saveAnimal(req.body, function(error,data){
-                var results = data || error;
+                var results = jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -127,7 +134,7 @@ export namespace AnimalService {
 
             res.status(200);
             AnimalService.getAnimal(req.params.id, function(error,data){
-                var results = data || error;
+                var results = jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -143,7 +150,7 @@ export namespace AnimalService {
            res.status(200);
            AnimalService.getAnimals(
                function(error, data) {
-                    var results = data || error;
+                    var results = jsonResponse(error,data);
                     res.json(results);
                 }, 
                 page, limit, phrase
