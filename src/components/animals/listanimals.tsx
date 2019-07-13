@@ -15,7 +15,12 @@ class ListAnimals extends React.Component {
     componentDidMount() {
         fetch("http://localhost:3302/api/animals?limit=100")
             .then(response =>response.json())
-            .then(response => this.setState(response))
+            .then(response => {
+                if(response.ok) 
+                    this.setState(response.data);
+                else
+                    this.setState({message: response.data});
+            })
             .catch(error => console.log(error));
     }
 
