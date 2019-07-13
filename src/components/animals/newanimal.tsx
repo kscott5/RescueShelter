@@ -23,24 +23,6 @@ class AnimalStateModel {
 }
 
 class NewAnimal extends React.Component<any> {
-    // state = {
-    //     id: '',
-    //     animal: 
-    //     {
-    //         name:'', description: '', endangered: false, imageSrc: '', 
-    //         contributors: [], 
-    //     },
-    //     contributor: '',
-    //     message: '',
-    //     toString: function() {
-    //         var arr = this.animal.contributors;
-    //         var email = this.contributor.trim();
-    //         if(email != "" && arr.indexOf(email.trim()) !== 0) 
-    //             arr.push(this.contributor);
-                
-    //         return JSON.stringify(this.animal);
-    //     }
-    // };
     state: AnimalStateModel;
 
     constructor(props) {
@@ -53,14 +35,19 @@ class NewAnimal extends React.Component<any> {
     }
 
     componentDidMount() {
-        var thisObj = this;
-        if(this.state.id == "0") return;
+        var objThis = this;
+        if(objThis.state.id == "0") return;
 
         // edit existing details
-        fetch(`http://localhost:3302/api/animal/${this.state.id}`)
+        fetch(`http://localhost:3302/api/animal/${objThis.state.id}`)
             .then(response =>response.json())
-            .then(response => thisObj.setState({["animal"]: response, ["contributor"]: ''}))
-            .catch(error => thisObj.setState({["message"]: error}));
+            .then(response => {
+                if(response.ok) 
+                    objThis.setState({animal: response.data, contributor: ''});
+                else
+                    objThis.setState({message: response.data});
+            })
+            .catch(error => objThis.setState({message: error}));
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -90,32 +77,28 @@ class NewAnimal extends React.Component<any> {
     }
 
     onSaveNewAnimal(event) {
-        const thisObj = this;
-
+        var objThis = this;
         var form = document.querySelector("form");
         if(!form.checkValidity()) return;
 
-        var url = `http://localhost:3302/api/animal/${this.state.id}`;
+        var url = `http://localhost:3302/api/animal/${objThis.state.id}`;
         if(this.state.id == "0")
             url = `http://localhost:3302/api/animal/new`;
 
         fetch(url, {
             method: 'POST',
-            body: this.stateToJson(),
+            body: objThis.stateToJson(),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json())
         .then(response => {
-            thisObj.setState({
-                ["id"]: response._id, 
-                ["animal"]: response, 
-                ["contributor"]: ''
-        });
-
-            /*window.location.href='/#/animals';*/ })
-        .catch(error => thisObj.setState({message: error}));
-        
+            if(response.ok)    
+                objThis.setState({["id"]: response.data._id, ["animal"]: response.data, ["contributor"]: ''});
+            else
+                objThis.setState({["message"]: response.data});
+        })
+        .catch(error => objThis.setState({["message"]: error}));
     }
 
     onClick(event) {
