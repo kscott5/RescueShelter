@@ -1,17 +1,11 @@
 import {Application}  from "express";
 import * as bodyParser from "body-parser";
-import * as mongoose from "mongoose";
+import * as services from "./services";
 
 export namespace AnimalService {
-    mongoose.set('debug', true);
-    mongoose.set('useFindAndModify', false);
-
     let __selectionFields = '_id name description imageSrc contributors';
-    let __connectionString = 'mongodb://localhost:27017/rescueshelter';
 
-    let __connection = mongoose.createConnection(__connectionString);
-
-    let schema = new mongoose.Schema({
+    let animalSchema = services.createMongooseSchema({
         name: {type: String, unique:true, required: [true, '*']},
         imageSrc: String,
         endangered: Boolean,
@@ -24,64 +18,44 @@ export namespace AnimalService {
         contributors: {type: Array<String>()}
     });
     
-    schema.index({name: "text", description: "text", contributors: "text"});
-    schema.path("dates.created").default(function(){return Date.now();});
-    schema.path("dates.modified").default(function(){return Date.now();});
+    animalSchema.index({name: "text", description: "text", contributors: "text"});
+    animalSchema.path("dates.created").default(function(){return Date.now();});
+    animalSchema.path("dates.modified").default(function(){return Date.now();});
     
-    export const name = 'animal';
-    let model =  __connection.model(AnimalService.name, schema);    
+    let animalModel =  services.createMongooseModel("animal", animalSchema);    
     
-    export class Pagination {
-        public pages: Number;
-        public pageIndex: Number;
-        public documents: Array<any>;
-
-        constructor(pageCount: Number, pageCurrent: Number, data: Array<any>){
-            this.pages = pageCount;
-            this.pageIndex = pageCurrent;
-            this.documents = data;
-        }
-    };
-
-    export function newAnimal(item: any, callback?: Function) {
-        var animal = new model(item);
+    function newAnimal(item: any, callback?: Function) {
+        var animal = new animalModel(item);
              
         animal.save(null,(err,product)=>{
             callback(err, product);
         });
     }
 
-    export function saveAnimal(item: any, callback?: Function) {
-        var animal = new model(item);
+    function saveAnimal(item: any, callback?: Function) {
+        var animal = new animalModel(item);
 
-        model.findOneAndUpdate({_id: animal._id}, animal, {rawResult: true} ,(err,doc,res)=>{
+        animalModel.findOneAndUpdate({_id: animal._id}, animal, {rawResult: true} ,(err,doc,res)=>{
             callback(err, doc.value);
         });
     }
 
-    export function getAnimal(id: String, callback: Function){
-        model.findById(id,callback);
+    function getAnimal(id: String, callback: Function){
+        animalModel.findById(id,callback);
     } 
 
-    export function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
+    function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
         var condition = (phrase)? {$text: {$search: phrase}}: {};
 
-        model.find(condition)
+        animalModel.find(condition)
             .lean()
             .limit(limit)
             .select(__selectionFields)
             .exec(function(error, data) {
-                var results = new Pagination(1,1, data);
+                var results = new services.pagination(1,1, data);
                 callback(error,results)
             });
     } 
-
-    function jsonResponse(error, data) {
-        return {
-            ok: !error,
-            data: error || data,
-        }
-    }
     
     /**
      * @description Pushlishes the available Web API URLs for items
@@ -101,8 +75,8 @@ export namespace AnimalService {
             }
 
             res.status(200);
-            AnimalService.newAnimal(req.body, function(error, data){
-                var results = jsonResponse(error,data);
+            newAnimal(req.body, function(error, data){
+                var results = services.jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -115,8 +89,8 @@ export namespace AnimalService {
             } 
 
             res.status(200);
-            AnimalService.saveAnimal(req.body, function(error,data){
-                var results = jsonResponse(error,data);
+            saveAnimal(req.body, function(error,data){
+                var results = services.jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -133,8 +107,8 @@ export namespace AnimalService {
             }
 
             res.status(200);
-            AnimalService.getAnimal(req.params.id, function(error,data){
-                var results = jsonResponse(error,data);
+            getAnimal(req.params.id, function(error,data){
+                var results = services.jsonResponse(error,data);
                 res.json(results);
             });
         });
@@ -148,9 +122,9 @@ export namespace AnimalService {
            var phrase = req.query.phrase || null;
 
            res.status(200);
-           AnimalService.getAnimals(
+           getAnimals(
                function(error, data) {
-                    var results = jsonResponse(error,data);
+                    var results = services.jsonResponse(error,data);
                     res.json(results);
                 }, 
                 page, limit, phrase
