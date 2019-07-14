@@ -1,3 +1,4 @@
+import {SchemaTypes}  from "mongoose";
 import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
@@ -14,20 +15,17 @@ export namespace ContributorService {
         audit: [
             {
                 _id: false,
-                creation: {type: Date, required: [true]},
-                contributor_id: {type: String, required: [true]}
+                modified: {type: Date, required: [true]},
+                contributor_id: {type: SchemaTypes.ObjectId, required: [true]}
             }
         ]
     });
     
     contributorSchema.index({username: "text", useremail: "text"});
     contributorSchema.path("audit").default(function(){
-        var objThis = this;
-        var id = this.id;
-        
         return {
-            creation: Date.now(),
-            contributor_id: id,
+            modified: Date.now(),
+            contributor_id: this._id,
         };
     });    
     //schema.path("audit.contributor_id").default(function(){return Date.now();});
@@ -86,7 +84,8 @@ export namespace ContributorService {
            newContributor(req.body, function(error, data){
                var results = services.jsonResponse(error,data);
                res.json(results);
-           });        });
+           });
+        });
 
         app.get("/api/contributor/:id:username", jsonBodyParser, (req,res) => {
             res.status(200);
