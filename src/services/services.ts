@@ -1,5 +1,7 @@
 import * as mongoose from "mongoose";
 
+console.log(`mongoosejs version: ${mongoose.version}`);
+
 mongoose.set('debug', true);
 mongoose.set('useFindAndModify', false);
 
@@ -25,7 +27,7 @@ export class pagination {
     }
 }
 
-export function jsonResponse(error, data) {
+export function jsonResponse(error, data: any = null) {
     return {
         ok: !error,
         data: error || data,
