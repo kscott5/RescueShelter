@@ -8,11 +8,12 @@ export namespace ContributorService {
     let contributorSchema = services.createMongooseSchema({        
         firstname: {type: String},
         lastname: {type: String},
-        useremail: {type: String, required: [true, '*'], unique: [true]},
-        username: {type: String},
+        useremail: {type: String, required: [true, '*'], unique: true},
+        username: {type: String, unique: true},
         photo: {type: String},
         audit: [
             {
+                _id: false,
                 creation: {type: Date, required: [true]},
                 contributor_id: {type: String, required: [true]}
             }
@@ -20,7 +21,15 @@ export namespace ContributorService {
     });
     
     contributorSchema.index({username: "text", useremail: "text"});
-    contributorSchema.path("audit.creation").default(function(){return Date.now();});    
+    contributorSchema.path("audit").default(function(){
+        var objThis = this;
+        var id = this.id;
+        
+        return {
+            creation: Date.now(),
+            contributor_id: id,
+        };
+    });    
     //schema.path("audit.contributor_id").default(function(){return Date.now();});
     
     let contributorModel =  services.createMongooseModel("contributor", contributorSchema); 
@@ -62,11 +71,26 @@ export namespace ContributorService {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
         app.post("/api/contributor/:id", jsonBodyParser, (req,res) => {
+            res.status(200);
+            res.json({id: req.params.id|| "none", body: req.body || "none"});
 
         });
 
         app.post("/api/contributor", jsonBodyParser, (req,res) => {
+            if(!req.body) {
+                res.status(200);
+                res.json(services.jsonResponse("HttpPOST json body not available"));
+           }
 
+           res.status(200);
+           newContributor(req.body, function(error, data){
+               var results = services.jsonResponse(error,data);
+               res.json(results);
+           });        });
+
+        app.get("/api/contributor/:id:username", jsonBodyParser, (req,res) => {
+            res.status(200);
+            res.json({id: req.params.id|| "none", username: req.params.username || "none"});
         });
 
         app.get("/api/contributors", (req,res) => {
