@@ -4,7 +4,7 @@ import * as bodyParser from "body-parser";
 import * as services from "./services";
 
 export namespace ContributorService {
-    let __selectionFields = "_id useremail username firstname lastname";
+    let __selectionFields = "_id useremail username firstname lastname photo audit";
 
     let contributorSchema = services.createMongooseSchema({        
         firstname: {type: String},
@@ -42,7 +42,7 @@ export namespace ContributorService {
 
     function saveContributor(item: any, callback: Function) {
         var contributor = new contributorModel(item);
-
+        
         contributorModel.findOneAndUpdate({_id: contributor._id}, contributor, (err,doc, res) =>{
             callback(err, doc);
         });
@@ -69,8 +69,10 @@ export namespace ContributorService {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
         app.post("/api/contributor/:id", jsonBodyParser, (req,res) => {
-            res.status(200);
-            res.json({id: req.params.id|| "none", body: req.body || "none"});
+            if(!req.params.id || !req.body.hashid) {
+                res.status(200);
+                res.json(services.jsonResponse("HttpGET json body not available"));
+            }
 
         });
 
@@ -87,9 +89,11 @@ export namespace ContributorService {
            });
         });
 
-        app.get("/api/contributor/:id:username", jsonBodyParser, (req,res) => {
+        app.get("/api/contributor/:id", (req,res) => {
             res.status(200);
-            res.json({id: req.params.id|| "none", username: req.params.username || "none"});
+            getContribtuor(req.params.id, (error, data) => {
+                res.json(services.jsonResponse(error, data));
+            });
         });
 
         app.get("/api/contributors", (req,res) => {
