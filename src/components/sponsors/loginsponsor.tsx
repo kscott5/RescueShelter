@@ -32,4 +32,4 @@ class LoginSponsor extends React.Component {
     }
 }
 
-export {LoginSponsor as default, LoginSponsor as LoginContributor};
+export {LoginSponsor as default, LoginSponsor as LoginSponsor};

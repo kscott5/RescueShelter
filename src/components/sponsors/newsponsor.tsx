@@ -43,4 +43,4 @@ class NewSponsor extends React.Component {
 export function NewContributorView(){
     return <NewSponsor/>
 }
-export {NewSponsor as default, NewSponsor as NewContributor};
+export {NewSponsor as default, NewSponsor as NewSponsor};
