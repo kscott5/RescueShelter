@@ -1,4 +1,6 @@
 import * as mongoose from "mongoose";
+import * as crypto from "crypto";
+import { Buffer } from "buffer";
 
 console.log(`mongoosejs version: ${mongoose.version}`);
 
@@ -15,6 +17,9 @@ export function createMongooseModel(modelName: string, modelSchema: mongoose.Sch
     return __connection.model(modelName, modelSchema);
 }
 
+export function createSecret(id: string) {
+    crypto.createSecretKey
+}
 export class pagination {
     public pages: Number;
     public pageIndex: Number;
