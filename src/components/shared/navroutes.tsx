@@ -1,11 +1,10 @@
 import * as React from "react";
-import * as ReactDOM  from "react-dom";
 import {Route} from "react-router-dom";
 
 import {Segment, Container} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
-import * as Contributors from "../contributors/index";
+import * as Sponsors from "../sponsors/index";
 
 class NavRoutes extends React.Component {
     render() {
@@ -16,7 +15,7 @@ class NavRoutes extends React.Component {
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
                     <Route exact path="/animal" component={Animals.NewEditAnimalView}/>
                     <Route exact path="/animal/:id" component={Animals.NewEditAnimalView}/>
-                    <Route exact path="/contributors" component={Contributors.ListContributorsView}/>
+                    <Route exact path="/sponsors" component={Sponsors.ListSponsorsView}/>
                 </Container>
             </Segment>
         );

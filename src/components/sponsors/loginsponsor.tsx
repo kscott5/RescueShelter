@@ -1,8 +1,7 @@
 import * as React from "react";
-import * as ReactDom from "react-dom"
-import {Segment, Container, Form, FormInput, FormButton} from "semantic-ui-react";
+import {Form, FormInput, FormButton} from "semantic-ui-react";
 
-class LoginContributor extends React.Component {
+class LoginSponsor extends React.Component {
     state = {
         username:'', 
         password: '', 
@@ -33,4 +32,4 @@ class LoginContributor extends React.Component {
     }
 }
 
-export {LoginContributor as default, LoginContributor as LoginContributor};
+export {LoginSponsor as default, LoginSponsor as LoginContributor};

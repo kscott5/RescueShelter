@@ -1,7 +1,6 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
-class ListContributors extends React.Component {
+class ListSponsors extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -17,9 +16,9 @@ class ListContributors extends React.Component {
 
     render() {
         return (
-            <h1> List the contributors of Rescue Shelter</h1>
+            <h1> List the sponsors of Rescue Shelter</h1>
         );
     }
 }
 
-export {ListContributors as default, ListContributors as ListContributors};
+export {ListSponsors as default, ListSponsors as ListSponsors};
