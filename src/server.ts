@@ -7,7 +7,7 @@ import * as morgan from "morgan";
 import * as path from "path";
 
 import {AnimalService} from "./services/animalservice";
-import {ContributorService} from "./services/contributorservice";
+import {ContributorService} from "./services/sponsorservice";
 
 
 enum LoggerType {
