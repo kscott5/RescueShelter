@@ -3,7 +3,7 @@ import * as bodyParser from "body-parser";
 import * as services from "./services";
 
 export namespace AnimalService {
-    let __selectionFields = '_id name description imageSrc contributors';
+    let __selectionFields = '_id name description imageSrc sponsors';
 
     let animalSchema = services.createMongooseSchema({
         name: {type: String, unique:true, required: [true, '*']},
@@ -15,10 +15,10 @@ export namespace AnimalService {
             created: Date ,
             modified: Date
         },
-        contributors: {type: Array<String>()}
+        sponsors: {type: Array<String>()}
     });
     
-    animalSchema.index({name: "text", description: "text", contributors: "text"});
+    animalSchema.index({name: "text", description: "text", sponsors: "text"});
     animalSchema.path("dates.created").default(function(){return Date.now();});
     animalSchema.path("dates.modified").default(function(){return Date.now();});
     
@@ -45,16 +45,39 @@ export namespace AnimalService {
     } 
 
     function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
-        var condition = (phrase)? {$text: {$search: phrase}}: {};
-
-        animalModel.find(condition)
-            .lean()
-            .limit(limit)
-            .select(__selectionFields)
-            .exec(function(error, data) {
-                var results = new services.pagination(1,1, data);
-                callback(error,results)
-            });
+        animalModel.aggregate([
+            {
+                $lookup: {
+                    from: "sponsors",
+                    let: {animals_sponsors: '$sponsors'},
+                    pipeline: [{
+                        $project: {
+                            _id: false, useremail: 1, username: 1, 
+                            is_sponsor: {$in: ['$useremail', '$$animals_sponsors']}
+                        }            
+                    }],
+                    as: "sponsors"
+                }        
+            },
+            {
+            $project: {
+                name: 1, description: 1, endangered: 1, imageSrc: 1,
+                sponsors_is_array: {$isArray: '$sponsors'},
+                sponsors: '$sponsors',
+                sponsors_filtered: {
+                    $filter: {
+                        input: '$sponsors',
+                        as: 'sponsor',
+                        cond: {$eq: ['$sponsor.is_sponsors', true]}
+                    }
+                }
+            }}
+        ])
+        .limit(limit)            
+        .exec(function(error, data) {
+            var results = new services.pagination(1,1, data);
+            callback(error,results)
+        });
     } 
     
     /**
