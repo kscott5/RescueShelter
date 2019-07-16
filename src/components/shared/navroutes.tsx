@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Route} from "react-router-dom";
 
-import {Segment, Container} from "semantic-ui-react";
+import {Segment, Container, Image} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
 import * as Sponsors from "../sponsors/index";
@@ -11,7 +11,7 @@ class NavRoutes extends React.Component {
         return (
             <Segment>
                 <Container>
-                    <Route exact path="/" component={function(){return <img src='/assets/images/home.png'/>;}} />
+                    <Route exact path="/" component={function(){return <Image src='/assets/images/home.png' class="ui image"/>;}} />
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
                     <Route exact path="/animal" component={Animals.NewEditAnimalView}/>
                     <Route exact path="/animal/:id" component={Animals.NewEditAnimalView}/>
