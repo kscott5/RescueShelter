@@ -1,6 +1,7 @@
 import {Application}  from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
+import * as mongoose from "mongoose";
 
 export namespace AnimalService {
     let __selectionFields = '_id name description imageSrc sponsors';
@@ -45,7 +46,11 @@ export namespace AnimalService {
     } 
 
     function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
-        animalModel.aggregate([
+        var animalAggregate = (!phrase)? animalModel.aggregate() :
+            animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
+        
+        
+        animalAggregate.append([
             {
                 $lookup: {
                     from: "sponsors",
