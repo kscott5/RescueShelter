@@ -7,14 +7,14 @@ class AnimalModel {
     public description: string="";
     public imageSrc: string="";
     public endangered: boolean = false;
-    public contributors: Array<string> = [];
+    public sponsors: Array<string> = [];
 }
 
 class AnimalStateModel {
     public id: string="0";
     public message: string="";
     public animal: AnimalModel;
-    public contributor: string="";
+    public sponsor: string="";
 
     constructor(id: string) {
         this.id = id;
@@ -43,7 +43,7 @@ class NewAnimal extends React.Component<any> {
             .then(response =>response.json())
             .then(response => {
                 if(response.ok) 
-                    objThis.setState({animal: response.data, contributor: ''});
+                    objThis.setState({animal: response.data, sponsor: ''});
                 else
                     objThis.setState({message: response.data});
             })
@@ -58,18 +58,20 @@ class NewAnimal extends React.Component<any> {
 
     stateToJson() {        
         var animal = this.state["animal"];
-        var contributors = this.state["contributor"].trim().split(',');
+        var sponsors = this.state["sponsor"].trim().split(',');
 
-        for(var index in contributors) {
-            // Validate contributor email address with regex
-            if(animal.contributors.indexOf(contributors[index]) == -1) {
-                animal.contributors.push(contributors[index]);
+        for(var index in sponsors) {
+            var sponsor = sponsors[index].trim();
+
+            // Validate sponsor email address with regex
+            if(animal.sponsors.indexOf(sponsors[index]) == -1 && sponsor.length != 0) {
+                animal.sponsors.push(sponsors[index]);
             }
         }
 
-        this.setState({animal: animal, contributor: ""});
+        this.setState({animal: animal, sponsor: ""});
 
-        console.log(contributors);
+        console.log(sponsors);
         console.log(animal);
 
         // JSONify only AnimalModel
@@ -94,7 +96,7 @@ class NewAnimal extends React.Component<any> {
         }).then(response => response.json())
         .then(response => {
             if(response.ok)    
-                objThis.setState({["id"]: response.data._id, ["animal"]: response.data, ["contributor"]: ''});
+                objThis.setState({["id"]: response.data._id, ["animal"]: response.data, ["sponsor"]: ''});
             else
                 objThis.setState({["message"]: response.data});
         })
@@ -106,14 +108,14 @@ class NewAnimal extends React.Component<any> {
         const id = target.id;
         const name = target.name;
 
-        if(id == "removeContributor") {
+        if(id == "removesponsor") {
             let animal = this.state.animal;
-            let index = animal.contributors.findIndex((item)=>{return item==name;});
+            let index = animal.sponsors.findIndex((item)=>{return item==name;});
 
-            animal.contributors[index] = "";
-            let contributorsSorted = animal.contributors.sort().reverse().pop();
+            animal.sponsors[index] = "";
+            let sponsorsSorted = animal.sponsors.sort().reverse().pop();
             
-            console.log(contributorsSorted);
+            console.log(sponsorsSorted);
         }
     }
     
@@ -123,7 +125,7 @@ class NewAnimal extends React.Component<any> {
         const value = (target.type === 'checkbox')? target.checked : target.value;
 
         let stateObj = this.state;
-        if(key === "contributor") {
+        if(key === "sponsor") {
             stateObj[key] = value;
         } else {
             stateObj["animal"][key] = value;            
@@ -133,10 +135,10 @@ class NewAnimal extends React.Component<any> {
     }
 
     render() {        
-        const contributors = this.state.animal.contributors.map((contributor) => {
+        const sponsors = this.state.animal.sponsors.map((sponsor) => {
             return (
-                <div key={contributor}>
-                    <span>{contributor}</span> <button id="removeContributor" name={contributor}  onClick={this.onClick}>Delete</button>
+                <div key={sponsor}>
+                    <span>{sponsor}</span> <button id="removesponsor" name={sponsor}  onClick={this.onClick}>Delete</button>
                 </div>
             );    
         });
@@ -148,8 +150,8 @@ class NewAnimal extends React.Component<any> {
                     <FormTextArea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' type='textarea' value={this.state.animal.description}/>
                     <FormInput id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
                     <FormCheckbox id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
-                    <FormInput id='contributor' onChange={this.onChange} name='contributor' placeholder="contributor@email.com" type='text'  value={this.state.contributor}/>
-                    {contributors}    
+                    <FormInput id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
+                    {sponsors}    
                     <FormButton id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</FormButton>
                 </Form>                
             </div>
