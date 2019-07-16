@@ -68,13 +68,11 @@ export namespace AnimalService {
             {
             $project: {
                 name: 1, description: 1, endangered: 1, imageSrc: 1,
-                sponsors_is_array: {$isArray: '$sponsors'},
-                sponsors: '$sponsors',
-                sponsors_filtered: {
+                sponsors: {
                     $filter: {
                         input: '$sponsors',
-                        as: 'sponsor',
-                        cond: {$eq: ['$sponsor.is_sponsors', true]}
+                        as: 'contributor',
+                        cond: {$eq: ['$$contributor.is_sponsor', true]}
                     }
                 }
             }}

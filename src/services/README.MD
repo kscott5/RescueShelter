@@ -82,6 +82,7 @@ db.contributors.insert([
 ```
   
   ## Aggregate of Animals and Contributors 
+[User Variables](https://docs.mongodb.com/manual/reference/aggregation-variables/index.html)
 ``` 
 db.animals.aggregate([
     {
@@ -106,15 +107,14 @@ db.animals.aggregate([
             $filter: {
                 input: '$contributors',
                 as: 'sponsor',
-                cond: {$eq: ['$sponsor.is_contributor', false]}
+                cond: {$eq: ['$$sponsor.is_contributor', false]}
             }
         }
     }}
 ])
 ```
   
-## Aggregate results ($eq not working)  
-Expected a single array item with each contributors_filtered $project field  
+## Aggregate results  
 ```
 /* 1 */
 {
@@ -136,7 +136,13 @@ Expected a single array item with each contributors_filtered $project field
         }
     ],
     "contributors_is_array" : true,
-    "contributors_filtered" : []
+    "contributors_filtered" : [
+        {
+            "useremail" : "flname@outlook.com",
+            "username" : "flname",
+            "is_contributor" : true
+        }
+    ]
 }
 
 /* 2 */
@@ -159,6 +165,12 @@ Expected a single array item with each contributors_filtered $project field
         }
     ],
     "contributors_is_array" : true,
-    "contributors_filtered" : []
+    "contributors_filtered" : [ 
+        {
+            "useremail" : "user.name@outlook.com",
+            "username" : "username",
+            "is_contributor" : true
+        }
+    ]
 }
 ```
