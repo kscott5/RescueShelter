@@ -7,7 +7,7 @@ import * as morgan from "morgan";
 import * as path from "path";
 
 import {AnimalService} from "./services/animalservice";
-import {ContributorService} from "./services/sponsorservice";
+import {SponsorService} from "./services/sponsorservice";
 
 
 enum LoggerType {
@@ -64,7 +64,7 @@ export class Server {
         });
 
         AnimalService.publishWebAPI(apiServer);
-        ContributorService.publishWebAPI(apiServer);
+        SponsorService.publishWebAPI(apiServer);
         
         apiServer.listen(port,function(){
             console.log('Rescue Shelter listening on port: '+ port);

@@ -3,7 +3,7 @@ import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
 
-export namespace ContributorService {
+export namespace SponsorService {
     let __selectionFields = "_id useremail username firstname lastname photo audit";
 
     let sponsorSchema = services.createMongooseSchema({        
@@ -16,7 +16,7 @@ export namespace ContributorService {
             {
                 _id: false,
                 modified: {type: Date, required: [true]},
-                contributor_id: {type: SchemaTypes.ObjectId, required: [true]}
+                Sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
             }
         ]
     });
@@ -25,7 +25,7 @@ export namespace ContributorService {
     sponsorSchema.path("audit").default(function(){
         return {
             modified: Date.now(),
-            contributor_id: this._id,
+            Sponsor_id: this._id,
         };
     });    
     //schema.path("audit.sponssor_id").default(function(){return Date.now();});
@@ -33,17 +33,17 @@ export namespace ContributorService {
     let sponsorModel =  services.createMongooseModel("sponsor", sponsorSchema); 
     
     function newSponsor(item: any, callback: Function) {
-        var contributor = new sponsorModel(item);
+        var Sponsor = new sponsorModel(item);
 
-        contributor.save(null, (err,doc)=>{
+        Sponsor.save(null, (err,doc)=>{
             callback(err,doc);
         })
     }
 
     function saveSponsor(item: any, callback: Function) {
-        var contributor = new sponsorModel(item);
+        var sponsor = new sponsorModel(item);
         
-        sponsorModel.findOneAndUpdate({_id: contributor._id}, contributor, (err,doc, res) =>{
+        sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, (err,doc, res) =>{
             callback(err, doc);
         });
     }
