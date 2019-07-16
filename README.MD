@@ -2,13 +2,13 @@
 Simple Single Page Application SPA that uses  
 - Simple Happy Path Use Cases 
 - NodeJS
-- React
+- React [Components README](https://github.com/kscott5/RescueShelter/tree/master/src/components)  
 - Semantic-UI-React
 - HTML5, CSS3 & Javascript
 - ExpressJS Web API 
-- Mongoose CRUD with indexes, text search
+- Mongoose CRUD with indexes, text search [Services README](https://github.com/kscott5/RescueShelter/tree/master/src/services)  
 - Mongo Docker Container  
-
+    
 NOTE: The app.js could function within a serverless cloud environment or API explorer. However, this is a small application with limit features. These environment require registration, access tokens and more.  
  
   
@@ -17,7 +17,7 @@ NOTE: The app.js could function within a serverless cloud environment or API exp
  [Markdown Guide](https://guides.github.com/features/mastering-markdown/) | [ReactJS](https://reactjs.org/) | [MongoDB Ecosystem](https://docs.mongodb.com/ecosystem/drivers/) | [jsfiddle](http://jsfiddle.net/)  
  [GitHub](https://github.com/) | [Mozilla Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | [Mongo Docker Hub](https://hub.docker.com/_/mongo) | [codepend.io](https://codepen.io/)  
  [Visual Code](https://code.visualstudio.com/) | [Typescript](https://www.typescriptlang.org/) | [Mongoose JS](https://mongoosejs.com/) | [Regexr](http://regexr.com/)  
- [Powershell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6) | | | 
+ [Powershell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6) | | [Robo3t](https://www.robomongo.org/) | 
  [Docker](https://www.docker.com/) | | |
 
 ### More
@@ -75,3 +75,5 @@ launch.json
         }
     ]
 ```  
+
+  
