@@ -11,7 +11,7 @@ class NavRoutes extends React.Component {
         return (
             <Segment>
                 <Container>
-                    <Route exact path="/"/>
+                    <Route exact path="/" component={function(){return <img src='/assets/images/home.png'/>;}} />
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
                     <Route exact path="/animal" component={Animals.NewEditAnimalView}/>
                     <Route exact path="/animal/:id" component={Animals.NewEditAnimalView}/>
