@@ -16,7 +16,7 @@ export namespace SponsorService {
             {
                 _id: false,
                 modified: {type: Date, required: [true]},
-                Sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
+                sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
             }
         ]
     });
@@ -43,7 +43,10 @@ export namespace SponsorService {
     function saveSponsor(item: any, callback: Function) {
         var sponsor = new sponsorModel(item);
         
+        sponsor["audit"].push({modified: new Date(), sponsor_id: sponsor._id});
+
         var options = services.createFindOneAndUpdateOptions();
+        
         sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options, (err,doc, res) =>{
             callback(err, doc["value"]);
         });
