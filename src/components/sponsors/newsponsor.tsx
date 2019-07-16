@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {Form, Button} from 'semantic-ui-react';
 
-class NewSponsor extends React.Component {
+class NewSponsor extends React.Component<any> {
     state = {
         firstname: '',
         lastname: '',
