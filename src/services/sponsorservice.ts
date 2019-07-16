@@ -43,8 +43,9 @@ export namespace SponsorService {
     function saveSponsor(item: any, callback: Function) {
         var sponsor = new sponsorModel(item);
         
-        sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, (err,doc, res) =>{
-            callback(err, doc);
+        var options = services.createFindOneAndUpdateOptions();
+        sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options, (err,doc, res) =>{
+            callback(err, doc["value"]);
         });
     }
 
@@ -69,11 +70,15 @@ export namespace SponsorService {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
-            if(!req.params.id || !req.body.hashid) {
-                res.status(200);
-                res.json(services.jsonResponse("HttpGET json body not available"));
-            }
+            // if(!req.body.hashid) {
+            //     res.status(200);
+            //     res.json(services.jsonResponse("HttpGET json body not available"));
+            // }
 
+            saveSponsor(req.body, (error, data) => {
+                res.status(200);
+                res.json(services.jsonResponse(error, data));
+            });
         });
 
         app.post("/api/sponsor", jsonBodyParser, (req,res) => {

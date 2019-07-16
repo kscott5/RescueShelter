@@ -38,7 +38,7 @@ export namespace AnimalService {
 
         var options = services.createFindOneAndUpdateOptions();
         animalModel.findOneAndUpdate({_id: animal._id}, animal, options ,(err,doc,res)=>{
-            callback(err, doc);
+            callback(err, doc["value"]);
         });
     }
 
