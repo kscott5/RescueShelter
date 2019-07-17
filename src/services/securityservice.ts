@@ -14,25 +14,6 @@ export const SecuritySchema = function securitySchema() {
     });
 }
 
-function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Security Question Answer') {
-    // Key length is dependent on the algorithm. In this case for aes 256, it is
-    // 256/8bits or 32 bytes.
-
-    const key = crypto.scryptSync(data, salt, 32);
-    const iv = Buffer.alloc(16, 0);
-    const cipher = crypto.createCipheriv('aes-256-ccm', key, iv);
-
-    let encryptedData = '';
-    cipher.on('readable', () => {
-        let chunk;
-        while (null !== (chunk = cipher.read())) {
-            encryptedData += chunk.toString('hex');
-        }
-    });
-
-    return encryptedData;
-}
-
 export function generateSecurityAnswer(answer: string) {    
     const encryptedAnswer = generateEncryptedData(answer.trim());
 
@@ -71,15 +52,48 @@ export function generateModel(useremail: string, textPassword, question: string,
     });
 }
 
-export function verifyUniqueUserEmail(email: string, callback: Function) {
+export function newSponorSecurity(useremail: string, securityModel: any, callback: Function) {
     var model = services.getModel("sponsor");
-
-    model.find({useremail: email}, (error,doc)=> {
-        callback(error,doc);
+        
+    model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, (error, res) => {
+        callback(error, res);
     });
 }
 
-export function verifyUniqueUserName(name: string, callback: Function) {
+export function verifyUniqueUserField(field: string, value: string, callback: Function) {
+    switch(field.trim().toLowerCase()) {
+        case "username":
+            verifyUniqueUserName(value, callback);
+            break;
+        case "useremail":
+            verifyUniqueUserEmail(value, callback);
+            break;
+        default:
+            callback("value exists");
+            break;
+    }
+}
+
+function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Security Question Answer') {
+    // Key length is dependent on the algorithm. In this case for aes 256, it is
+    // 256/8bits or 32 bytes.
+
+    const key = crypto.scryptSync(data, salt, 32);
+    const iv = Buffer.alloc(16, 0);
+    const cipher = crypto.createCipheriv('aes-256-ccm', key, iv);
+
+    let encryptedData = '';
+    cipher.on('readable', () => {
+        let chunk;
+        while (null !== (chunk = cipher.read())) {
+            encryptedData += chunk.toString('hex');
+        }
+    });
+
+    return encryptedData;
+}
+
+function verifyUniqueUserName(name: string, callback: Function) {
     var model = services.getModel("sponsor");
     
     model.find({useremail: name}, (error,doc)=> {
@@ -87,11 +101,10 @@ export function verifyUniqueUserName(name: string, callback: Function) {
     });
 }
 
-export function newSponorSettings(item: any, callback: Function) {
+function verifyUniqueUserEmail(email: string, callback: Function) {
     var model = services.getModel("sponsor");
-    var sponsorModel = new model(item);
 
-    sponsorModel.save((error, product) => {
-        callback(error,product);
+    model.find({useremail: email}, (error,doc)=> {
+        callback(error,doc);
     });
 }

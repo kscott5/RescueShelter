@@ -74,6 +74,24 @@ export namespace SponsorService {
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
+        app.get("/api/sponsor/unique/:field/:value", (req,res) => {
+            res.status(200);
+
+            const field = req.params.field;
+            if(!field) {                
+                res.json(services.jsonResponse("HttpGET field username or useremail not available with request"));
+            }
+
+            const value = req.params.value;
+            if(!value) {
+                res.json(services.jsonResponse("HttpGet value not available with request"));
+            }
+
+            security.verifyUniqueUserField(field, value, (error, data) => {
+                    res.json(services.jsonResponse(error,data));
+            });
+        });
+
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
             // if(!req.body.hashid) {
             //     res.status(200);
