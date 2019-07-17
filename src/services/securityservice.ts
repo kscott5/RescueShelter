@@ -14,7 +14,7 @@ export const SecuritySchema = function securitySchema() {
     });
 }
 export function authenticate(useremail: String, password: String, callback: Function) {
-    callback(`authenticate not available ${{hashid: "system access identifer"}}`);
+    callback({message: 'authenticate not available',hashid: 'system access identifer'});
 }
 
 export function generateSecurityAnswer(answer: string) {    

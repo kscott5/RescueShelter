@@ -77,7 +77,7 @@ export namespace SponsorService {
         app.post("/api/sponsor/auth", jsonBodyParser, (req,res) => {
             res.status(200);
 
-            const useremail = req.body.sponsor; // either useremail or username
+            const useremail = req.body.useremail; // either useremail or username
             const password = req.body.password; // clear text password never saved
 
             if(!useremail || !password) {
@@ -100,7 +100,7 @@ export namespace SponsorService {
             const useremail = req.body.useremail;            
             const password = req.body.password;
             if(!useremail || !password) {
-                res.json(services.jsonResponse("HttpPOST request user not available"));
+                res.json(services.jsonResponse("HttpPOST request body not available"));
             }
 
             const questions = req.body.questions;
