@@ -69,3 +69,7 @@ export function generateModel(useremail: string, textPassword, question: string,
         question: question, answer: answer
     });
 }
+
+export function verifyUniqueEmail(email: string) {
+       
+}

@@ -10,11 +10,21 @@ mongoose.set('useFindAndModify', false);
 let __connectionString = 'mongodb://localhost:27017/rescueshelter';
 let __connection = mongoose.createConnection(__connectionString);
 
+let __models = {};
+
 export function createMongooseSchema(schemaDefinition: any) {
     return new mongoose.Schema(schemaDefinition)
 }
+
 export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any>) {
-    return __connection.model(modelName, modelSchema);
+    const model = __connection.model(modelName, modelSchema);    
+    __models[modelName] = model;
+
+    return __models[modelName];
+}
+
+export function getModel(modelName: string) {
+    return __models[modelName];
 }
 
 export function createFindOneAndUpdateOptions(fields?: Object|String) {

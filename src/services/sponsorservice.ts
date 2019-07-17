@@ -2,6 +2,7 @@ import {SchemaTypes}  from "mongoose";
 import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
+import * as security from "./securityservice";
 
 export namespace SponsorService {
     let __selectionFields = "_id useremail username firstname lastname photo audit";
@@ -11,6 +12,7 @@ export namespace SponsorService {
         lastname: {type: String},
         useremail: {type: String, required: [true, '*'], unique: true},
         username: {type: String, unique: true},
+        security: security.SecuritySchema(),
         photo: {type: String},
         audit: [
             {
