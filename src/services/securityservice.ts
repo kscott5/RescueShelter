@@ -32,24 +32,27 @@ export function generateQuestion(question: string, answer: string) {
     return {question: question, answer: encryptedAnswer};
 }
 
-export function generate(useremail: string, textPassword: string, question?: any) {
+export function generate(useremail: string, textPassword: string, questions?: any) {
     const encryptedPassword = generateSecurityPassword(textPassword, useremail);
     const securityModel = {password: encryptedPassword};
 
-    if(question && question["question"] && question["anwer"]) {
-        const questionModel = generateQuestion(question["question"], question["answer"]);
-        securityModel["question"] = [
-            questionModel
-        ]
+    if(questions) {
+        console.debug(`${useremail} with ${questions.length} questions`);
+        
+        securityModel["questions"] = new Array();
+        
+        for(var question in questions) {
+            const questionModel = generateQuestion(question["question"], question["answer"]);
+            securityModel["questions"].push(questionModel);
+        }
     }
-
+    
     return securityModel;
 }
 
-export function generateModel(useremail: string, textPassword, question: string, answer: string) {
-    return generate(useremail, textPassword, {
-        question: question, answer: answer
-    });
+export function generateOne(useremail: string, textPassword, question: string, answer: string) {
+    return generate(useremail, textPassword, 
+        [ {question: question, answer: answer} ]);
 }
 
 export function newSponorSecurity(useremail: string, securityModel: any, callback: Function) {
