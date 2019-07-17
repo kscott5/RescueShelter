@@ -74,6 +74,21 @@ export namespace SponsorService {
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
+        app.post("/api/sponsor/auth", jsonBodyParser, (req,res) => {
+            res.status(200);
+
+            const useremail = req.body.sponsor; // either useremail or username
+            const password = req.body.password; // clear text password never saved
+
+            if(!useremail || !password) {
+                res.json(services.jsonResponse("HttpPOST: request body not available"));
+            }
+
+            security.authenticate(useremail, password, (error, data) =>{
+                res.json(services.jsonResponse(error,data));
+            });
+        });
+
         /**
          * new sponsor security
          */
@@ -81,7 +96,7 @@ export namespace SponsorService {
             res.status(200);
 
             const hashid = req.body.hashid; // use system generated access identitify 
-            
+
             const useremail = req.body.useremail;            
             const password = req.body.password;
             if(!useremail || !password) {

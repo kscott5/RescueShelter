@@ -13,6 +13,9 @@ export const SecuritySchema = function securitySchema() {
         questions: [questions]
     });
 }
+export function authenticate(useremail: String, password: String, callback: Function) {
+    callback(`authenticate not available ${{hashid: "system access identifer"}}`);
+}
 
 export function generateSecurityAnswer(answer: string) {    
     const encryptedAnswer = generateEncryptedData(answer.trim());
