@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import * as services from "./services";
 
-export function securitySchema() {
+export const SecuritySchema = function securitySchema() {
     const questions = services.createMongooseSchema({
         question: {type: String, required: true, unique: true},
         answer: {type: String, required: true},
