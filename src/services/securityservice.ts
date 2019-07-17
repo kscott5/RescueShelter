@@ -86,3 +86,12 @@ export function verifyUniqueUserName(name: string, callback: Function) {
         callback(error,doc);
     });
 }
+
+export function newSponorSettings(item: any, callback: Function) {
+    var model = services.getModel("sponsor");
+    var sponsorModel = new model(item);
+
+    sponsorModel.save((error, product) => {
+        callback(error,product);
+    });
+}
