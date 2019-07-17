@@ -1,4 +1,5 @@
 import * as crypto from "crypto";
+import * as mongoose from "mongoose";
 import * as services from "./services";
 
 export const SecuritySchema = function securitySchema() {
@@ -70,6 +71,18 @@ export function generateModel(useremail: string, textPassword, question: string,
     });
 }
 
-export function verifyUniqueEmail(email: string) {
-       
+export function verifyUniqueUserEmail(email: string, callback: Function) {
+    var model = services.getModel("sponsor");
+
+    model.find({useremail: email}, (error,doc)=> {
+        callback(error,doc);
+    });
+}
+
+export function verifyUniqueUserName(name: string, callback: Function) {
+    var model = services.getModel("sponsor");
+    
+    model.find({useremail: name}, (error,doc)=> {
+        callback(error,doc);
+    });
 }

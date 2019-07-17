@@ -23,7 +23,7 @@ export function createMongooseModel(modelName: string, modelSchema: mongoose.Sch
     return __models[modelName];
 }
 
-export function getModel(modelName: string) {
+export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {
     return __models[modelName];
 }
 
