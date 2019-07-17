@@ -57,7 +57,13 @@ export function generateOne(useremail: string, textPassword, question: string, a
 
 export function newSponorSecurity(useremail: string, securityModel: any, callback: Function) {
     var model = services.getModel("sponsor");
-        
+    
+    if(!securityModel["password"]) {
+        console.debug(`${securityModel}: not a valid ${SecuritySchema()} schema`);
+        callback("Sponsor security creation issue. Contact system administrator");
+        return;
+    }
+
     model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, (error, res) => {
         callback(error, res);
     });
