@@ -96,15 +96,15 @@ function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Sec
 function verifyUniqueUserName(name: string, callback: Function) {
     var model = services.getModel("sponsor");
     
-    model.find({useremail: name}, (error,doc)=> {
-        callback(error,doc);
+    model.findOne({useremail: name}, (error,doc)=> {
+        callback(error,{unique: !doc});
     });
 }
 
 function verifyUniqueUserEmail(email: string, callback: Function) {
     var model = services.getModel("sponsor");
 
-    model.find({useremail: email}, (error,doc)=> {
-        callback(error,doc);
+    model.findOne({useremail: email}, (error,doc) => {
+        callback(error,{unique: !doc});
     });
 }
