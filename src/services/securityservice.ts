@@ -1,6 +1,5 @@
 import * as crypto from "crypto";
 import * as services from "./services";
-import { string } from "prop-types";
 
 export const SecuritySchema = function securitySchema() {
     const questions = services.createMongooseSchema({
@@ -34,7 +33,7 @@ function generateHashId(err: any, doc: any, callback: Function) {
     const expires = new Date();
     expires.setMinutes(SESSION_TIME);
 
-    const useremail = doc["useremail"];    
+    const useremail = doc["useremail"] || 'no email';    
     const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
 
     const model = services.getModel("validator");
@@ -56,7 +55,7 @@ export function authenticate(useremail: String, password: String, callback: Func
 
     const model = services.getModel("sponsor");
     
-    model.findOne({useremail: useremail, security: {password: encryptedPassword}}, (error, doc) =>{
+    model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, (error, doc) =>{
         generateHashId(error, doc, callback);
     });
 }
@@ -131,7 +130,7 @@ export function verifyUniqueUserField(field: String, value: String, callback: Fu
     }
 }
 
-function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
+export function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
     const encryptedData = crypto.pbkdf2Sync(data.toString(), salt.toString(), 100, 50, 'sha256');
     return encryptedData.toString('hex');
 }

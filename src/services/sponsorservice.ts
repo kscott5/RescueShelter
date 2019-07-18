@@ -1,5 +1,5 @@
 import {SchemaTypes}  from "mongoose";
-import {Application} from "express";
+import {Application, json} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
 import * as security from "./securityservice";
