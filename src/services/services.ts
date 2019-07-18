@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { element } from "prop-types";
 
 console.log(`mongoosejs version: ${mongoose.version}`);
 
@@ -21,8 +22,11 @@ export function createMongooseModel(modelName: string, modelSchema: mongoose.Sch
     return __models[modelName];
 }
 
-export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {
-    return __models[modelName];
+export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {    
+    if(__models[modelName])
+        return __models[modelName];
+    throw new Error(`${modelName} not a valid model name.`);
+    
 }
 
 export function createFindOneAndUpdateOptions(fields?: Object|String) {
