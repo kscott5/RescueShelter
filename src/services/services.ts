@@ -1,6 +1,4 @@
 import * as mongoose from "mongoose";
-import * as crypto from "crypto";
-import { Buffer } from "buffer";
 
 console.log(`mongoosejs version: ${mongoose.version}`);
 
@@ -46,9 +44,6 @@ export function createFindOneAndUpdateOptions(fields?: Object|String) {
     return options;
 }
 
-export function createSecret(id: string) {
-    crypto.createSecretKey
-}
 export class pagination {
     public pages: Number;
     public pageIndex: Number;
