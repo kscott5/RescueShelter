@@ -74,6 +74,19 @@ export namespace SponsorService {
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
+        app.post("/api/secure", jsonBodyParser, (req,res) => {
+            res.status(200);
+
+            const data = req.body.data;
+            const secret = req.body.secret;            
+
+            if(!data || !secret) {
+                res.json(services.jsonResponse("HttpPOST: request body not available"));
+            }
+
+            res.json(services.jsonResponse(security.generateEncryptedData(data,secret)));
+        });
+
         app.post("/api/sponsor/auth", jsonBodyParser, (req,res) => {
             res.status(200);
 
