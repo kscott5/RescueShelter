@@ -127,17 +127,13 @@ export namespace SponsorService {
             });
         });
 
-        app.get("/api/sponsor/unique/:field/:value", (req,res) => {
+        app.post("/api/sponsor/unique", jsonBodyParser, (req,res) => {
             res.status(200);
 
-            const field = req.params.field;
-            if(!field) {                
-                res.json(services.jsonResponse("HttpGET field username or useremail not available with request"));
-            }
-
-            const value = req.params.value;
-            if(!value) {
-                res.json(services.jsonResponse("HttpGet value not available with request"));
+            const field = req.body.field;
+            const value = req.body.value;
+            if(!field || !value) {                
+                res.json(services.jsonResponse("HttpPOST body not available with request"));
             }
 
             security.verifyUniqueUserField(field, value, (error, data) => {
