@@ -4,11 +4,13 @@ import * as services from "./services";
 
 export const SecuritySchema = function securitySchema() {
     const questions = services.createMongooseSchema({
+        _id: false,
         question: {type: String, required: true, unique: true},
         answer: {type: String, required: true},
     });
 
     return services.createMongooseSchema({        
+        _id: false,
         password: {type: String, required: true},
         questions: [questions]
     });
@@ -44,8 +46,8 @@ export function generate(useremail: string, textPassword: string, questions?: an
         
         securityModel["questions"] = new Array();
         
-        for(var question in questions) {
-            const questionModel = generateQuestion(question["question"], question["answer"]);
+        for(var index in questions) {
+            const questionModel = generateQuestion(questions[index]["question"], questions[index]["answer"]);
             securityModel["questions"].push(questionModel);
         }
     }
@@ -87,7 +89,7 @@ export function verifyUniqueUserField(field: string, value: string, callback: Fu
 }
 
 function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Security Question Answer') {
-    const encryptedData = crypto.pbkdf2Sync(data, salt, 100, 256, 'aes');
+    const encryptedData = crypto.pbkdf2Sync(data, salt, 100, 50, 'sha256');
     return encryptedData.toString('hex');
 }
 
