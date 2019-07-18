@@ -45,7 +45,7 @@ class NewSponsor extends React.Component<any> {
         const target = event.target;
         const name = target.name;
         const value = target.value;
-        const compareTo = target["data-compareTo"];
+        const compareTo = target["data-compareto"];
 
         console.log(target);
     }
@@ -55,7 +55,9 @@ class NewSponsor extends React.Component<any> {
         const name = target.name;
         const value = target.value;
         
-        fetch(`http://local:3302/api/unique`, {
+        const objThis = this;
+
+        fetch(`http://localhost:3302/api/sponsor/unique`, {
             method: "POST",
             body: JSON.stringify({field: name, value: value}),
             headers: {
@@ -63,7 +65,10 @@ class NewSponsor extends React.Component<any> {
             }
         })
         .then(response => response.json)
-        .then(response => console.log(response))
+        .then(response => (response)=>{
+             this.setState({name: value});
+             console.log(response.data.unique);
+        })
         .catch(error => console.log(error));
     }
 
@@ -72,11 +77,11 @@ class NewSponsor extends React.Component<any> {
 
         return (
             <Form>
-            <input type="text" id="firstname" name="firstname" placeholder="First Name" value={sponsor.firstname}/>
-            <input type="text" id="lastname" name="lastname" placeholder="Last Name" value={sponsor.lastname}/>
+            <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={sponsor.firstname}/>
+            <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={sponsor.lastname}/>
             <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={sponsor.useremail}/>
-            <input type="password" id="password" name="password" placeholder="Password" value={sponsor.password} />
-            <input type="password" id="passwordConfirmed" name="passwordConfirmed" data-compareTo={sponsor.password} onChange={this.compareTo} placeholder="Password Confirmed" value=""/>
+            <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={sponsor.password} />
+            <input type="password" id="passwordConfirmed" name="passwordConfirmed" data-compareto={sponsor.password} onChange={this.compareTo} placeholder="Password Confirmed" value=""/>
             <Button value="Save"/>
             </Form>
         );           
