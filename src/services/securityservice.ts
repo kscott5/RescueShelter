@@ -1,6 +1,6 @@
 import * as crypto from "crypto";
-import * as mongoose from "mongoose";
 import * as services from "./services";
+import { string } from "prop-types";
 
 export const SecuritySchema = function securitySchema() {
     const questions = services.createMongooseSchema({
@@ -15,29 +15,71 @@ export const SecuritySchema = function securitySchema() {
         questions: [questions]
     });
 }
-export function authenticate(useremail: String, password: String, callback: Function) {
-    callback({message: 'authenticate not available',hashid: 'system access identifer'});
+
+export const SESSION_TIME = 15; //minutes
+
+services.createMongooseModel("validator", services.createMongooseSchema({}));
+/**
+ * 
+ * @param err authenticate sponsor was not ok
+ * @param doc authenicate sponor was ok
+ * @param callback publish results of complete authentication process
+ */
+function generateHashId(err: any, doc: any, callback: Function) {
+    if(err) {
+        callback(err,doc);
+        return;
+    }
+
+    const expires = new Date();
+    expires.setMinutes(SESSION_TIME);
+
+    const useremail = doc["useremail"];    
+    const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
+
+    const model = services.getModel("validator");
+    const hash = new model({_id: useremail, hashid: hashid, expiration: expires});
+    hash.save((error, product) => {
+        if(product)  {
+            doc["hashid"] = product;
+
+            callback(error, doc);
+            return;
+        }
+
+        callback(error, product);
+    });
 }
 
-export function generateSecurityAnswer(answer: string) {    
+export function authenticate(useremail: String, password: String, callback: Function) {
+    const encryptedPassword = generateEncryptedData(password, useremail);
+
+    const model = services.getModel("sponsor");
+    
+    model.findOne({useremail: useremail, security: {password: encryptedPassword}}, (error, doc) =>{
+        generateHashId(error, doc, callback);
+    });
+}
+
+export function generateSecurityAnswer(answer: String) {    
     const encryptedAnswer = generateEncryptedData(answer.trim());
 
     return encryptedAnswer;
 }
 
-export function generateSecurityPassword(useremail: string, textPassword) {
+export function generateSecurityPassword(useremail: String, textPassword) {
     const encryptedPassword = generateEncryptedData(textPassword.trim(), useremail.trim());
 
     return encryptedPassword;   
 }
 
-export function generateQuestion(question: string, answer: string) {
+export function generateQuestion(question: String, answer: String) {
     const encryptedAnswer = generateSecurityAnswer(answer.trim());
 
     return {question: question, answer: encryptedAnswer};
 }
 
-export function generate(useremail: string, textPassword: string, questions?: any) {
+export function generate(useremail: String, textPassword: String, questions?: any) {
     const encryptedPassword = generateSecurityPassword(textPassword, useremail);
     const securityModel = {password: encryptedPassword};
 
@@ -46,7 +88,7 @@ export function generate(useremail: string, textPassword: string, questions?: an
         
         securityModel["questions"] = new Array();
         
-        for(var index in questions) {
+        for(const index in questions) {
             const questionModel = generateQuestion(questions[index]["question"], questions[index]["answer"]);
             securityModel["questions"].push(questionModel);
         }
@@ -55,13 +97,13 @@ export function generate(useremail: string, textPassword: string, questions?: an
     return securityModel;
 }
 
-export function generateOne(useremail: string, textPassword, question: string, answer: string) {
+export function generateOne(useremail: String, textPassword, question: String, answer: String) {
     return generate(useremail, textPassword, 
         [ {question: question, answer: answer} ]);
 }
 
-export function newSponorSecurity(useremail: string, securityModel: any, callback: Function) {
-    var model = services.getModel("sponsor");
+export function newSponorSecurity(useremail: String, securityModel: any, callback: Function) {
+    const model = services.getModel("sponsor");
     
     if(!securityModel["password"]) {
         console.debug(`${securityModel}: not a valid ${SecuritySchema()} schema`);
@@ -69,12 +111,13 @@ export function newSponorSecurity(useremail: string, securityModel: any, callbac
         return;
     }
 
-    model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, (error, res) => {
-        callback(error, res);
+    const options = services.createFindOneAndUpdateOptions();
+    model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options, (error, doc) => {
+        callback(error, doc);
     });
 }
 
-export function verifyUniqueUserField(field: string, value: string, callback: Function) {
+export function verifyUniqueUserField(field: String, value: String, callback: Function) {
     switch(field.trim().toLowerCase()) {
         case "username":
             verifyUniqueUserName(value, callback);
@@ -88,21 +131,21 @@ export function verifyUniqueUserField(field: string, value: string, callback: Fu
     }
 }
 
-function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Security Question Answer') {
-    const encryptedData = crypto.pbkdf2Sync(data, salt, 100, 50, 'sha256');
+function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
+    const encryptedData = crypto.pbkdf2Sync(data.toString(), salt.toString(), 100, 50, 'sha256');
     return encryptedData.toString('hex');
 }
 
-function verifyUniqueUserName(name: string, callback: Function) {
-    var model = services.getModel("sponsor");
+function verifyUniqueUserName(name: String, callback: Function) {
+    const model = services.getModel("sponsor");
     
     model.findOne({useremail: name}, (error,doc)=> {
         callback(error,{unique: !doc});
     });
 }
 
-function verifyUniqueUserEmail(email: string, callback: Function) {
-    var model = services.getModel("sponsor");
+function verifyUniqueUserEmail(email: String, callback: Function) {
+    const model = services.getModel("sponsor");
 
     model.findOne({useremail: email}, (error,doc) => {
         callback(error,{unique: !doc});
