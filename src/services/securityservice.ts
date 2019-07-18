@@ -87,22 +87,8 @@ export function verifyUniqueUserField(field: string, value: string, callback: Fu
 }
 
 function generateEncryptedData(data: string, salt: string = 'Rescue Shelter: Security Question Answer') {
-    // Key length is dependent on the algorithm. In this case for aes 256, it is
-    // 256/8bits or 32 bytes.
-
-    const key = crypto.scryptSync(data, salt, 32);
-    const iv = Buffer.alloc(16, 0);
-    const cipher = crypto.createCipheriv('aes-256-ccm', key, iv);
-
-    let encryptedData = '';
-    cipher.on('readable', () => {
-        let chunk;
-        while (null !== (chunk = cipher.read())) {
-            encryptedData += chunk.toString('hex');
-        }
-    });
-
-    return encryptedData;
+    const encryptedData = crypto.pbkdf2Sync(data, salt, 100, 256, 'aes');
+    return encryptedData.toString('hex');
 }
 
 function verifyUniqueUserName(name: string, callback: Function) {
