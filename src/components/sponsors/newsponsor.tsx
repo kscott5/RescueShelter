@@ -13,6 +13,7 @@ class SponsorModel {
 }
 
 class SponsorStateModel {
+    public hashid: string = '';
     public message: string = '';
     public sponsor: SponsorModel;
     public matchSuccess: string = '';
@@ -52,7 +53,7 @@ class NewSponsor extends React.Component<any> {
         const value = event.target.value;
         
         const objThis = this;        
-        fetch(`http://localhost:3302/api/sponsor/`, {
+        fetch(`http://localhost:3302/api/sponsor/new`, {
             method: "POST",
             body: JSON.stringify(objThis.state.sponsor),
             headers: {
@@ -61,7 +62,10 @@ class NewSponsor extends React.Component<any> {
         })
         .then(response => response.json())
         .then(response => { 
-            console.log(response);
+            if(response.ok) {
+                objThis.setState({ hashid: response.data.hashid});
+                objThis.setState({sponsor: response.data.sponsor});
+            }
         })
         .catch(error => console.log(error));
     }

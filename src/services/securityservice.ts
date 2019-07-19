@@ -40,9 +40,7 @@ function generateHashId(err: any, doc: any, callback: Function) {
     const hash = new model({_id: useremail, hashid: hashid, expiration: expires});
     hash.save((error, product) => {
         if(product)  {
-            doc["hashid"] = product;
-
-            callback(error, doc);
+            callback(error, product);
             return;
         }
 
@@ -56,7 +54,11 @@ export function authenticate(useremail: String, password: String, callback: Func
     const model = services.getModel("sponsor");
     
     model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, (error, doc) =>{
-        generateHashId(error, doc, callback);
+        (error)? callback(error, null): 
+            generateHashId(error, doc, (error, data) => {
+                (error)? callback(error, null):
+                    callback(error, {hashid: data, sponsor: doc});
+            });
     });
 }
 

@@ -35,9 +35,9 @@ export namespace SponsorService {
     let sponsorModel =  services.createMongooseModel("sponsor", sponsorSchema); 
     
     function newSponsor(item: any, callback: Function) {
-        var Sponsor = new sponsorModel(item);
+        var sponsor = new sponsorModel(item);
 
-        Sponsor.save(null, (err,doc)=>{
+        sponsor.save(null, (err,doc)=>{
             callback(err,doc);
         })
     }
@@ -167,8 +167,29 @@ export namespace SponsorService {
 
            res.status(200);
            newSponsor(req.body, function(error, data){
-               var results = services.jsonResponse(error,data);
-               res.json(results);
+               res.json(services.jsonResponse(error,data));
+           });
+        });
+
+        app.post("/api/sponsor/new", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
+            if(!req.body) {
+                res.status(200);
+                res.json(services.jsonResponse("HttpPOST json body not available"));
+           }
+
+           // generate the security object
+           var item = req.body;
+           item.security = security.generate(req.body.useremail, req.body.password);
+
+           // create the new sponsor with security
+           res.status(200);
+           newSponsor(item, function(error, data){
+                if(!error) {
+                    res.redirect("/api/sponsor/auth");
+                }
+
+               res.json(services.jsonResponse(error,data));
            });
         });
 
