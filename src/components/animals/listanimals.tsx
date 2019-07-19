@@ -44,7 +44,7 @@ class ListAnimals extends React.Component {
             <div key={document._id}>
                 <span>{document.name}</span>
                 <span>{document.description}</span>
-                <Image src={document.imageSrc} class="ui image"/>
+                <Image src={document.imageSrc} className="ui image"/>
                 <Link to={`/animal/${document._id}`}>Edit</Link>        
             </div>
         );
