@@ -1,22 +1,21 @@
 import * as React from "react";
 
-import {Form, FormInput, FormTextArea, FormCheckbox, FormButton} from "semantic-ui-react";
-
 class AnimalModel {
-    public name: string="";
-    public description: string="";
-    public imageSrc: string="";
+    public name: string='';
+    public description: string='';
+    public imageSrc: string='';
     public endangered: boolean = false;
     public sponsors: Array<string> = [];
 }
 
 class AnimalStateModel {
-    public id: string="0";
-    public message: string="";
+    public id: string='0';
+    public message: string='';
     public animal: AnimalModel;
-    public sponsor: string="";
-
+    public sponsor: string='';
+    public pageTitle: string='New Animal';
     constructor(id: string) {
+
         this.id = id;
         this.animal = new AnimalModel();
     }
@@ -42,6 +41,7 @@ class NewAnimal extends React.Component<any> {
         fetch(`http://localhost:3302/api/animal/${objThis.state.id}`)
             .then(response =>response.json())
             .then(response => {
+                objThis.setState({pageTitle: 'Animal Details'});
                 if(response.ok) 
                     objThis.setState({animal: response.data, sponsor: ''});
                 else
@@ -69,7 +69,7 @@ class NewAnimal extends React.Component<any> {
             }
         }
 
-        this.setState({animal: animal, sponsor: ""});
+        this.setState({animal: animal, sponsor: ''});
 
         // JSONify only AnimalModel
         return JSON.stringify(animal);
@@ -109,7 +109,7 @@ class NewAnimal extends React.Component<any> {
             let animal = this.state.animal;
             let index = animal.sponsors.findIndex((item)=>{return item==name;});
 
-            animal.sponsors[index] = "";
+            animal.sponsors[index] = '';
             let sponsorsSorted = animal.sponsors.sort().reverse().pop();
             
             console.log(sponsorsSorted);
@@ -137,21 +137,53 @@ class NewAnimal extends React.Component<any> {
                 <div key={sponsor}>
                     <span>{sponsor}</span> <button id="removesponsor" name={sponsor}  onClick={this.onClick}>Delete</button>
                 </div>
-            );    
+            ); 
         });
-                return (
-            <div>
+
+        return (
+            <form className="ui form">
+                <h4 className="ui diving header">{this.state.pageTitle}</h4>
                 <div className="ui error">{this.state.message}</div>
-                <Form>
-                    <FormInput id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={this.state.animal.name}/>
-                    <FormTextArea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' type='textarea' value={this.state.animal.description}/>
-                    <FormInput id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
-                    <FormCheckbox id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
-                    <FormInput id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
-                    {sponsors}    
-                    <FormButton id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</FormButton>
-                </Form>                
-            </div>
+                <div className="field">
+                    <label>Name</label>
+                    <div className="ui field input">                                
+                        <input id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={this.state.animal.name}/>
+                    </div>
+                </div>
+                <div className="field">
+                    <label>Description</label>
+                    <div className="ui field input">
+                        <textarea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' value={this.state.animal.description}/>
+                    </div>
+                </div>
+                <div className="field">
+                    <label>Image Url</label>
+                    <div className="ui field input">
+                        <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
+                    </div>
+                </div>
+                <div className="inline field">
+                    <div className="ui checkbox">
+                        <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
+                        <label>Endangered</label>                            
+                    </div>
+                </div>
+                <div className="field">
+                    <label>Sponsor</label>
+                    <div className="ui field input">
+                        <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
+                    </div>
+                </div>
+                <div className="field">
+                    <label>Sponsor</label>                                
+                    <div className="ui field input">
+                        {sponsors}    
+                    </div>
+                </div>
+                <div className="field">
+                    <button id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</button>
+                </div>
+            </form>                
         );
     }
 }

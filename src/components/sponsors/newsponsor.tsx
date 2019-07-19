@@ -13,23 +13,26 @@ class SponsorModel {
 }
 
 class SponsorStateModel {
+    public message: string = '';
     public sponsor: SponsorModel;
     public matchSuccess: string = '';
-    public uniqueSuccess = '';
-    public confirmPassword = '';
+    public uniqueSuccess: string = '';
+    public confirmPassword: string = '';
+    public pageTitle: string = 'New Sponsor';
     constructor() {
         this.sponsor = new SponsorModel();
     }
 }
 
 class NewSponsor extends React.Component<any> {
-    state = new SponsorStateModel();
+    state =  new SponsorStateModel();
 
     constructor(props) {
         super(props);
 
         this.state = new SponsorStateModel();
 
+        this.onClick = this.onClick.bind(this);
         this.onChange = this.onChange.bind(this);
         this.compareTo = this.compareTo.bind(this);
         this.verifyUniquiness = this.verifyUniquiness.bind(this);
@@ -42,6 +45,25 @@ class NewSponsor extends React.Component<any> {
         return (nextProps !== this.props) || 
             (nextState !== this.state) || 
             (nextContext !== this.context);
+    }
+
+    onClick(event) {
+        const name = event.target.name;
+        const value = event.target.value;
+        
+        const objThis = this;        
+        fetch(`http://localhost:3302/api/sponsor/`, {
+            method: "POST",
+            body: JSON.stringify(objThis.state.sponsor),
+            headers: {
+                "content-type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(response => { 
+            console.log(response);
+        })
+        .catch(error => console.log(error));
     }
 
     onChange(event) {
@@ -94,24 +116,39 @@ class NewSponsor extends React.Component<any> {
     render()  {
         return (
             <form className="ui form">
-                <h4 className="ui diving header">New Sponsor</h4>
+                <h4 className="ui diving header">{this.state.pageTitle}</h4>
                 <div className="field">
-                    <div id="firstname" className="ui field input">
-                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
-                    </div>
-                    <div id="lastname" className="ui field input">
-                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
-                    </div>
+                    <label>Email *</label>
                     <div id="useremail" className={"ui field input " + this.state.uniqueSuccess}>
                         <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
                     </div>
+                </div>
+                <div className="field">
+                    <label>Password *</label>
                     <div id="password" className={"ui field input " + this.state.matchSuccess}>
                         <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
                     </div>
-                    <div id="comfirmPassword" className="ui field input">
+                </div>
+                <div className="field">
+                    <label>Confirm Password *</label>
+                    <div id="confirmPassword" className="ui field input">
                         <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={this.state.confirmPassword}/>
                     </div>
-                    <button id="save" name="save" className="ui button" value="Save"/>
+                </div>
+                <div className="field">
+                    <label>First Name</label>
+                    <div id="firstname" className="ui field input">
+                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
+                    </div>
+                </div>
+                <div className="field">
+                    <label>Last name</label>
+                    <div id="lastname" className="ui field input">
+                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
+                    </div>
+                </div>
+                <div className="field">
+                    <button id="save" name="save" className="ui button" onClick={this.onClick}>Save</button>
                 </div>
             </form>
         );           
