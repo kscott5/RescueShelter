@@ -58,9 +58,9 @@ class NewSponsor extends React.Component<any> {
         const target = event.target;
         const value = target.value;
         
-        this.setState({["matchSuccess"]: ""});
+        this.setState({matchSuccess: ""});
         if(this.state.sponsor.password === value) {
-            this.setState({["matchSuccess"]: "success"});
+            this.setState({matchSuccess: "success"});
         }
 
         this.setState({confirmPassword: value});
@@ -80,13 +80,13 @@ class NewSponsor extends React.Component<any> {
         })
         .then(response => response.json())
         .then(response => { 
-            objThis.setState({["uniqueSuccess"]: ""});
+            objThis.setState({uniqueSuccess: ""});
             if(!response.ok)
-                objThis.setState({["uniqueSuccess"]: "error"});
+                objThis.setState({uniqueSuccess: "error"});
             
             const sponsor = objThis.state.sponsor;
             sponsor.useremail = value;
-            objThis.setState({["sponsor"]: sponsor});             
+            objThis.setState({sponsor: sponsor});             
         })
         .catch(error => console.log(error));
     }
@@ -94,22 +94,25 @@ class NewSponsor extends React.Component<any> {
     render()  {
         return (
             <form className="ui form">
-                <div id="firstname" className="ui field input">
-                    <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
+                <h4 className="ui diving header">New Sponsor</h4>
+                <div className="field">
+                    <div id="firstname" className="ui field input">
+                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
+                    </div>
+                    <div id="lastname" className="ui field input">
+                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
+                    </div>
+                    <div id="useremail" className={"ui field input " + this.state.uniqueSuccess}>
+                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
+                    </div>
+                    <div id="password" className={"ui field input " + this.state.matchSuccess}>
+                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
+                    </div>
+                    <div id="comfirmPassword" className="ui field input">
+                        <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={this.state.confirmPassword}/>
+                    </div>
+                    <button id="save" name="save" className="ui button" value="Save"/>
                 </div>
-                <div id="lastname" className="ui field input">
-                    <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
-                </div>
-                <div id="useremail" className={"ui field input " + this.state.uniqueSuccess}>
-                    <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
-                </div>
-                <div id="password" className={"ui field input " + this.state.matchSuccess}>
-                    <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
-                </div>
-                <div id="comfirmPassword" className="ui field input">
-                    <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={this.state.confirmPassword}/>
-                </div>
-                <button id="save" name="save" className="ui button" value="Save"/>
             </form>
         );           
     }
