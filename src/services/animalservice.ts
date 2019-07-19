@@ -96,6 +96,7 @@ export namespace AnimalService {
          * @description Includes a new item 
          */
         app.post("/api/animal/new", jsonBodyParser, function(req,res){
+            console.debug(`POST: ${req.url}`);
             if(!req.body) {
                  res.status(404);
                  res.json("HttpPOST json body not available");                 
@@ -109,6 +110,7 @@ export namespace AnimalService {
         });
 
         app.post("/api/animal/:id", jsonBodyParser, function(req,res){
+            console.debug(`POST: ${req.url}`);
             if (!req.params.id || !req.body) {
                 res.status(404);
                 res.json("HttpPOST id or json body not available");
@@ -127,6 +129,7 @@ export namespace AnimalService {
          * @param id unique identifier of item
          */
         app.get("/api/animal/:id", function(req,res){
+            console.debug(`GET: ${req.url}`);
             if (!req.params.id) {
                  res.status(404);
                  res.send("HttpGET id not available");
@@ -144,17 +147,18 @@ export namespace AnimalService {
          * @description Retrieves a json resultset of items
          */
         app.get("/api/animals/", function(req,res){
-           var page = Number.parseInt(req.query.page || 1); 
-           var limit = Number.parseInt(req.query.limit || 5);
-           var phrase = req.query.phrase || null;
+            console.debug(`GET: ${req.url}`);
+            var page = Number.parseInt(req.query.page || 1); 
+            var limit = Number.parseInt(req.query.limit || 5);
+            var phrase = req.query.phrase || null;
 
-           res.status(200);
-           getAnimals(
-               function(error, data) {
-                    var results = services.jsonResponse(error,data);
-                    res.json(results);
-                }, 
-                page, limit, phrase
+            res.status(200);
+            getAnimals(
+                function(error, data) {
+                        var results = services.jsonResponse(error,data);
+                        res.json(results);
+                    }, 
+                    page, limit, phrase
             );
         });
     } 

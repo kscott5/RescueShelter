@@ -75,6 +75,7 @@ export namespace SponsorService {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
         app.post("/api/secure", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             const data = req.body.data;
@@ -88,6 +89,7 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor/auth", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             const useremail = req.body.useremail; // either useremail or username
@@ -106,6 +108,7 @@ export namespace SponsorService {
          * new sponsor security
          */
         app.post("/api/sponsor/security/:id", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             const hashid = req.body.hashid; // use system generated access identitify 
@@ -128,6 +131,7 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor/unique", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             const field = req.body.field;
@@ -142,6 +146,7 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             // if(!req.body.hashid) {
             //     res.status(200);
             //     res.json(services.jsonResponse("HttpGET json body not available"));
@@ -154,6 +159,7 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
                 res.json(services.jsonResponse("HttpPOST json body not available"));
@@ -167,6 +173,7 @@ export namespace SponsorService {
         });
 
         app.get("/api/sponsor/:id", (req,res) => {
+            console.debug(`GET: ${req.url}`);
             res.status(200);
             getContribtuor(req.params.id, (error, data) => {
                 res.json(services.jsonResponse(error, data));
@@ -174,6 +181,7 @@ export namespace SponsorService {
         });
 
         app.get("/api/sponsors", (req,res) => {
+            console.debug(`GET: ${req.url}`);
             var page = Number.parseInt(req.query.page || 1); 
             var limit = Number.parseInt(req.query.limit || 5);
             var phrase = req.query.phrase || null;
