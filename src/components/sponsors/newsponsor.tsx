@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Form, Button} from 'semantic-ui-react';
+//import {Form, Button} from 'semantic-ui-react';
 
 class SponsorModel {
     public firstname: string = '';
@@ -11,13 +11,23 @@ class SponsorModel {
     constructor(){}
 }
 
+class SponsorStateModel {
+    public sponsor: SponsorModel;
+    public matchSuccess: string = '';
+    public uniqueSuccess = '';
+    public confirmPassword = '';
+    constructor() {
+        this.sponsor = new SponsorModel();
+    }
+}
+
 class NewSponsor extends React.Component<any> {
-    state = new SponsorModel();
+    state = new SponsorStateModel();
 
     constructor(props) {
         super(props);
 
-        this.state = new SponsorModel();
+        this.state = new SponsorStateModel();
 
         this.onChange = this.onChange.bind(this);
         this.compareTo = this.compareTo.bind(this);
@@ -38,16 +48,19 @@ class NewSponsor extends React.Component<any> {
         const name = target.name;
         const value = target.value;
 
-        this.setState({name: value});
+        this.setState({[name]: value});
     }
 
     compareTo(event) {
         const target = event.target;
-        const name = target.name;
         const value = target.value;
-        const compareTo = target["data-compareto"];
+        
+        this.setState({["matchSuccess"]: ""});
+        if(this.state.sponsor.password === value) {
+            this.setState({["matchSuccess"]: "success"});
+        }
 
-        console.log(target);
+        this.setState({confirmPassword: value});
     }
 
     verifyUniquiness(event) {
@@ -64,26 +77,37 @@ class NewSponsor extends React.Component<any> {
                 "content-type": "application/json"
             }
         })
-        .then(response => response.json)
-        .then(response => (response)=>{
-             this.setState({name: value});
-             console.log(response.data.unique);
+        .then(response => response.json())
+        .then(response => { 
+            objThis.setState({["uniqueSuccess"]: ""});
+            if(!response.ok)
+                objThis.setState({["uniqueSuccess"]: "error"});
+
+            objThis.setState({[name]: value});             
         })
         .catch(error => console.log(error));
     }
 
     render()  {
-        const sponsor = this.state;
-
         return (
-            <Form>
-            <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={sponsor.firstname}/>
-            <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={sponsor.lastname}/>
-            <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={sponsor.useremail}/>
-            <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={sponsor.password} />
-            <input type="password" id="passwordConfirmed" name="passwordConfirmed" data-compareto={sponsor.password} onChange={this.compareTo} placeholder="Password Confirmed" value=""/>
-            <Button value="Save"/>
-            </Form>
+            <form className="ui form">
+                <div id="firstname" className="ui field input">
+                    <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
+                </div>
+                <div id="lastname" className="ui field input">
+                    <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
+                </div>
+                <div id="useremail" className={"ui field input" + this.state.uniqueSuccess}>
+                    <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
+                </div>
+                <div id="password" className={"ui field input" + this.state.matchSuccess}>
+                    <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
+                </div>
+                <div id="comfirmPassword" className="ui field input">
+                    <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={this.state.confirmPassword}/>
+                </div>
+                <button id="save" name="save" className="ui button" value="Save"/>
+            </form>
         );           
     }
 }
