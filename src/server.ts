@@ -33,11 +33,9 @@ export class Server {
     start(loggerType: LoggerType = LoggerType.Development, port: Number = 3302) : void {
         apiServer.use(morgan("dev")); // TODO: Use LoggerType Enum
 
-        var whitelist = ['http://host:port'];
+        var whitelist = [];
         var corsOptionsDelegate = function (req, callback) {
-            //http://regexr.com/4h6ph
-            var localhost = /((http([s]){0,1}:\/\/){0,1}(localhost|127.0.0.1){1}(([:]){0,1}[\0-9]{4}){0,1}\/{0,1}){1}/g;
-            if (localhost.test(req.headers.host) === true || whitelist.indexOf(req.headers.origin) === 0) {
+            if (whitelist.length === 0 || whitelist.indexOf(req.headers.origin) === 0) {
                 callback(null, true);
             }
             else {
