@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SponsorService } from '../../services/sponsorservice';
 
 //import {Form, Button} from 'semantic-ui-react';
 
@@ -47,8 +48,10 @@ class NewSponsor extends React.Component<any> {
         const target = event.target;
         const name = target.name;
         const value = target.value;
+        const sponsor = this.state.sponsor;
 
-        this.setState({[name]: value});
+        sponsor[name] = value;
+        this.setState({sponsor: sponsor});
     }
 
     compareTo(event) {
@@ -64,12 +67,10 @@ class NewSponsor extends React.Component<any> {
     }
 
     verifyUniquiness(event) {
-        const target = event.target;
-        const name = target.name;
-        const value = target.value;
+        const name = event.target.name;
+        const value = event.target.value;
         
-        const objThis = this;
-
+        const objThis = this;        
         fetch(`http://localhost:3302/api/sponsor/unique`, {
             method: "POST",
             body: JSON.stringify({field: name, value: value}),
@@ -82,8 +83,10 @@ class NewSponsor extends React.Component<any> {
             objThis.setState({["uniqueSuccess"]: ""});
             if(!response.ok)
                 objThis.setState({["uniqueSuccess"]: "error"});
-
-            objThis.setState({[name]: value});             
+            
+            const sponsor = objThis.state.sponsor;
+            sponsor.useremail = value;
+            objThis.setState({["sponsor"]: sponsor});             
         })
         .catch(error => console.log(error));
     }
@@ -97,10 +100,10 @@ class NewSponsor extends React.Component<any> {
                 <div id="lastname" className="ui field input">
                     <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
                 </div>
-                <div id="useremail" className={"ui field input" + this.state.uniqueSuccess}>
+                <div id="useremail" className={"ui field input " + this.state.uniqueSuccess}>
                     <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
                 </div>
-                <div id="password" className={"ui field input" + this.state.matchSuccess}>
+                <div id="password" className={"ui field input " + this.state.matchSuccess}>
                     <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
                 </div>
                 <div id="comfirmPassword" className="ui field input">
