@@ -2,7 +2,7 @@
   "name": "rescueshelter",
   "version": "1.0.0",
   "description": "Simple application using Express and React",
-  "main": "app.js",
+  "main": "index.js",
   "author": "Karega K. Scott",
   "license": "MIT",
   "dependencies": {
@@ -74,7 +74,7 @@
   "scripts": {
     "clean": "find ./src -name *.js -delete",
     "compile": "tsc -p tsconfig.json",
-    "start": "node scripts/start.js",
+    "start": "node scripts/start.js --inspect-brk=3301",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
