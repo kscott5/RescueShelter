@@ -35,7 +35,7 @@ export class Server {
 
         var whitelist = [];
         var corsOptionsDelegate = function (req, callback) {
-            if (whitelist.length === 0 || whitelist.indexOf(req.headers.origin) === 0) {
+            if (whitelist.length == 0 || whitelist.indexOf(req.headers.origin) === 0) {
                 callback(null, true);
             }
             else {
