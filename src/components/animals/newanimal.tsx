@@ -57,22 +57,19 @@ class NewAnimal extends React.Component<any> {
     }
 
     stateToJson() {        
-        var animal = this.state["animal"];
-        var sponsors = this.state["sponsor"].trim().split(',');
+        var animal = this.state.animal;
+        var sponsors = this.state.sponsor.trim().split(',');
 
         for(var index in sponsors) {
             var sponsor = sponsors[index].trim();
 
             // Validate sponsor email address with regex
-            if(animal.sponsors.indexOf(sponsors[index]) == -1 && sponsor.length != 0) {
+            if(animal.sponsors.indexOf(sponsors[index]) === -1 && sponsor.length !== 0) {
                 animal.sponsors.push(sponsors[index]);
             }
         }
 
         this.setState({animal: animal, sponsor: ""});
-
-        console.log(sponsors);
-        console.log(animal);
 
         // JSONify only AnimalModel
         return JSON.stringify(animal);
@@ -96,11 +93,11 @@ class NewAnimal extends React.Component<any> {
         }).then(response => response.json())
         .then(response => {
             if(response.ok)    
-                objThis.setState({["id"]: response.data._id, ["animal"]: response.data, ["sponsor"]: ''});
+                objThis.setState({id: response.data._id, animal: response.data, sponsor: ''});
             else
-                objThis.setState({["message"]: response.data});
+                objThis.setState({message: response.data});
         })
-        .catch(error => objThis.setState({["message"]: error}));
+        .catch(error => objThis.setState({message: error}));
     }
 
     onClick(event) {
