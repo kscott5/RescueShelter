@@ -1,6 +1,8 @@
 import * as crypto from "crypto";
 import * as services from "./services";
 
+let __authSelectionFields = "_id useremail username firstname lastname photo audit";
+
 export const SecuritySchema = function securitySchema() {
     const question = services.createMongooseSchema({
         _id: false,
@@ -43,7 +45,7 @@ function generateHashId(err: any, doc: any, callback: Function) {
     hash.save((error, product) => {
         callback(error, product);
     });
-}        (error)?  callback(error, null) :
+}
 
 
 export function authenticate(useremail: String, password: String, callback: Function) {
@@ -51,7 +53,8 @@ export function authenticate(useremail: String, password: String, callback: Func
 
     const model = services.getModel("sponsor");
     
-    model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, (error, doc) =>{
+    model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, 
+        __authSelectionFields, (error, doc) => {
         (error)? callback(error, null): 
             generateHashId(error, doc, (error, data) => {
                 (error)? callback(error, null):
