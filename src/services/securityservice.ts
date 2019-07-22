@@ -33,7 +33,7 @@ function generateHashId(err: any, doc: any, callback: Function) {
     const expires = new Date();
     expires.setMinutes(SESSION_TIME);
 
-    const useremail = doc["useremail"] || 'no email';    
+    const useremail = doc.useremail || 'no email';    
     const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
 
     const model = services.getModel("validator");
