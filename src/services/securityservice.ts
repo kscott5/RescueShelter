@@ -62,26 +62,8 @@ export function authenticate(useremail: String, password: String, callback: Func
     });
 }
 
-export function generateSecurityAnswer(answer: String) {    
-    const encryptedAnswer = generateEncryptedData(answer.trim());
-
-    return encryptedAnswer;
-}
-
-export function generateSecurityPassword(useremail: String, textPassword) {
-    const encryptedPassword = generateEncryptedData(textPassword.trim(), useremail.trim());
-
-    return encryptedPassword;   
-}
-
-export function generateQuestion(question: String, answer: String) {
-    const encryptedAnswer = generateSecurityAnswer(answer.trim());
-
-    return {question: question, answer: encryptedAnswer};
-}
-
 export function generate(useremail: String, textPassword: String, questions?: any) {
-    const encryptedPassword = generateSecurityPassword(textPassword, useremail);
+    const encryptedPassword = generateEncryptedData(textPassword, useremail);
     const securityModel = {password: encryptedPassword};
 
     if(questions) {
@@ -90,8 +72,12 @@ export function generate(useremail: String, textPassword: String, questions?: an
         securityModel["questions"] = new Array();
         
         for(const index in questions) {
-            const questionModel = generateQuestion(questions[index]["question"], questions[index]["answer"]);
-            securityModel["questions"].push(questionModel);
+            const question = {
+                    question: questions[index]["question"], 
+                    answer: generateEncryptedData(questions[index]["answer"])
+            };
+
+            securityModel["questions"].push(question);
         }
     }
     
@@ -133,8 +119,13 @@ export function verifyUniqueUserField(field: String, value: String, callback: Fu
 }
 
 export function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
-    const encryptedData = crypto.pbkdf2Sync(data.toString(), salt.toString(), 100, 50, 'sha256');
-    return encryptedData.toString('hex');
+    const tmpData = data.trim();
+    const tmpSalt = salt.trim();
+
+    const encryptedData = crypto.pbkdf2Sync(tmpData, tmpSalt, 100, 50, 'sha256');
+    const hexEncryptedData = encryptedData.toString('hex');
+
+    return hexEncryptedData;
 }
 
 function verifyUniqueUserName(name: String, callback: Function) {
