@@ -177,13 +177,11 @@ export namespace SponsorService {
            // create the new sponsor with security
            res.status(200);
            newSponsor(item, function(error, data){
-                if(!error) {
+                (error)? 
+                    res.json(services.jsonResponse(error,data)) :
                     security.authenticate(useremail, password, (err, auth) =>{
                         res.json(services.jsonResponse(err,auth));
-                    });                            
-                }
-
-               res.json(services.jsonResponse(error,data));
+                    });
            });
         });
 
