@@ -11,8 +11,8 @@ let __connection = mongoose.createConnection(__connectionString);
 
 let __models = {};
 
-export function createMongooseSchema(schemaDefinition: any) {
-    return new mongoose.Schema(schemaDefinition)
+export function createMongooseSchema(schemaDefinition: any, strictMode: boolean = true) {
+    return new mongoose.Schema(schemaDefinition, {strict: strictMode});
 }
 
 export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any>) {
