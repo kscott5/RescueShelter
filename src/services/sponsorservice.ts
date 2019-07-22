@@ -12,7 +12,7 @@ export namespace SponsorService {
         lastname: {type: String},
         useremail: {type: String, required: [true, '*'], unique: true},
         username: {type: String, unique: true},
-        security: security.SecuritySchema(),
+        security: {type: security.SecuritySchema()},
         photo: {type: String},
         audit: [
             {
@@ -111,23 +111,25 @@ export namespace SponsorService {
             console.debug(`POST: ${req.url}`);
             res.status(200);
 
-            const hashid = req.body.hashid; // use system generated access identitify 
+            res.json(services.jsonResponse("Not implemented yet"));
+            
+            // const hashid = req.body.hashid; // use system generated access identitify 
 
-            const useremail = req.body.useremail;            
-            const password = req.body.password;
-            if(!useremail || !password) {
-                res.json(services.jsonResponse("HttpPOST request body not available"));
-            }
+            // const useremail = req.body.useremail;            
+            // const password = req.body.password;
+            // if(!useremail || !password) {
+            //     res.json(services.jsonResponse("HttpPOST request body not available"));
+            // }
 
-            const questions = req.body.questions;
-            if(!questions) {
-                res.json(services.jsonResponse("HttpPOST request security object not available"));
-            }
+            // const questions = req.body.questions;
+            // if(!questions) {
+            //     res.json(services.jsonResponse("HttpPOST request security object not available"));
+            // }
 
-            const securityModel = security.generate(useremail, password, questions);
-            security.newSponorSecurity(useremail, securityModel,(error,data) => {
-                res.json(services.jsonResponse(error,data));
-            });
+            // const securityModel = security.generate(useremail, password, questions);
+            // security.newSponorSecurity(useremail, securityModel,(error,data) => {
+            //     res.json(services.jsonResponse(error,data));
+            // });
         });
 
         app.post("/api/sponsor/unique", jsonBodyParser, (req,res) => {
@@ -142,19 +144,6 @@ export namespace SponsorService {
 
             security.verifyUniqueUserField(field, value, (error, data) => {
                     res.json(services.jsonResponse(error,data));
-            });
-        });
-
-        app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            // if(!req.body.hashid) {
-            //     res.status(200);
-            //     res.json(services.jsonResponse("HttpGET json body not available"));
-            // }
-
-            saveSponsor(req.body, (error, data) => {
-                res.status(200);
-                res.json(services.jsonResponse(error, data));
             });
         });
 
@@ -180,17 +169,35 @@ export namespace SponsorService {
 
            // generate the security object
            var item = req.body;
-           item.security = security.generate(req.body.useremail, req.body.password);
+           var useremail = item.useremail;
+           var password = item.password;
+
+           item.security = security.generate(useremail, password);
 
            // create the new sponsor with security
            res.status(200);
            newSponsor(item, function(error, data){
                 if(!error) {
-                    res.redirect("/api/sponsor/auth");
+                    security.authenticate(useremail, password, (err, auth) =>{
+                        res.json(services.jsonResponse(err,auth));
+                    });                            
                 }
 
                res.json(services.jsonResponse(error,data));
            });
+        });
+
+        app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
+            // if(!req.body.hashid) {
+            //     res.status(200);
+            //     res.json(services.jsonResponse("HttpGET json body not available"));
+            // }
+
+            saveSponsor(req.body, (error, data) => {
+                res.status(200);
+                res.json(services.jsonResponse(error, data));
+            });
         });
 
         app.get("/api/sponsor/:id", (req,res) => {
