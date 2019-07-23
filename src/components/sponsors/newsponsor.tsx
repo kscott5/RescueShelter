@@ -50,7 +50,7 @@ class NewSponsor extends React.Component<any> {
         const value = event.target.value;
         
         const objThis = this;        
-        fetch(`http://localhost:3302/api/sponsor/new`, {
+        fetch(`http://localhost:3302/api/secure/registration`, {
             method: "POST",
             body: JSON.stringify(objThis.state.sponsor),
             headers: {
