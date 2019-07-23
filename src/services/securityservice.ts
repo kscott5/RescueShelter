@@ -222,7 +222,7 @@ export namespace SecurityService {
             });
         });
 
-        app.post("/api/secure/registeration", jsonBodyParser, (req,res) => {
+        app.post("/api/secure/registration", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
