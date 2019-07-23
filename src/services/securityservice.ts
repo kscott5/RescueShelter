@@ -171,7 +171,6 @@ export namespace SecurityService {
         });
     }
 
-
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
 
@@ -204,7 +203,8 @@ export namespace SecurityService {
             res.json(services.jsonResponse(generateEncryptedData(data,secret)));
         });
 
-        app.post("api/secure/verify", jsonBodyParser, (req,res) => {
+        app.post("/api/secure/verify", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             var hashid = req.body.hashid;
@@ -217,7 +217,8 @@ export namespace SecurityService {
             res.json(services.jsonResponse(null, verifyHash(hashid, useremail)));
         }); // end api/secure/verify
 
-        app.post("api/secure/deauth", jsonBodyParser, (req,res) => {
+        app.post("/api/secure/deauth", jsonBodyParser, (req,res) => {
+            console.debug(`POST: ${req.url}`);
             res.status(200);
 
             var hashid = req.body.hashid;
