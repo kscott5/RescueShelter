@@ -233,6 +233,9 @@ export namespace SecurityService {
             });
         });
 
+        /**
+         * Authenticate the sponsor and generate app access hash id
+         */
         app.post("/api/secure/auth", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             res.status(200);
@@ -249,6 +252,9 @@ export namespace SecurityService {
             });
         });
 
+        /**
+         * Registers then authenticate new sponsor
+         */
         app.post("/api/secure/registration", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
