@@ -71,7 +71,7 @@ export namespace SecurityService {
             (error)? callback(error, null): 
                 generateHashId(error, doc, (error, data) => {
                     (error)? callback(error, null):
-                        callback(error, {hashid: data.hashid, sponsor: doc});
+                        callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: doc});
                 });
         });
     }
