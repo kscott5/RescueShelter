@@ -64,7 +64,11 @@ export namespace SecurityService {
     }
 
     export function deauthenticate(hashid: String, useremail: String, callback: Function) { 
+        var model = services.getModel("token");
 
+        model.findOneAndRemove({hashid: hashid, useremail: useremail}, (err,doc) => {
+            callback(err,doc);
+        });
     } 
 
     export function authenticate(useremail: String, password: String, callback: Function) {
