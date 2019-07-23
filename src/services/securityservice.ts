@@ -50,6 +50,8 @@ function generateHashId(err: any, doc: any, callback: Function) {
     });
 }
 
+export function verifyHash(hashid: String, useremail: String) { }
+export function deauthenticate(hashid: String, useremail: String, callback: Function) { }
 
 export function authenticate(useremail: String, password: String, callback: Function) {
     const encryptedPassword = generateEncryptedData(password, useremail);
@@ -61,7 +63,7 @@ export function authenticate(useremail: String, password: String, callback: Func
         (error)? callback(error, null): 
             generateHashId(error, doc, (error, data) => {
                 (error)? callback(error, null):
-                    callback(error, {token: data, sponsor: doc});
+                    callback(error, {hashid: data.hashid, sponsor: doc});
             });
     });
 }
