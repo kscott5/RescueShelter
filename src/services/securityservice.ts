@@ -1,6 +1,7 @@
 import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as crypto from "crypto";
+import * as co from "co";
 import * as services from "./services";
 
 export namespace SecurityService {
@@ -53,13 +54,25 @@ export namespace SecurityService {
         });
     }
 
-    export function verifyHash(hashid: String, useremail: String) { 
+    export function verifyHash(hashid: String, useremail: String) : Boolean { 
+        var model = services.getModel("token");
+        var results = false;
 
+        co(function *() {
+             var data = yield model.findOne({hashid: hashid, useremail: useremail}).exec();
+             console.log(data);
+
+             results = true;
+        }).catch((error) => {
+            console.log(`SecurityService.veryHash ${error}`);
+        });
+
+        return results;
     }
 
     export function deauthenticate(hashid: String, useremail: String, callback: Function) { 
 
-    }
+    } 
 
     export function authenticate(useremail: String, password: String, callback: Function) {
         const encryptedPassword = generateEncryptedData(password, useremail);
@@ -190,6 +203,19 @@ export namespace SecurityService {
 
             res.json(services.jsonResponse(generateEncryptedData(data,secret)));
         });
+
+        app.post("api/secure/verify", jsonBodyParser, (req,res) => {
+            res.status(200);
+
+            var hashid = req.body.hashid;
+            var useremail = req.body.useremail;
+
+            if(!hashid || !useremail) {
+                res.json(services.jsonResponse("HttpPOST body not availe with request"));
+            }
+
+            res.json(services.jsonResponse(null, verifyHash(hashid, useremail)));
+        }); // end api/secure/verify
 
         app.post("api/secure/deauth", jsonBodyParser, (req,res) => {
             res.status(200);
