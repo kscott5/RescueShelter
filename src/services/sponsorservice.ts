@@ -74,64 +74,6 @@ export namespace SponsorService {
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
-        app.post("/api/secure", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            res.status(200);
-
-            const data = req.body.data;
-            const secret = req.body.secret;            
-
-            if(!data || !secret) {
-                res.json(services.jsonResponse("HttpPOST: request body not available"));
-            }
-
-            res.json(services.jsonResponse(security.generateEncryptedData(data,secret)));
-        });
-
-        app.post("/api/sponsor/auth", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            res.status(200);
-
-            const useremail = req.body.useremail; // either useremail or username
-            const password = req.body.password; // clear text password never saved
-
-            if(!useremail || !password) {
-                res.json(services.jsonResponse("HttpPOST: request body not available"));
-            }
-
-            security.authenticate(useremail, password, (error, data) =>{
-                res.json(services.jsonResponse(error,data));
-            });
-        });
-
-        /**
-         * new sponsor security
-         */
-        app.post("/api/sponsor/security/:id", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            res.status(200);
-
-            res.json(services.jsonResponse("Not implemented yet"));
-            
-            // const hashid = req.body.hashid; // use system generated access identitify 
-
-            // const useremail = req.body.useremail;            
-            // const password = req.body.password;
-            // if(!useremail || !password) {
-            //     res.json(services.jsonResponse("HttpPOST request body not available"));
-            // }
-
-            // const questions = req.body.questions;
-            // if(!questions) {
-            //     res.json(services.jsonResponse("HttpPOST request security object not available"));
-            // }
-
-            // const securityModel = security.generate(useremail, password, questions);
-            // security.newSponorSecurity(useremail, securityModel,(error,data) => {
-            //     res.json(services.jsonResponse(error,data));
-            // });
-        });
-
         app.post("/api/sponsor/unique", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             res.status(200);
@@ -157,31 +99,6 @@ export namespace SponsorService {
            res.status(200);
            newSponsor(req.body, function(error, data){
                res.json(services.jsonResponse(error,data));
-           });
-        });
-
-        app.post("/api/sponsor/new", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            if(!req.body) {
-                res.status(200);
-                res.json(services.jsonResponse("HttpPOST json body not available"));
-           }
-
-           // generate the security object
-           var item = req.body;
-           var useremail = item.useremail;
-           var password = item.password;
-
-           item.security = security.generate(useremail, password);
-
-           // create the new sponsor with security
-           res.status(200);
-           newSponsor(item, function(error, data){
-                (error)? 
-                    res.json(services.jsonResponse(error,data)) :
-                    security.authenticate(useremail, password, (err, auth) =>{
-                        res.json(services.jsonResponse(err,auth));
-                    });
            });
         });
 

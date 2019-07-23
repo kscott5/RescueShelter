@@ -1,3 +1,5 @@
+import {Application} from "express";
+import * as bodyParser from "body-parser";
 import * as crypto from "crypto";
 import * as services from "./services";
 
@@ -50,8 +52,13 @@ function generateHashId(err: any, doc: any, callback: Function) {
     });
 }
 
-export function verifyHash(hashid: String, useremail: String) { }
-export function deauthenticate(hashid: String, useremail: String, callback: Function) { }
+export function verifyHash(hashid: String, useremail: String) { 
+
+}
+
+export function deauthenticate(hashid: String, useremail: String, callback: Function) { 
+
+}
 
 export function authenticate(useremail: String, password: String, callback: Function) {
     const encryptedPassword = generateEncryptedData(password, useremail);
@@ -149,3 +156,83 @@ function verifyUniqueUserEmail(email: String, callback: Function) {
         callback(error,{unique: !doc});
     });
 }
+
+
+export function publishWebAPI(app: Application) {
+    let jsonBodyParser = bodyParser.json({type: 'application/json'});
+
+    app.post("/api/secure/data", jsonBodyParser, (req,res) => {
+        console.debug(`POST: ${req.url}`);
+        res.status(200);
+
+        const data = req.body.data;
+        const secret = req.body.secret;            
+
+        if(!data || !secret) {
+            res.json(services.jsonResponse("HttpPOST: request body not available"));
+        }
+
+        res.json(services.jsonResponse(generateEncryptedData(data,secret)));
+    });
+
+    app.post("api/secure/deauth", jsonBodyParser, (req,res) => {
+        res.status(200);
+
+        var hashid = req.body.hashid;
+        var useremail = req.body.useremail;
+
+        if(!hashid || !useremail) {
+            res.json(services.jsonResponse("HttpPOST body is not available."));
+        }
+
+        deauthenticate(hashid, useremail, (error, data) => {
+            res.json(services.jsonResponse(error, data));
+        });
+    });
+
+    app.post("/api/secure/auth", jsonBodyParser, (req,res) => {
+        console.debug(`POST: ${req.url}`);
+        res.status(200);
+
+        const useremail = req.body.useremail; // either useremail or username
+        const password = req.body.password; // clear text password never saved
+
+        if(!useremail || !password) {
+            res.json(services.jsonResponse("HttpPOST: request body not available"));
+        }
+
+        authenticate(useremail, password, (error, data) =>{
+            res.json(services.jsonResponse(error,data));
+        });
+    });
+
+    app.post("/api/secure/registeration", jsonBodyParser, (req,res) => {
+        console.debug(`POST: ${req.url}`);
+        if(!req.body) {
+            res.status(200);
+            res.json(services.jsonResponse("HttpPOST json body not available"));
+       }
+
+       // generate the security object
+       var item = req.body;
+       var useremail = item.useremail;
+       var password = item.password;
+
+       item.security = generate(useremail, password);
+
+       // create the new sponsor with security
+       res.status(200);
+
+       var model = services.getModel("sponsor");
+       var sponsor = new model(item);
+
+       sponsor.save(null, (err,doc)=>{
+            (err)? 
+                res.json(services.jsonResponse(err,doc)) :
+                
+                authenticate(useremail, password, (err, auth) =>{
+                    res.json(services.jsonResponse(err,auth));
+                });
+       }); // end save sponsor
+    });
+} // end publishWebAPI
