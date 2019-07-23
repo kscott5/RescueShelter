@@ -19,7 +19,7 @@ export const SecuritySchema = function securitySchema() {
 
 export const SESSION_TIME = 15; //minutes
 
-services.createMongooseModel("validator", services.createMongooseSchema({}, false /* disable schema strict */));
+services.createMongooseModel("token", services.createMongooseSchema({}, false /* disable schema strict */));
 /**
  * 
  * @param err authenticate sponsor was not ok
@@ -40,10 +40,13 @@ function generateHashId(err: any, doc: any, callback: Function) {
     
     const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
 
-    const model = services.getModel("validator");
-    const hash = new model({useremail: useremail, hashid: hashid, expiration: expires});
-    hash.save((error, product) => {
-        callback(error, product);
+    const model = services.getModel("token");
+    const update = new model({useremail: useremail, hashid: hashid, expiration: expires});
+
+    var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
+    model.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
+        (error)? callback(error, null) :
+            callback(null, product["value"]);
     });
 }
 
@@ -58,7 +61,7 @@ export function authenticate(useremail: String, password: String, callback: Func
         (error)? callback(error, null): 
             generateHashId(error, doc, (error, data) => {
                 (error)? callback(error, null):
-                    callback(error, {hashid: data.hashid, sponsor: doc});
+                    callback(error, {token: data, sponsor: doc});
             });
     });
 }
