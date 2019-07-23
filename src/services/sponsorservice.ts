@@ -2,7 +2,7 @@ import {SchemaTypes}  from "mongoose";
 import {Application, json} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
-import * as security from "./securityservice";
+import {SecurityService} from "./securityservice";
 
 export namespace SponsorService {
     let __selectionFields = "_id useremail username firstname lastname photo audit";
@@ -12,7 +12,7 @@ export namespace SponsorService {
         lastname: {type: String},
         useremail: {type: String, required: [true, '*'], unique: true},
         username: {type: String, unique: true},
-        security: {type: security.SecuritySchema()},
+        security: {type: SecurityService.SecuritySchema()},
         photo: {type: String},
         audit: [
             {
@@ -74,21 +74,6 @@ export namespace SponsorService {
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
     
-        app.post("/api/sponsor/unique", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
-            res.status(200);
-
-            const field = req.body.field;
-            const value = req.body.value;
-            if(!field || !value) {                
-                res.json(services.jsonResponse("HttpPOST body not available with request"));
-            }
-
-            security.verifyUniqueUserField(field, value, (error, data) => {
-                    res.json(services.jsonResponse(error,data));
-            });
-        });
-
         app.post("/api/sponsor", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
