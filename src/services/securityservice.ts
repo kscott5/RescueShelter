@@ -1,8 +1,8 @@
 import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as crypto from "crypto";
-import * as co from "co";
 import * as services from "./services";
+import { callbackify } from "util";
 
 export namespace SecurityService {
     let __authSelectionFields = "_id useremail username firstname lastname photo audit";
@@ -54,20 +54,13 @@ export namespace SecurityService {
         });
     }
 
-    export function verifyHash(hashid: String, useremail: String) : Boolean { 
+    export function verifyHash(hashid: String, useremail: String, callback: Function) { 
         var model = services.getModel("token");
-        var results = false;
 
-        co(function *() {
-             var data = yield model.findOne({hashid: hashid, useremail: useremail}).exec();
-             console.log(data);
-
-             results = true;
-        }).catch((error) => {
-            console.log(`SecurityService.veryHash ${error}`);
+        model.findOne({hashid: hashid, useremail: useremail}, (err, doc) =>{
+            (err)? callback(err, doc) :
+                callback(err, {verified: doc != null });
         });
-
-        return results;
     }
 
     export function deauthenticate(hashid: String, useremail: String, callback: Function) { 
@@ -214,8 +207,11 @@ export namespace SecurityService {
                 res.json(services.jsonResponse("HttpPOST body not availe with request"));
             }
 
-            res.json(services.jsonResponse(null, verifyHash(hashid, useremail)));
-        }); // end api/secure/verify
+            verifyHash(hashid, useremail, (error, data) => {
+                res.json(services.jsonResponse(error, data));
+            })
+            
+        }); // end /api/secure/verify
 
         app.post("/api/secure/deauth", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
