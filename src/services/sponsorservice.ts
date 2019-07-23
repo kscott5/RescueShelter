@@ -88,7 +88,7 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
-            console.debug(`POST: ${req.url}`);
+            console.debug(`POST [:id]: ${req.url}`);
             // if(!req.body.hashid) {
             //     res.status(200);
             //     res.json(services.jsonResponse("HttpGET json body not available"));
@@ -101,7 +101,7 @@ export namespace SponsorService {
         });
 
         app.get("/api/sponsor/:id", (req,res) => {
-            console.debug(`GET: ${req.url}`);
+            console.debug(`GET [:id]: ${req.url}`);
             res.status(200);
             getContribtuor(req.params.id, (error, data) => {
                 res.json(services.jsonResponse(error, data));
