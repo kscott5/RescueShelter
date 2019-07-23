@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { SponsorService } from '../../services/sponsorservice';
-
-//import {Form, Button} from 'semantic-ui-react';
 
 class SponsorModel {
     public firstname: string = '';
