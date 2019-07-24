@@ -2,7 +2,6 @@ import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as crypto from "crypto";
 import * as services from "./services";
-import { callbackify } from "util";
 
 export namespace SecurityService {
     let __authSelectionFields = "_id useremail username firstname lastname photo audit";
