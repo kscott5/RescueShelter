@@ -25,13 +25,12 @@ export namespace SecurityService {
     services.createMongooseModel("token", services.createMongooseSchema({}, false /* disable schema strict */));
     /**
      * 
-     * @param err authenticate sponsor was not ok
      * @param doc authenicate sponor was ok
      * @param callback publish results of complete authentication process
      */
-    function generateHashId(err: any, doc: any, callback: Function) {
-        if(err) {
-            callback(err,doc);
+    function generateHashId(doc: any, callback: Function) {
+        if(!doc) {
+            callback("invalid useremail and/or password", null);
             return;
         }
 
@@ -75,10 +74,34 @@ export namespace SecurityService {
 
         const model = services.getModel("sponsor");
         
+        model.aggregate([    {
+            $lookup: {
+                from: "tokens",
+                let: {sponsors_useremail: '$useremail'},
+                pipeline: [
+                    {
+                        $match: {useremail: '$$sponsors_useremail'}                    
+                    },
+                    {                    
+                        $project: {_id: false, hashid: 1, expiration: 1, su: '$$sponsors_useremail', useremail: 1}
+                    }
+                ],
+                as: "token"
+            }        
+        },
+        {
+            $match: {useremail: 'flname@outlook.com'}
+        },
+        {
+        $project: {
+            firstname: 1, lastname: 1, useremail: 1, username: 1, token: '$token'
+        }}
+    ]);
+    
         model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, 
             __authSelectionFields, (error, doc) => {
-            (error)? callback(error, null): 
-                generateHashId(error, doc, (error, data) => {
+            (!error && !doc)? callback("invalid useremail and/or password", null): 
+                generateHashId(doc, (error, data) => {
                     (error)? callback(error, null):
                         callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: doc});
                 });
