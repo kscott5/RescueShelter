@@ -20,7 +20,7 @@ export namespace SecurityService {
         });
     }
 
-    export const SESSION_TIME = 15; //minutes
+    export const SESSION_TIME = 900000; // 15 minutes = 900000 milliseconds
 
     services.createMongooseModel("token", services.createMongooseSchema({}, false /* disable schema strict */));
     /**
@@ -34,8 +34,8 @@ export namespace SecurityService {
             return;
         }
 
-        const expires = new Date();
-        expires.setMinutes(SESSION_TIME);
+        const now = new Date();
+        const expires = new Date(now.getTime()+SESSION_TIME);
 
         const useremail = doc.useremail || 'no email';    
         console.debug(`generateHashId with ${useremail}`);
@@ -43,7 +43,7 @@ export namespace SecurityService {
         const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
 
         const model = services.getModel("token");
-        const update = new model({useremail: useremail, hashid: hashid, expiration: expires});
+        const update = new model({useremail: useremail, hashid: hashid, expires: expires.getTime()});
 
         var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
         model.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
@@ -72,41 +72,47 @@ export namespace SecurityService {
     export function authenticate(useremail: String, password: String, callback: Function) {
         const encryptedPassword = generateEncryptedData(password, useremail);
 
+        // Format improves readable and increases the number of lines
+        const now = new Date();
         const model = services.getModel("sponsor");
-        
-        model.aggregate([    {
-            $lookup: {
-                from: "tokens",
-                let: {sponsors_useremail: '$useremail'},
-                pipeline: [
-                    {
-                        $match: {useremail: '$$sponsors_useremail'}                    
-                    },
-                    {                    
-                        $project: {_id: false, hashid: 1, expiration: 1, su: '$$sponsors_useremail', useremail: 1}
-                    }
-                ],
-                as: "token"
-            }        
-        },
-        {
-            $match: {useremail: 'flname@outlook.com'}
-        },
-        {
-        $project: {
-            firstname: 1, lastname: 1, useremail: 1, username: 1, token: '$token'
-        }}
-    ]);
-    
-        model.findOne({$and: [{useremail: useremail, "security.password": encryptedPassword}]}, 
-            __authSelectionFields, (error, doc) => {
-            (!error && !doc)? callback("invalid useremail and/or password", null): 
+        model.aggregate([
+            {
+                $lookup: { // sponsor token exists and valid
+                    from: "tokens",
+                    let: {sponsors_useremail: '$useremail'},
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {$eq: ['$useremail', '$$sponsors_useremail']},
+                                        {$lt: [`${now.getTime()}`, '$expires']}
+                                    ]
+                                }
+                            }
+                        },
+                        {                    
+                            $project: {_id: false, hashid: 1, expires: 1, useremail: 1}
+                        }
+                    ],
+                    as: "token"
+                }        
+            },
+            {
+                $match: { $and: [{useremail: useremail, "security.password": encryptedPassword}] }
+            },
+            {
+            $project: {
+                firstname: 1, lastname: 1, useremail: 1, username: 1, token: '$token'
+            }}
+        ]).exec((err, doc) => {
+            (!err && !doc)? callback("invalid useremail and/or password", null) : 
                 generateHashId(doc, (error, data) => {
                     (error)? callback(error, null):
                         callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: doc});
                 });
-        });
-    }
+        });        
+    } // end authenticate
 
     export function generate(useremail: String, textPassword: String, questions?: any) {
         const encryptedPassword = generateEncryptedData(textPassword, useremail);
