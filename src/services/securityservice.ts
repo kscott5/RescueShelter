@@ -23,6 +23,35 @@ export namespace SecurityService {
     export const SESSION_TIME = 900000; // 15 minutes = 900000 milliseconds
 
     services.createMongooseModel("token", services.createMongooseSchema({}, false /* disable schema strict */));
+
+    services.createMongooseModel("transaction", () => {
+            var schema = services.createMongooseSchema({
+                    name: {type: String, required: true},
+                    sponsor_id: {type: {}, required: true},
+                    data: {type: {}, required: true},
+                    date: {type: Date, required: true}
+                }); 
+        
+            schema.path("data").default(new Date());
+
+            return schema;
+        }
+    );
+
+    export function track(action: any) {
+        console.debug("Tracking transaction");
+
+        var model = services.getModel("transaction");
+        var obj = new model(action);
+        
+        obj.save((err, doc)=>{
+            if(err !== null) {
+                console.log("Error occurred with transaction tracker");
+                console.log(err);
+            }
+        });
+    } // end track
+
     export function verifyAccess(access: any, callback: Function) {
         try {
             var accessType = access.accessType.trim().toLowerCase();

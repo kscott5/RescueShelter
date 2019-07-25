@@ -19,8 +19,10 @@ export function createMongooseSchema(schemaDefinition: any, strictMode: boolean 
     return new mongoose.Schema(schemaDefinition, {strict: strictMode});
 }
 
-export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any>) {
-    const model = __connection.model(modelName, modelSchema);    
+export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any> | Function) {
+    var schema = (typeof modelSchema == 'function')?  modelSchema(): modelSchema;
+
+    const model = __connection.model(modelName, schema);    
     __models[modelName] = model;
 
     return __models[modelName];
