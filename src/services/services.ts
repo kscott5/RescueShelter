@@ -64,7 +64,7 @@ export class pagination {
     }
 }
 
-export function jsonResponse(error, data: any = null) {
+export function createJSONResponse(error, data: any = null) {
     return {
         ok: !error,
         data: error || data,
