@@ -174,3 +174,7 @@ db.animals.aggregate([
     ]
 }
 ```
+
+## More
+The [Security Service Typescript](https://github.com/kscott5/RescueShelter/blob/master/src/services/securityservice.ts) file contains $lookkup with authentication and hash identifier  
+validation. Code Review it. 
