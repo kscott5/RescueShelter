@@ -90,14 +90,16 @@ export namespace SecurityService {
                                 $expr: {
                                     $and: [
                                         {$eq: ['$useremail', '$$sponsors_useremail']},
-                                        {$eq: [useremail, '$useremail']},
-                                        {$lt: [now.getTime(), '$expires']}
+                                        {$eq: ['$useremail', useremail]}
                                     ]
                                 }
                             }
                         },
                         {                    
-                            $project: {_id: false, hashid: 1, expires: 1, useremail: 1}
+                            $project: {
+                                _id: false, hashid: 1, useremail: 1, expires: 1, 
+                                expired: { $not: {$gt: ['$expires', now.getTime()] } }
+                            }
                         }
                     ],
                     as: "token"
@@ -119,10 +121,12 @@ export namespace SecurityService {
             } else { 
                 try {
                     var sponsor = doc[0];                    
-                    if(sponsor.token !== null && sponsor.token === 'object') { // session exists
-                        var hashid = sponsor.token.hashid;
+                    if(sponsor.token !== null && sponsor.token === 'object') { // session exists                        
+                        var token = sponsor.token;                                                
+                        var error = (token.expired)? services.SYSTEM_SESSION_EXPIRED: null;
+
                         sponsor.token = null;
-                        callback(null, {hashid: hashid, sponsor: sponsor});
+                        callback(error, {hashid: token.hashid, sponsor: sponsor});
                     } else { // session !exists
                         generateHashId(sponsor, (error, data) => {
                             callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor});

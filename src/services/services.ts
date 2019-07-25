@@ -13,6 +13,7 @@ let __models = {};
 
 export const SYSTEM_UNAVAILABLE_MSG = "system unavailable. please try later.";
 export const SYSTEM_INVALID_USER_CREDENTIALS_MSG = "invalid useremail and/or password";
+export const SYSTEM_SESSION_EXPIRED = "login, current session expired.";
 
 export function createMongooseSchema(schemaDefinition: any, strictMode: boolean = true) {
     return new mongoose.Schema(schemaDefinition, {strict: strictMode});
