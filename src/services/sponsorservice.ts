@@ -78,12 +78,12 @@ export namespace SponsorService {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
-                res.json(services.jsonResponse("HttpPOST json body not available"));
+                res.json(services.createJSONResponse("HttpPOST json body not available"));
            }
 
            res.status(200);
            newSponsor(req.body, function(error, data){
-               res.json(services.jsonResponse(error,data));
+               res.json(services.createJSONResponse(error,data));
            });
         });
 
@@ -96,7 +96,7 @@ export namespace SponsorService {
 
             saveSponsor(req.body, (error, data) => {
                 res.status(200);
-                res.json(services.jsonResponse(error, data));
+                res.json(services.createJSONResponse(error, data));
             });
         });
 
@@ -104,7 +104,7 @@ export namespace SponsorService {
             console.debug(`GET [:id]: ${req.url}`);
             res.status(200);
             getContribtuor(req.params.id, (error, data) => {
-                res.json(services.jsonResponse(error, data));
+                res.json(services.createJSONResponse(error, data));
             });
         });
 
@@ -117,7 +117,7 @@ export namespace SponsorService {
             res.status(200);
             getSponsors(
                 function(error, data) {
-                    var results = services.jsonResponse(error,data);
+                    var results = services.createJSONResponse(error,data);
                     res.json(results);
                 }, 
                 page, limit, phrase
