@@ -45,9 +45,10 @@ export namespace SecurityService {
         var obj = new model(action);
         
         obj.save((err, doc)=>{
-            if(err !== null) {
+            if(err !== null) {                
                 console.log("Error occurred with transaction tracker");
                 console.log(err);
+                throw new Error(err);
             }
         });
     } // end track
