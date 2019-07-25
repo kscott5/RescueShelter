@@ -23,47 +23,37 @@ export namespace SecurityService {
     export const SESSION_TIME = 900000; // 15 minutes = 900000 milliseconds
 
     services.createMongooseModel("token", services.createMongooseSchema({}, false /* disable schema strict */));
-    /**
-     * 
-     * @param doc authenicate sponor was ok
-     * @param callback publish results of complete authentication process
-     */
-    function generateHashId(doc: any, callback: Function) {
-        if(!doc) {
-            callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, null);
-            return;
-        }
+    export function verifyAccess(access: any, callback: Function) {
+        try {
+            var accessType = access.accessType.trim().toLowerCase();
+            switch(accessType) {
+                case "hashid" || 1:
+                    verifyHash(access.hashId, access.useremail, callback);
+                    break;
 
-        var now = new Date();
-        var expires = new Date(now.getTime()+SESSION_TIME);
+                case "uniqueuseremail" || 2:
+                    verifyUniqueUserEmail(access.email, callback);
+                    break;
+                
+                case "uniqueusername" || 3:
+                    verifyUniqueUserName(access.username, callback);
+                    break;
 
-        var useremail = doc.useremail;
-        console.debug(`generateHashId with ${useremail}`);
-        
-        var hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
-
-        var tokenModel = services.getModel("token");
-        var update = new tokenModel({useremail: useremail, hashid: hashid, expires: expires.getTime()});
-
-        var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
-        tokenModel.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
-            try {
-                callback(error, product["value"]);
-            } catch(err) {
-                console.debug(err);
-                callback(services.SYSTEM_UNAVAILABLE_MSG, product);
+                case "uniqueuserfield" || 4:
+                    verifyUniqueUserField(access.field, access.value, callback);
+                    break;
+                    
+                default:
+                    console.debug(`Access Type: ${accessType} not valid`);
+                    callback("Contact system administrator for access");
             }
-        });
-    } // end generateHashId
-
-    export function verifyHash(hashid: String, useremail: String, callback: Function) { 
-        var model = services.getModel("token");
-
-        model.findOne({hashid: hashid, useremail: useremail}, (err, doc) =>{
-            (err)? callback(err, doc) :
-                callback(err, {verified: doc != null });
-        });
-    }
+        } catch(error) {
+            console.debug("verify access type not valid");
+            console.debug(error);
+            
+            callback("Contact system administrator for access");
+        }
+    } // end verifyAccess
 
     export function deauthenticate(hashid: String, useremail: String, callback: Function) { 
         var model = services.getModel("token");
@@ -182,7 +172,59 @@ export namespace SecurityService {
         });
     }
 
-    export function verifyUniqueUserField(field: String, value: String, callback: Function) {
+    export function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
+        const tmpData = data.trim();
+        const tmpSalt = salt.trim();
+
+        const encryptedData = crypto.pbkdf2Sync(tmpData, tmpSalt, 100, 50, 'sha256');
+        const hexEncryptedData = encryptedData.toString('hex');
+
+        return hexEncryptedData;
+    }
+
+    function verifyHash(hashid: String, useremail: String, callback: Function) { 
+        var model = services.getModel("token");
+
+        model.findOne({hashid: hashid, useremail: useremail}, (err, doc) =>{
+            (err)? callback(err, doc) :
+                callback(err, {verified: doc != null });
+        });
+    }
+
+    /**
+     * 
+     * @param doc authenicate sponor was ok
+     * @param callback publish results of complete authentication process
+     */
+    function generateHashId(doc: any, callback: Function) {
+        if(!doc) {
+            callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, null);
+            return;
+        }
+
+        var now = new Date();
+        var expires = new Date(now.getTime()+SESSION_TIME);
+
+        var useremail = doc.useremail;
+        console.debug(`generateHashId with ${useremail}`);
+        
+        var hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
+
+        var tokenModel = services.getModel("token");
+        var update = new tokenModel({useremail: useremail, hashid: hashid, expires: expires.getTime()});
+
+        var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
+        tokenModel.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
+            try {
+                callback(error, product["value"]);
+            } catch(err) {
+                console.debug(err);
+                callback(services.SYSTEM_UNAVAILABLE_MSG, product);
+            }
+        });
+    } // end generateHashId
+
+    function verifyUniqueUserField(field: String, value: String, callback: Function) {
         switch(field.trim().toLowerCase()) {
             case "username":
                 verifyUniqueUserName(value, callback);
@@ -194,16 +236,6 @@ export namespace SecurityService {
                 callback("value exists");
                 break;
         }
-    }
-
-    export function generateEncryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
-        const tmpData = data.trim();
-        const tmpSalt = salt.trim();
-
-        const encryptedData = crypto.pbkdf2Sync(tmpData, tmpSalt, 100, 50, 'sha256');
-        const hexEncryptedData = encryptedData.toString('hex');
-
-        return hexEncryptedData;
     }
 
     function verifyUniqueUserName(name: String, callback: Function) {
@@ -232,11 +264,11 @@ export namespace SecurityService {
             const field = req.body.field;
             const value = req.body.value;
             if(!field || !value) {                
-                res.json(services.jsonResponse("HttpPOST body not available with request"));
+                res.json(services.createJSONResponse("HttpPOST body not available with request"));
             }
 
             verifyUniqueUserField(field, value, (error, data) => {
-                    res.json(services.jsonResponse(error,data));
+                    res.json(services.createJSONResponse(error,data));
             });
         });
 
@@ -248,10 +280,10 @@ export namespace SecurityService {
             const secret = req.body.secret;            
 
             if(!data || !secret) {
-                res.json(services.jsonResponse("HttpPOST: request body not available"));
+                res.json(services.createJSONResponse("HttpPOST: request body not available"));
             }
 
-            res.json(services.jsonResponse(generateEncryptedData(data,secret)));
+            res.json(services.createJSONResponse(generateEncryptedData(data,secret)));
         });
 
         app.post("/api/secure/verify", jsonBodyParser, (req,res) => {
@@ -262,11 +294,11 @@ export namespace SecurityService {
             var useremail = req.body.useremail;
 
             if(!hashid || !useremail) {
-                res.json(services.jsonResponse("HttpPOST body not availe with request"));
+                res.json(services.createJSONResponse("HttpPOST body not availe with request"));
             }
 
             verifyHash(hashid, useremail, (error, data) => {
-                res.json(services.jsonResponse(error, data));
+                res.json(services.createJSONResponse(error, data));
             })
             
         }); // end /api/secure/verify
@@ -279,11 +311,11 @@ export namespace SecurityService {
             var useremail = req.body.useremail;
 
             if(!hashid || !useremail) {
-                res.json(services.jsonResponse("HttpPOST body is not available."));
+                res.json(services.createJSONResponse("HttpPOST body is not available."));
             }
 
             deauthenticate(hashid, useremail, (error, data) => {
-                res.json(services.jsonResponse(error, data));
+                res.json(services.createJSONResponse(error, data));
             });
         });
 
@@ -298,11 +330,11 @@ export namespace SecurityService {
             const password = req.body.password; // clear text password never saved
 
             if(!useremail || !password) {
-                res.json(services.jsonResponse("HttpPOST: request body not available"));
+                res.json(services.createJSONResponse("HttpPOST: request body not available"));
             }
 
             authenticate(useremail, password, (error, data) =>{
-                res.json(services.jsonResponse(error,data));
+                res.json(services.createJSONResponse(error,data));
             });
         });
 
@@ -313,7 +345,7 @@ export namespace SecurityService {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
-                res.json(services.jsonResponse("HttpPOST json body not available"));
+                res.json(services.createJSONResponse("HttpPOST json body not available"));
             }
 
             // generate the security object
@@ -331,10 +363,10 @@ export namespace SecurityService {
 
             sponsor.save(null, (err,doc)=>{
                     (err)? 
-                        res.json(services.jsonResponse(err,doc)) :
+                        res.json(services.createJSONResponse(err,doc)) :
                         
                         authenticate(useremail, password, (err, auth) =>{
-                            res.json(services.jsonResponse(err,auth));
+                            res.json(services.createJSONResponse(err,auth));
                         });
             }); // end save sponsor
         }); // end /api/secure/registration
