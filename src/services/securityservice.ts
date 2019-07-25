@@ -30,14 +30,14 @@ export namespace SecurityService {
      */
     function generateHashId(doc: any, callback: Function) {
         if(!doc) {
-            callback("invalid useremail and/or password", null);
+            callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, null);
             return;
         }
 
         var now = new Date();
         var expires = new Date(now.getTime()+SESSION_TIME);
 
-        var useremail = doc.useremail || 'no email';    
+        var useremail = doc.useremail;
         console.debug(`generateHashId with ${useremail}`);
         
         var hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
@@ -81,7 +81,7 @@ export namespace SecurityService {
         const model = services.getModel("sponsor");
         model.aggregate([
             {
-                $lookup: { // sponsor token exists and valid
+                $lookup: { // left outer join on sponsor. token exists and valid
                     from: "tokens",
                     let: {sponsors_useremail: '$useremail'},
                     pipeline: [
@@ -90,6 +90,7 @@ export namespace SecurityService {
                                 $expr: {
                                     $and: [
                                         {$eq: ['$useremail', '$$sponsors_useremail']},
+                                        {$eq: [useremail, '$useremail']},
                                         {$lt: [now.getTime(), '$expires']}
                                     ]
                                 }
@@ -121,15 +122,15 @@ export namespace SecurityService {
                     if(sponsor.token !== null && sponsor.token === 'object') { // session exists
                         var hashid = sponsor.token.hashid;
                         sponsor.token = null;
-                        callback(null, {hashid: hashid /* find alternative */, sponsor: sponsor});
-                    } else {
+                        callback(null, {hashid: hashid, sponsor: sponsor});
+                    } else { // session !exists
                         generateHashId(sponsor, (error, data) => {
                             callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor});
                         });
                     }
                 } catch(error) {
                     console.debug(error);
-                    callback("Invalid username and/or password");
+                    callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, doc);
                 } // end try-catch
             } // end if-else
         });        
