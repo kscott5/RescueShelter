@@ -5,7 +5,7 @@ import * as services from "./services";
 
 export namespace SecurityService {
     let __authSelectionFields = "_id useremail username firstname lastname photo audit";
-
+    
     export const SecuritySchema = function securitySchema() {
         const question = services.createMongooseSchema({
             _id: false,
@@ -34,23 +34,27 @@ export namespace SecurityService {
             return;
         }
 
-        const now = new Date();
-        const expires = new Date(now.getTime()+SESSION_TIME);
+        var now = new Date();
+        var expires = new Date(now.getTime()+SESSION_TIME);
 
-        const useremail = doc.useremail || 'no email';    
+        var useremail = doc.useremail || 'no email';    
         console.debug(`generateHashId with ${useremail}`);
         
-        const hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
+        var hashid = generateEncryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
 
-        const model = services.getModel("token");
-        const update = new model({useremail: useremail, hashid: hashid, expires: expires.getTime()});
+        var tokenModel = services.getModel("token");
+        var update = new tokenModel({useremail: useremail, hashid: hashid, expires: expires.getTime()});
 
         var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
-        model.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
-            (error)? callback(error, null) :
-                callback(null, product["value"]);
+        tokenModel.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
+            try {
+                callback(error, product["value"]);
+            } catch(err) {
+                console.debug(err);
+                callback(services.SYSTEM_UNAVAILABLE_MSG, product);
+            }
         });
-    }
+    } // end generateHashId
 
     export function verifyHash(hashid: String, useremail: String, callback: Function) { 
         var model = services.getModel("token");
@@ -86,7 +90,7 @@ export namespace SecurityService {
                                 $expr: {
                                     $and: [
                                         {$eq: ['$useremail', '$$sponsors_useremail']},
-                                        {$lt: [`${now.getTime()}`, '$expires']}
+                                        {$lt: [now.getTime(), '$expires']}
                                     ]
                                 }
                             }
@@ -105,12 +109,29 @@ export namespace SecurityService {
             $project: {
                 firstname: 1, lastname: 1, useremail: 1, username: 1, token: '$token'
             }}
-        ]).exec((err, doc) => {
-            (!err && !doc)? callback("invalid useremail and/or password", null) : 
-                generateHashId(doc, (error, data) => {
-                    (error)? callback(error, null):
-                        callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: doc});
-                });
+        ])
+        .limit(1)
+        .exec((err, doc) => {
+            if(err !== null){
+                console.debug(err);
+                callback(services.SYSTEM_UNAVAILABLE_MSG, doc);
+            } else { 
+                try {
+                    var sponsor = doc[0];                    
+                    if(sponsor.token !== null && sponsor.token === 'object') { // session exists
+                        var hashid = sponsor.token.hashid;
+                        sponsor.token = null;
+                        callback(null, {hashid: hashid /* find alternative */, sponsor: sponsor});
+                    } else {
+                        generateHashId(sponsor, (error, data) => {
+                            callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor});
+                        });
+                    }
+                } catch(error) {
+                    console.debug(error);
+                    callback("Invalid username and/or password");
+                } // end try-catch
+            } // end if-else
         });        
     } // end authenticate
 
