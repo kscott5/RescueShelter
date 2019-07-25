@@ -1,7 +1,7 @@
 import {Application}  from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
-import * as mongoose from "mongoose";
+import {SecurityService as security} from "./securityservice";
 
 export namespace AnimalService {
     let __selectionFields = '_id name description imageSrc sponsors';
@@ -93,36 +93,62 @@ export namespace AnimalService {
     
 
         /**
-         * @description Includes a new item 
+         * @description create a new animal data 
          */
         app.post("/api/animal/new", jsonBodyParser, function(req,res){
             console.debug(`POST: ${req.url}`);
-            if(!req.body) {
-                 res.status(404);
-                 res.json("HttpPOST json body not available");                 
+
+            var hashid = req.body.hashid;
+            var useremail = req.body.useremail;
+            var animal = req.body.animal;
+            
+            res.status(200);
+
+            if(animal === null) {
+                res.json(services.createJSONResponse("HttpPOST request body not valid"));
             }
 
-            res.status(200);
-            newAnimal(req.body, function(error, data){
-                var results = services.jsonResponse(error,data);
-                res.json(results);
-            });
+            var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
+            security.verifyAccess(access, (error, data) => {
+                if(error !== null){
+                    res.json(services.createJSONResponse("You do not have access.", data));
+                } else {
+                    newAnimal(req.body, function(error, data){
+                        var results = services.createJSONResponse(error,data);
+                        res.json(results);
+                    });
+                }
+            }); // end verify access
         });
 
+        /**
+         * @description update the animal data
+         */
         app.post("/api/animal/:id", jsonBodyParser, function(req,res){
-            console.debug(`POST: ${req.url}`);
-            if (!req.params.id || !req.body) {
-                res.status(404);
-                res.json("HttpPOST id or json body not available");
-                return;
-            } 
+            console.debug(`POST [:id] update ${req.url}`);
 
+            var id = req.params.id;
+            var hashid = req.body.hashid;
+            var useremail = req.body.useremail;
+            var animal = req.body.animal;
+            
             res.status(200);
-            saveAnimal(req.body, function(error,data){
-                var results = services.jsonResponse(error,data);
-                res.json(results);
+
+            if(id === null || animal === null || animal._id != id) {
+                res.json(services.createJSONResponse("HttpPOST request parameter and/or json body not valid"));
+            }
+            
+            var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
+            security.verifyAccess(access, (error, data) => {
+                if(error !== null){
+                    res.json(services.createJSONResponse("You do not have access.", data));
+                } else {
+                    saveAnimal(animal, function(error,data) {
+                        res.json(services.createJSONResponse(error,data));                
+                    });
+                }
             });
-        });
+        }); // end POST [update] /api/animal/:id 
 
         /**
          * @description Retrieves single item
@@ -138,7 +164,7 @@ export namespace AnimalService {
 
             res.status(200);
             getAnimal(req.params.id, function(error,data){
-                var results = services.jsonResponse(error,data);
+                var results = services.createJSONResponse(error,data);
                 res.json(results);
             });
         });
@@ -155,7 +181,7 @@ export namespace AnimalService {
             res.status(200);
             getAnimals(
                 function(error, data) {
-                        var results = services.jsonResponse(error,data);
+                        var results = services.createJSONResponse(error,data);
                         res.json(results);
                     }, 
                     page, limit, phrase
