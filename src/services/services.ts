@@ -11,6 +11,8 @@ let __connection = mongoose.createConnection(__connectionString);
 
 let __models = {};
 
+export const SYSTEM_UNAVAILABLE_MSG = "system unavailable. please try later.";
+    
 export function createMongooseSchema(schemaDefinition: any, strictMode: boolean = true) {
     return new mongoose.Schema(schemaDefinition, {strict: strictMode});
 }
