@@ -9,6 +9,7 @@ class Login extends React.Component<any> {
 
         this.state = new SponsorStateModel();
         this.onClick = this.onClick.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {        
@@ -18,6 +19,16 @@ class Login extends React.Component<any> {
         return (nextProps !== this.props) || 
             (nextState !== this.state) || 
             (nextContext !== this.context);
+    }
+
+    onChange(event) {
+        var key = event.target.name;
+        var value = event.target.value;
+
+        var sponsor = this.state.sponsor;
+        sponsor[key] = value;
+
+        this.setState({sponsor: sponsor});
     }
 
     onClick(event) {
@@ -41,9 +52,12 @@ class Login extends React.Component<any> {
         .then(response => response.json())
         .then(response => {
             if(response.ok) {
+                window.sessionStorage.setItem("sessionState", "logout");
                 window.sessionStorage.setItem("hashid", response.data.hashid);
-                window.sessionStorage.setItem("sponsor", response.data.sponsor);
-
+                window.sessionStorage.setItem("useremail", response.data.sponsor.useremail);
+                window.sessionStorage.setItem("username", response.data.sponsor.username);
+                window.sessionStorage.setItem("firstname", response.data.sponsor.firstname);
+            
                 objThis.setState({hashid: response.data.hashid, sponsor: response.data.sponsor});
             }
         })
@@ -53,8 +67,8 @@ class Login extends React.Component<any> {
     render()  {
         return (            
             <form id="loginForm" className="ui form">
-                <input id="useremail" name="useremail" type="text" value={this.state.sponsor.useremail}/>
-                <input id="password" name="password" type="password" value={this.state.sponsor.password}/>
+                <input id="useremail" name="useremail" type="text" onChange={this.onChange} value={this.state.sponsor.useremail}/>
+                <input id="password" name="password" type="password" onChange={this.onChange} value={this.state.sponsor.password}/>
                 <button onClick={this.onClick}>Login</button>
             </form>
         );
@@ -65,8 +79,7 @@ class Access extends React.Component<any> {
     state = "login";
     
     constructor(props) {
-        super(props);
-
+        super(props);        
         window.sessionStorage.setItem("sessionState", this.state);
     }
 
