@@ -55,8 +55,12 @@ export namespace SecurityService {
 
     export function verifyAccess(access: any, callback: Function) {
         try {
-            var accessType = access.accessType.trim().toLowerCase();
+            var accessType = access.accessType.trim().toLowerCase() || "not required";
             switch(accessType) {
+                case "not required"  || 0:
+                    callback(null, true);
+                    break;
+
                 case "hashid" || 1:
                     verifyHash(access.hashId, access.useremail, callback);
                     break;
