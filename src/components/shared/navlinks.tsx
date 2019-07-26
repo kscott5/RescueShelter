@@ -5,6 +5,7 @@ import {Segment, Container, Menu} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
 import * as Members from "../sponsors/index";
+import {Access} from "../shared/access";
 
 class NavLinks extends React.Component {
     state;
@@ -30,7 +31,7 @@ class NavLinks extends React.Component {
                         <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><Link to="/animals">Animals</Link></Menu.Item>
                         <Menu.Item id='sponsors' name='sponsors' as='div' onClick={this.onMenuItemClicked}><Link to="/sponsors">Sponsors</Link></Menu.Item>
                     </Menu>
-                    
+                    <Access/>                    
                 </Container>
             </Segment>);
     }
