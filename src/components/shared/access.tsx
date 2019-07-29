@@ -74,7 +74,7 @@ class Login extends React.Component<any> {
             <form id="loginForm" className="ui form">
                 <input id="useremail" name="useremail" type="text" onChange={this.onChange} value={this.state.useremail}/>
                 <input id="password" name="password" type="password" onChange={this.onChange} value={this.state.password}/>
-                <button onClick={this.onClick}>Login</button>
+                <button type="button" onClick={this.onClick}>Login</button>
             </form>
         );
     }
@@ -136,7 +136,7 @@ class Logout extends React.Component<any> {
         return (       
             <form className="ui form">
                 <label>{this.state.sponsor.useremail}</label>
-                <button onClick={this.onClick}>Logout</button>
+                <button type="button" onClick={this.onClick}>Logout</button>
             </form>
         );
     }
