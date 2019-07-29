@@ -25,14 +25,18 @@ class NavLinks extends React.Component {
             <Segment inverted vertical textAlign='center' 
                 style={{ minHeight: 50, padding: '1em 0em' }}>
                 
-                <Container>                    
-                    <Menu id="menu" name="menu" inverted pointing secondary size='large'>
+                <div className="ui row">
+                <Container className="left float">                    
+                    <Menu id="menu" name="menu" compact inverted pointing secondary size='large'>
                         <Menu.Item id='home' name='home' as='div' active onClick={this.onMenuItemClicked}><Link to="/">Home</Link></Menu.Item>
                         <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><Link to="/animals">Animals</Link></Menu.Item>
                         <Menu.Item id='sponsors' name='sponsors' as='div' onClick={this.onMenuItemClicked}><Link to="/sponsors">Sponsors</Link></Menu.Item>
                     </Menu>
+                </Container>
+                <Container className="right float">
                     <Access/>                    
                 </Container>
+                </div>
             </Segment>);
     }
 }

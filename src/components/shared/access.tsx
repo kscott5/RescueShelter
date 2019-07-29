@@ -72,9 +72,19 @@ class Login extends React.Component<any> {
     render()  {
         return (       
             <form id="loginForm" className="ui form">
-                <input id="useremail" name="useremail" type="text" onChange={this.onChange} value={this.state.useremail}/>
-                <input id="password" name="password" type="password" onChange={this.onChange} value={this.state.password}/>
-                <button type="button" onClick={this.onClick}>Login</button>
+                <div id="useremail" className="ui left corner labeled input">
+                    <input id="useremail" className="ui input error" required name="useremail" type="email" onChange={this.onChange} value={this.state.useremail} placeholder="user@email.com" />
+                    <div className="ui left corner label">
+                        <i className="asterisk icon red"></i>
+                    </div>
+                </div>
+                <div id="password" className="ui left corner labeled input">
+                    <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={this.state.password} placeholder="password"/ >
+                    <div className="ui left corner label">
+                        <i className="asterisk icon red"></i>
+                    </div>
+                </div>
+                <button type="button" className="ui button tiny circular" onClick={this.onClick}>Login</button>
             </form>
         );
     }
