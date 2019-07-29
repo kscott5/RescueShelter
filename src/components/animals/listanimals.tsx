@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 
-import {Container, Image} from 'semantic-ui-react';
+import {SponsorContext} from "../state/context";
 
 class ListAnimals extends React.Component {
     state = { documents: [], pages: 1, pageIndex: 1};
+    context = SponsorContext;
 
     constructor(props) {
         super(props);
@@ -44,17 +45,19 @@ class ListAnimals extends React.Component {
             <div key={document._id}>
                 <span>{document.name}</span>
                 <span>{document.description}</span>
-                <Image src={document.imageSrc} className="ui image"/>
+                <img src={document.imageSrc} className="ui image"/>
+
                 <Link to={`/animal/${document._id}`}>Edit</Link>        
             </div>
         );
         
         return (
-            <Container>
+            <div className="ui containter">
                 <h2>Animal Rescurers! We need YOU!</h2>
-                <Link to="/animal" >New</Link>
+                <Link to="/animal">New</Link>
                 {documentItems}
-            </Container>
+            </div>
+            
         );
     }
 }
