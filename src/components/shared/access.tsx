@@ -1,4 +1,5 @@
 import * as React from "react";
+import {SponsorContext} from "../state/context";
 import SponsorStateModel, {SponsorModel} from "../state/sponsor";
 
 class Login extends React.Component<any> {
@@ -165,13 +166,18 @@ class Access extends React.Component<any> {
 
     onLoggedIn(login) {
         console.log("Login completed");
-    
+        
+        // Window sessionStorage and props with custom event attributes (Why?)
+        // window.sessionStorage.setItem("hashid", login.data.hashid);
+        // window.sessionStorage.setItem("useremail", login.data.sponsor.useremail);
+
         this.setState({hashid: login.data.hashid, loggedIn: login.ok, sponsor: login.data.sponsor});
     }
 
     onLoggedOut(logout) {
         console.log("Logout completed");
-        console.log(logout);
+        
+        // window.sessionStorage.clear();
 
         var sponsor = new SponsorModel();
         this.setState({hashid: '', loggedIn: logout.ok, sponsor: sponsor});
@@ -183,10 +189,15 @@ class Access extends React.Component<any> {
 
     render() {        
         var model = this.state;
-        if(!model.loggedIn)             
-            return <Login onLoggedIn={this.onLoggedIn} onError={this.onError} />;
-        else
-            return <Logout model={model} onLoggedOut={this.onLoggedOut} onError={this.onError} />;
+        var ctrl = (!model.loggedIn)? 
+            <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
+            <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} model={model} />;
+
+        return (
+            <SponsorContext.Provider value={model}>
+                {ctrl}
+            </SponsorContext.Provider>
+        );
     }
 }
 
