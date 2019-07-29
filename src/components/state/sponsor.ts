@@ -10,11 +10,12 @@ class SponsorModel {
 class SponsorStateModel {
     public hashid: string = '';
     public message: string = '';
-    public sponsor: SponsorModel;
+    public sponsor: SponsorModel = new SponsorModel();
     public matchSuccess: string = '';
     public uniqueSuccess: string = '';
     public confirmPassword: string = '';
     public pageTitle: string = 'New Sponsor';
+    public loggedIn = false;
     constructor() {
         this.sponsor = new SponsorModel();
     }

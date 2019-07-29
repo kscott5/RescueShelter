@@ -1,15 +1,22 @@
 import * as React from "react";
-import {SponsorStateModel} from "../state/sponsor";
+import SponsorStateModel, {SponsorModel} from "../state/sponsor";
 
 class Login extends React.Component<any> {
-    state =  new SponsorStateModel();
+    state: SponsorModel;
+
+    onLoggedIn: Function;
+    onError: Function;
 
     constructor(props) {
         super(props);
 
-        this.state = new SponsorStateModel();
+        this.state = new SponsorModel();
+
+        this.onLoggedIn = this.props.onLoggedIn;
+        this.onError = this.props.onError;
+
         this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.onChange = this.onChange.bind(this);   
     }
 
     componentDidMount() {        
@@ -21,11 +28,12 @@ class Login extends React.Component<any> {
             (nextContext !== this.context);
     }
 
+    
     onChange(event) {
         var key = event.target.name;
         var value = event.target.value;
 
-        var sponsor = this.state.sponsor;
+        var sponsor = this.state;
         sponsor[key] = value;
 
         this.setState({sponsor: sponsor});
@@ -35,11 +43,11 @@ class Login extends React.Component<any> {
         var form = document.querySelector("form");
         if(!form.checkValidity()) 
             return;
-
+        
         var objThis = this;
         var body = { 
-            useremail: this.state.sponsor.useremail,
-            password: this.state.sponsor.password
+            useremail: this.state.useremail,
+            password: this.state.password
         };
 
         fetch(`http://localhost:3302/api/secure/auth`, { 
@@ -51,36 +59,41 @@ class Login extends React.Component<any> {
         })
         .then(response => response.json())
         .then(response => {
-            if(response.ok) {
-                window.sessionStorage.setItem("sessionState", "logout");
-                window.sessionStorage.setItem("hashid", response.data.hashid);
-                window.sessionStorage.setItem("useremail", response.data.sponsor.useremail);
-                window.sessionStorage.setItem("username", response.data.sponsor.username);
-                window.sessionStorage.setItem("firstname", response.data.sponsor.firstname);
-            
-                objThis.setState({hashid: response.data.hashid, sponsor: response.data.sponsor});
-            }
+            objThis.setState({useremail: '', password: ''});
+            this.onLoggedIn(response);
         })
-        .catch(error => {});
+        .catch(error => {
+            objThis.setState({useremail: '', password: ''});
+            this.onError(error);
+        });
     }
 
     render()  {
-        return (            
+        return (       
             <form id="loginForm" className="ui form">
-                <input id="useremail" name="useremail" type="text" onChange={this.onChange} value={this.state.sponsor.useremail}/>
-                <input id="password" name="password" type="password" onChange={this.onChange} value={this.state.sponsor.password}/>
+                <input id="useremail" name="useremail" type="text" onChange={this.onChange} value={this.state.useremail}/>
+                <input id="password" name="password" type="password" onChange={this.onChange} value={this.state.password}/>
                 <button onClick={this.onClick}>Login</button>
             </form>
         );
     }
 } // end Login
 
-class Access extends React.Component<any> {
-    state = "login";
-    
+class Logout extends React.Component<any> {
+    state: SponsorStateModel;
+
+    onLoggedOut: Function;
+    onError: Function;
+
     constructor(props) {
-        super(props);        
-        window.sessionStorage.setItem("sessionState", this.state);
+        super(props);
+
+        this.state = props.model;
+
+        this.onLoggedOut = props.onLoggedOut;
+        this.onError = props.onError;
+
+        this.onClick = this.onClick.bind(this);
     }
 
     componentDidMount() {        
@@ -92,17 +105,89 @@ class Access extends React.Component<any> {
             (nextContext !== this.context);
     }
 
-    render() {
-        switch(this.state || "login") {
-            case "login":
-                return (<Login/>);
+    onClick(event) {
+        var body = { 
+            hashid: this.state.hashid,
+            useremail: this.state.sponsor.useremail
+        };
 
-            case "logout":
-                break;            
-        }
+        fetch(`http://localhost:3302/api/secure/deauth`, { 
+            method: `POST`,
+            body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(response => {
+            if(this.onLoggedOut !== null) {
+                this.onLoggedOut(response);
+            }
+        })
+        .catch(error => {
+            if(this.onError !== null) {
+                this.onError(error);
+            }
+        });
+    }
 
-        return ('');
+    render()  {
+        return (       
+            <form className="ui form">
+                <label>{this.state.sponsor.useremail}</label>
+                <button onClick={this.onClick}>Logout</button>
+            </form>
+        );
+    }
+} // end Logout
+
+class Access extends React.Component<any> {
+    state: SponsorStateModel;
+    
+    constructor(props) {
+        super(props);        
+
+        this.state = new SponsorStateModel();
+
+        this.onError = this.onError.bind(this);
+        this.onLoggedIn = this.onLoggedIn.bind(this);
+        this.onLoggedOut = this.onLoggedOut.bind(this);
+    }
+
+    componentDidMount() {        
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return (nextProps !== this.props) || 
+            (nextState !== this.state) || 
+            (nextContext !== this.context);
+    }
+
+    onLoggedIn(login) {
+        console.log("Login completed");
+    
+        this.setState({hashid: login.data.hashid, loggedIn: login.ok, sponsor: login.data.sponsor});
+    }
+
+    onLoggedOut(logout) {
+        console.log("Logout completed");
+        console.log(logout);
+
+        var sponsor = new SponsorModel();
+        this.setState({hashid: '', loggedIn: logout.ok, sponsor: sponsor});
+    }
+
+    onError(error) {
+        console.log(`${this.state}: ${error}`);
+    }
+
+    render() {        
+        var model = this.state;
+        if(!model.loggedIn)             
+            return <Login onLoggedIn={this.onLoggedIn} onError={this.onError} />;
+        else
+            return <Logout model={model} onLoggedOut={this.onLoggedOut} onError={this.onError} />;
     }
 }
 
-export {Access as default, Access, Login};
+export {Access as default, Access};
