@@ -19,6 +19,8 @@ class NavRoutes extends React.Component {
                     <Route exact path="/sponsors" component={Sponsors.ListSponsorsView}/>
                     <Route exact path="/sponsor" component={Sponsors.NewEditSponsorView}/>
                     <Route exact path="/sponsor/:id" component={Sponsors.NewEditSponsorView}/>
+
+                    <Route exact path="/login" component={Sponsors.LoginSponsorView} />
                     
                 </Container>
             </Segment>
