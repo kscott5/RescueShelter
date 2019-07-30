@@ -5,10 +5,13 @@ import {HashRouter} from "react-router-dom";
 import Layout from './shared/layout'
 
 import registerServiceWorker from '../registerServiceWorker';
+import { SponsorContext, DefaultSponsorContextValue } from './state/context';
 
 ReactDOM.render(
-    <HashRouter>
-        <Layout/>
-    </HashRouter> ,
+    <SponsorContext.Provider value={DefaultSponsorContextValue}>
+        <HashRouter>
+            <Layout/>
+        </HashRouter>
+    </SponsorContext.Provider> ,
     document.querySelector('#root'));
 registerServiceWorker();

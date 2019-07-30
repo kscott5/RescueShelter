@@ -157,12 +157,6 @@ class Access extends React.Component<any> {
     
     constructor(props) {
         super(props);        
-
-        this.state = new SponsorStateModel();
-
-        this.onError = this.onError.bind(this);
-        this.onLoggedIn = this.onLoggedIn.bind(this);
-        this.onLoggedOut = this.onLoggedOut.bind(this);
     }
 
     componentDidMount() {        
@@ -174,39 +168,17 @@ class Access extends React.Component<any> {
             (nextContext !== this.context);
     }
 
-    onLoggedIn(login) {
-        console.log("Login completed");
-        
-        // Window sessionStorage and props with custom event attributes (Why?)
-        // window.sessionStorage.setItem("hashid", login.data.hashid);
-        // window.sessionStorage.setItem("useremail", login.data.sponsor.useremail);
-
-        this.setState({hashid: login.data.hashid, loggedIn: login.ok, sponsor: login.data.sponsor});
-    }
-
-    onLoggedOut(logout) {
-        console.log("Logout completed");
-        
-        // window.sessionStorage.clear();
-
-        var sponsor = new SponsorModel();
-        this.setState({hashid: '', loggedIn: logout.ok, sponsor: sponsor});
-    }
-
-    onError(error) {
-        console.log(`${this.state}: ${error}`);
-    }
-
-    render() {        
-        var model = this.state;
-        var ctrl = (!model.loggedIn)? 
-            <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
-            <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} model={model} />;
-
-        return (
-            <SponsorContext.Provider value={model}>
-                {ctrl}
-            </SponsorContext.Provider>
+    render() {
+        return (        
+            <SponsorContext.Consumer>
+                {
+                    ({model, onLoggedIn, onLoggedOut, onError}) => (
+                        (!model.loggedIn)? 
+                        <Login onLoggedIn={onLoggedIn} onError={onError} /> :
+                        <Logout onLoggedOut={onLoggedOut} onError={onError} model={model} />                        
+                    )
+                }
+            </SponsorContext.Consumer>
         );
     }
 }
