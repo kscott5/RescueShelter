@@ -1,7 +1,7 @@
 import * as React from "react";
 import {SponsorStateModel, SponsorModel} from "./sponsor";
 
-export const DefaultSponsorContextValue = {
+var DefaultSponsorContextValue = {
     model: new SponsorStateModel(),
 
     onLoggedIn: (login) => {
@@ -32,9 +32,14 @@ export const DefaultSponsorContextValue = {
 
     onError: (error) => {
         console.log(`${error}`);
-    }
-
-
+    },    
 };
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind
+DefaultSponsorContextValue.onError = DefaultSponsorContextValue.onError.bind(DefaultSponsorContextValue);
+DefaultSponsorContextValue.onLoggedIn = DefaultSponsorContextValue.onLoggedIn.bind(DefaultSponsorContextValue);
+DefaultSponsorContextValue.onLoggedOut = DefaultSponsorContextValue.onLoggedOut.bind(DefaultSponsorContextValue);
+DefaultSponsorContextValue.onUpdates = DefaultSponsorContextValue.onUpdates.bind(DefaultSponsorContextValue);
+
+export {DefaultSponsorContextValue};
 export const SponsorContext = React.createContext(DefaultSponsorContextValue);
