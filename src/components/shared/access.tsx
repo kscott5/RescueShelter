@@ -201,4 +201,4 @@ class Access extends React.Component<any> {
     }
 }
 
-export {Access as default, Access};
+export {Access as default, Access, Login, Logout};
