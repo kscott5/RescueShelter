@@ -1,16 +1,17 @@
 import * as React from "react";
-import {Form, FormInput, FormButton} from "semantic-ui-react";
+import {Redirect} from "react-router";
+import {AppContext} from "../state/context";
+import {Login} from "../shared/access";
+import {SponsorStateModel, SponsorModel } from "../state/sponsor";
 
-class LoginSponsor extends React.Component {
-    state = {
-        username:'', 
-        password: '', 
-        loginLabel: 'Login', 
-        forgotLabel: 'Forgot It'
-    };
+class LoginSponsor extends React.Component<any> {
+    static contextType = AppContext;
 
     constructor(props) {
-        super(props);        
+        super(props);
+
+        this.onLoggedIn = this.onLoggedIn.bind(this);
+        this.onError = this.onError.bind(this);
     }
 
     componentDidMount() {        
@@ -22,14 +23,35 @@ class LoginSponsor extends React.Component {
             (nextContext !== this.context);
     }
     
-    render()  {
-        const login = this.state;
-        return (<Form>
-            <FormInput type="text" id="username" placeholder="UserName" name="username" value={login.username}/>
-            <FormInput type="password" id="password" placeholder="Password" name="password" value={login.password} />
-            <FormButton value={login.loginLabel}/> <FormButton value={login.loginLabel} />
-        </Form>);           
+    onLoggedIn(login) {
+        if(!login.ok) {
+            console.log("Login sponsor failed."); 
+            return ;
+        }
+
+        console.log("Login sponsor is complete.");
+        
+        const model = new SponsorStateModel();
+        model.hashid = login.data.hashid || '';
+        model.loggedIn = login.ok || false;
+        model.sponsor = login.data.sponsor || new SponsorModel();
+        
+        this.context.updateAppContext(model);        
     }
-}
+
+    onError(error){
+        console.log(`${error}`);
+    }
+
+    render()  {
+        const model = this.context.state.model;
+
+        return (
+            (!model.loggedIn)?
+                <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
+                <Redirect to={"/sponsor/"+ model.sponsor._id } />
+        );
+    }
+} // end LoginSponsor
 
 export {LoginSponsor as default, LoginSponsor as LoginSponsor};
