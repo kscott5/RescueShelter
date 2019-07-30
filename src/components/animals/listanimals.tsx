@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 
-import {SponsorContext} from "../state/context";
+import AppContext from "../state/context";
 
 class ListAnimals extends React.Component {
     state = { documents: [], pages: 1, pageIndex: 1};
-    context = SponsorContext;
+    static contextType = AppContext;
 
     constructor(props) {
         super(props);
