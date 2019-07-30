@@ -1,7 +1,10 @@
 import * as React from 'react';
 import {SponsorStateModel} from "../state/sponsor";
+import {AppContext} from '../state/context';
 
 class NewSponsor extends React.Component<any> {
+    static contextType = AppContext;
+
     state =  new SponsorStateModel();
 
     constructor(props) {
