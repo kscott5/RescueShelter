@@ -1,7 +1,10 @@
 import * as React from "react";
+import {Redirect} from "react-router";
 import {AnimalStateModel} from "../state/animal";
+import {AppContext} from "../state/context";
 
 class NewAnimal extends React.Component<any,any> {
+    static contextType = AppContext;
     state: AnimalStateModel;
 
     constructor(props,state) {
@@ -51,8 +54,11 @@ class NewAnimal extends React.Component<any,any> {
 
         this.setState({animal: animal, sponsor: ''});
 
+        var hashid = this.context.state.model.hashid;
+        var useremail = this.context.state.model.sponsor.useremail;
+
         // JSONify only AnimalModel
-        return JSON.stringify(animal);
+        return JSON.stringify({hashid: hashid, useremail: useremail, animal: animal});
     }
 
     onSaveNewAnimal(event) {
@@ -120,51 +126,55 @@ class NewAnimal extends React.Component<any,any> {
             ); 
         });
 
-        return (
-            <form className="ui form">
-                <h4 className="ui diving header">{this.state.pageTitle}</h4>
-                <div className="ui error">{this.state.message}</div>
-                <div className="field">
-                    <label>Name</label>
-                    <div className="ui field input">                                
-                        <input id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={this.state.animal.name}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label>Description</label>
-                    <div className="ui field input">
-                        <textarea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' value={this.state.animal.description}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label>Image Url</label>
-                    <div className="ui field input">
-                        <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
-                    </div>
-                </div>
-                <div className="inline field">
-                    <div className="ui checkbox">
-                        <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
-                        <label>Endangered</label>                            
-                    </div>
-                </div>
-                <div className="field">
-                    <label>Sponsor</label>
-                    <div className="ui field input">
-                        <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label>Sponsor</label>                                
-                    <div className="ui field input">
-                        {sponsors}    
-                    </div>
-                </div>
-                <div className="field">
-                    <button id='addanimal' name='addanimal' onClick={this.onSaveNewAnimal}>Save</button>
-                </div>
-            </form>                
-        );
+        const model = this.context.state.model;
+        if(!model.loggedIn)
+            return (<Redirect to="/login?/animal" /> );
+        else
+            return (
+                    <form id="animalForm" className="ui form">
+                        <h4 className="ui diving header">{this.state.pageTitle}</h4>
+                        <div className="ui error">{this.state.message}</div>
+                        <div className="field">
+                            <label>Name</label>
+                            <div className="ui field input">                                
+                                <input id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={this.state.animal.name}/>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label>Description</label>
+                            <div className="ui field input">
+                                <textarea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' value={this.state.animal.description}/>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label>Image Url</label>
+                            <div className="ui field input">
+                                <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
+                            </div>
+                        </div>
+                        <div className="inline field">
+                            <div className="ui checkbox">
+                                <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
+                                <label>Endangered</label>                            
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label>Sponsor</label>
+                            <div className="ui field input">
+                                <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label>Sponsor</label>                                
+                            <div className="ui field input">
+                                {sponsors}    
+                            </div>
+                        </div>
+                        <div className="field">
+                            <button id='addanimal' name='addanimal' type="button" onClick={this.onSaveNewAnimal}>Save</button>
+                        </div>
+                    </form>
+            );
     }
 }
 
