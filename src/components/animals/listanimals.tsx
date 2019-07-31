@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 
-import AppContext from "../state/context";
+import {AppContext} from "../state/context";
 
 class ListAnimals extends React.Component {
-    state = { documents: [], pages: 1, pageIndex: 1};
     static contextType = AppContext;
-
+    state = { documents: [], pages: 1, pageIndex: 1};
+    
     constructor(props) {
         super(props);
         this.onSponsorClick = this.onSponsorClick.bind(this);
@@ -51,10 +51,12 @@ class ListAnimals extends React.Component {
             </div>
         );
         
+        const model = this.context.state.model;
+
         return (
             <div className="ui containter">
                 <h2>Animal Rescurers! We need YOU!</h2>
-                <Link to="/animal">New</Link>
+                {(model.loggedIn)? (<Link to="/animal">New</Link>) : <div/>}
                 {documentItems}
             </div>
             
