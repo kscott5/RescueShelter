@@ -131,7 +131,7 @@ class NewSponsor extends React.Component<any> {
                     </div>
                 </div>
                 <div className="field">
-                    <button id="save" name="save" className="ui button" onClick={this.onClick}>Save</button>
+                    <button id="save" name="save" className="ui button" type="button" onClick={this.onClick}>Save</button>
                 </div>
             </form>
         );           
