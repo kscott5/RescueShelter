@@ -1,16 +1,13 @@
 import * as React from 'react';
 import {SponsorStateModel} from "../state/sponsor";
 import {AppContext} from '../state/context';
+import { callbackify } from 'util';
 
 class NewSponsor extends React.Component<any> {
     static contextType = AppContext;
 
-    state =  new SponsorStateModel();
-
     constructor(props) {
         super(props);
-
-        this.state = new SponsorStateModel();
 
         this.onClick = this.onClick.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -28,13 +25,36 @@ class NewSponsor extends React.Component<any> {
     }
 
     onClick(event) {
-        const name = event.target.name;
-        const value = event.target.value;
+        // Multiple <form/> on HTML page. QuerySElector provides different results
+        // from browser console viewer and typescript [tsc - cli] v3.5.2 
+        // ------------------------------------------------------------------------------------
+        // document.querySelector("form").checkValidity();                             // OK      : both
+        // document.querySelector("form.ui.form.register").checkValidity();            // NOT OK  : tsc
+        // document.querySelector("form[class='ui form register']").checkValidity();   // NOT OK  : tsc
+        //
+        // getForm("[form.ui.form.register").checkValidity();                      OK
+        //
+        // <form class="ui form">
+        // </form>
+        //
+        // <form class="ui form register">
+        // </form>
+        //
+        // WORK AROUND
+        //     getForm(selector: string) : HTMLFormElement {
+        //          return document.querySelector(selector);
+        //      }
+        //
         
-        const objThis = this;        
+        if(this.context.state.getForm("form.ui.form.register").checkValidity()) {
+            console.log("not valid");
+            return false;
+        }
+
+        const appCtx = this.context.state;
         fetch(`http://localhost:3302/api/secure/registration`, {
             method: "POST",
-            body: JSON.stringify(objThis.state.sponsor),
+            body: JSON.stringify(appCtx.model.sponsor),
             headers: {
                 "content-type": "application/json"
             }
@@ -42,8 +62,11 @@ class NewSponsor extends React.Component<any> {
         .then(response => response.json())
         .then(response => { 
             if(response.ok) {
-                objThis.setState({ hashid: response.data.hashid});
-                objThis.setState({sponsor: response.data.sponsor});
+                var model = appCtx.model;
+                model.hashid = response.data.hashid;
+                model.sponsor = response.data.sponsor;
+
+                appCtx.updateAppContext(model);
             }
         })
         .catch(error => console.log(error));
@@ -53,29 +76,29 @@ class NewSponsor extends React.Component<any> {
         const target = event.target;
         const name = target.name;
         const value = target.value;
-        const sponsor = this.state.sponsor;
+        const model = this.context.state.model;
 
-        sponsor[name] = value;
-        this.setState({sponsor: sponsor});
+        model.sponsor[name] = value;
+        this.context.state.updateAppContext(model);
     }
 
     compareTo(event) {
         const target = event.target;
         const value = target.value;
         
-        this.setState({matchSuccess: ""});
-        if(this.state.sponsor.password === value) {
-            this.setState({matchSuccess: "success"});
-        }
+        var model = this.context.state.model;
 
-        this.setState({confirmPassword: value});
+        model.matchSuccess = (model.sponsor.password === value)? "success": "";
+        model.confirmPassword = value;
+
+        this.context.state.updateAppContext(model);
     }
 
     verifyUniquiness(event) {
         const name = event.target.name;
         const value = event.target.value;
         
-        const objThis = this;        
+        const appCtx = this.context.state;
         fetch(`http://localhost:3302/api/secure/unique/sponsor`, {
             method: "POST",
             body: JSON.stringify({field: name, value: value}),
@@ -84,50 +107,49 @@ class NewSponsor extends React.Component<any> {
             }
         })
         .then(response => response.json())
-        .then(response => { 
-            objThis.setState({uniqueSuccess: ""});
-            if(!response.ok)
-                objThis.setState({uniqueSuccess: "error"});
-            
-            const sponsor = objThis.state.sponsor;
-            sponsor.useremail = value;
-            objThis.setState({sponsor: sponsor});             
+        .then(response => {
+            var model = appCtx.model;
+
+            model.uniqueSuccess = (!response.ok)? "error": "";
+            model.sponsor.useremail = value;
+            appCtx.updateAppContext(model);
         })
         .catch(error => console.log(error));
     }
 
     render()  {
+        var model = this.context.state.model;
         return (
-            <form className="ui form">
-                <h4 className="ui diving header">{this.state.pageTitle}</h4>
+            <form className="ui form register">
+                <h4 className="ui diving header">{model.pageTitle}</h4>
                 <div className="field">
                     <label>Email *</label>
-                    <div id="useremail" className={"ui field input " + this.state.uniqueSuccess}>
-                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={this.state.sponsor.useremail}/>
+                    <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
+                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={model.sponsor.useremail}/>
                     </div>
                 </div>
                 <div className="field">
                     <label>Password *</label>
-                    <div id="password" className={"ui field input " + this.state.matchSuccess}>
-                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={this.state.sponsor.password} />
+                    <div id="password" className={"ui field input " + model.matchSuccess}>
+                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={model.sponsor.password} />
                     </div>
                 </div>
                 <div className="field">
                     <label>Confirm Password *</label>
                     <div id="confirmPassword" className="ui field input">
-                        <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={this.state.confirmPassword}/>
+                        <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={model.confirmPassword}/>
                     </div>
                 </div>
                 <div className="field">
                     <label>First Name</label>
                     <div id="firstname" className="ui field input">
-                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={this.state.sponsor.firstname}/>
+                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={model.sponsor.firstname}/>
                     </div>
                 </div>
                 <div className="field">
                     <label>Last name</label>
                     <div id="lastname" className="ui field input">
-                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={this.state.sponsor.lastname}/>
+                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={model.sponsor.lastname}/>
                     </div>
                 </div>
                 <div className="field">

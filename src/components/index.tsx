@@ -20,9 +20,14 @@ class App extends React.Component<any> {
         this.state = this;
     }
 
+    getForm(selector: string) : HTMLFormElement {
+        return document.querySelector(selector);
+    }
 
-    updateAppContext(model: SponsorStateModel) {
-        this.setState({model: model});
+    updateAppContext(model: SponsorStateModel | any) {
+        (model instanceof SponsorStateModel)?
+            this.setState({model: model}) :
+            this.setState(model);
     }
 
     render() {

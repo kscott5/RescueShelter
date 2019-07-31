@@ -28,9 +28,9 @@ class NavLinks extends React.Component {
                 <div className="ui row">
                 <Container className="left float">                    
                     <Menu id="menu" name="menu" compact inverted pointing secondary size='large'>
-                        <Menu.Item id='home' name='home' as='div' active onClick={this.onMenuItemClicked}><Link to="/">Home</Link></Menu.Item>
-                        <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><Link to="/animals">Animals</Link></Menu.Item>
-                        <Menu.Item id='sponsors' name='sponsors' as='div' onClick={this.onMenuItemClicked}><Link to="/sponsors">Sponsors</Link></Menu.Item>
+                        <Menu.Item id='home' name='home' as='div' active onClick={this.onMenuItemClicked}><i className="home icon"></i><Link to="/">Home</Link></Menu.Item>
+                        <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><i className="paw icon"></i><Link to="/animals">Animals</Link></Menu.Item>
+                        <Menu.Item id='sponsors' name='sponsors' as='div' onClick={this.onMenuItemClicked}><i className="users icon"></i><Link to="/sponsors">Sponsors</Link></Menu.Item>
                     </Menu>
                 </Container>
                 <Container className="right float">
