@@ -18,9 +18,10 @@ class App extends React.Component<any> {
         this.updateAppContext = this.updateAppContext.bind(this);
         this.model = new SponsorStateModel();
         this.state = this;
+        
     }
 
-    getForm(selector: string) : HTMLFormElement {
+    querySelector(selector: string) : any {
         return document.querySelector(selector);
     }
 

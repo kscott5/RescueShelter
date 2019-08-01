@@ -32,7 +32,7 @@ class NewSponsor extends React.Component<any> {
         // document.querySelector("form.ui.form.register").checkValidity();            // NOT OK  : tsc
         // document.querySelector("form[class='ui form register']").checkValidity();   // NOT OK  : tsc
         //
-        // getForm("[form.ui.form.register").checkValidity();                      OK
+        // querySelector("[form.ui.form.register").checkValidity();                      OK
         //
         // <form class="ui form">
         // </form>
@@ -41,17 +41,16 @@ class NewSponsor extends React.Component<any> {
         // </form>
         //
         // WORK AROUND
-        //     getForm(selector: string) : HTMLFormElement {
+        //     querySelector(selector: string) : any {
         //          return document.querySelector(selector);
         //      }
         //
-        
-        if(this.context.state.getForm("form.ui.form.register").checkValidity()) {
+        const appCtx = this.context.state;
+        if(appCtx.querySelector("form.ui.form.register").checkValidity()) {
             console.log("not valid");
             return false;
         }
 
-        const appCtx = this.context.state;
         fetch(`http://localhost:3302/api/secure/registration`, {
             method: "POST",
             body: JSON.stringify(appCtx.model.sponsor),

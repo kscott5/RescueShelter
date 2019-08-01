@@ -12,12 +12,12 @@ Multiple <form/> on HTML page. [querySelector](https://developer.mozilla.org/en-
 Casting with javascript. Stop it now. This is a typescript function.  
 The lib.ts.d should check the HTMLElement DOCUMENT_NODE_TYPE or other value  
 ```
-getForm(selector: string) : HTMLFormElement {
+querySelector(selector: string) : any {
     return document.querySelector(selector);
 }
 
    
-getForm("[form.ui.form.register").checkValidity() ;   
+querySelector("[form.ui.form.register").checkValidity() ;   
 
  <form class="ui form">
  </form>
