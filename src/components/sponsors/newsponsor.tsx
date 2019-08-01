@@ -25,26 +25,6 @@ class NewSponsor extends React.Component<any> {
     }
 
     onClick(event) {
-        // Multiple <form/> on HTML page. QuerySElector provides different results
-        // from browser console viewer and typescript [tsc - cli] v3.5.2 
-        // ------------------------------------------------------------------------------------
-        // document.querySelector("form").checkValidity();                             // OK      : both
-        // document.querySelector("form.ui.form.register").checkValidity();            // NOT OK  : tsc
-        // document.querySelector("form[class='ui form register']").checkValidity();   // NOT OK  : tsc
-        //
-        // querySelector("[form.ui.form.register").checkValidity();                      OK
-        //
-        // <form class="ui form">
-        // </form>
-        //
-        // <form class="ui form register">
-        // </form>
-        //
-        // WORK AROUND
-        //     querySelector(selector: string) : any {
-        //          return document.querySelector(selector);
-        //      }
-        //
         const appCtx = this.context.state;
         if(appCtx.querySelector("form.ui.form.register").checkValidity()) {
             console.log("not valid");
