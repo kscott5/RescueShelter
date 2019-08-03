@@ -49,8 +49,7 @@ export namespace AnimalService {
     function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
         var animalAggregate = (!phrase)? animalModel.aggregate() :
             animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
-        
-        
+                
         animalAggregate.append([
             {
                 $lookup: {
@@ -77,7 +76,7 @@ export namespace AnimalService {
                 }
             }}
         ])
-        .limit(limit)            
+        .limit(limit)
         .exec(function(error, data) {
             var results = new services.pagination(1,1, data);
             callback(error,results)
