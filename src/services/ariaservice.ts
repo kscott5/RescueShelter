@@ -13,22 +13,23 @@ import * as services from "./services";
  * 
  */
 
+export namespace AriaService {
+    services.createMongooseModel("aria", 
+        services.createMongooseSchema({
+            lang: {type: String, required: true},
+            route: {type: String, required: true},
+            labels: {type: Object, required: true}
+        })
+    );
 
-services.createMongooseModel("aria", 
-    services.createMongooseSchema({
-        lang: {type: String, required: true},
-        route: {type: String, required: true},
-        labels: {type: Object, required: true}
-    })
-);
+    export function publishWebAPI(app: Application) {
+        const jsonParser = bodyParser.json();
 
-export function publishWebAPI(app: Application) {
-    const jsonParser = bodyParser.json();
+        app.get("/api/aria/:lang", jsonParser, (req,res)=>{
+            res.status(200);
 
-    app.get("/api/aria/:lang", jsonParser, (req,res)=>{
-        res.status(200);
-
-        const lang = req.params.lang;
-        res.json(services.createJSONResponse("Not impplemented yet", {data: lang}));
-    });
-}
+            const lang = req.params.lang;
+            res.json(services.createJSONResponse("Not impplemented yet", {data: lang}));
+        });
+    } // end publishWebAPI
+} // end AriaService

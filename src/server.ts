@@ -6,6 +6,7 @@ import * as cors from "cors";
 import * as morgan from "morgan";
 import * as path from "path";
 
+import {AriaService} from "./services/ariaservice";
 import {AnimalService} from "./services/animalservice";
 import {SponsorService} from "./services/sponsorservice";
 import {SecurityService} from "./services/securityservice";
@@ -61,6 +62,7 @@ export class Server {
             res.sendFile("apis.html");
         });
 
+        AriaService.publishWebAPI(apiServer);
         AnimalService.publishWebAPI(apiServer);
         SponsorService.publishWebAPI(apiServer);
         SecurityService.publishWebAPI(apiServer);
