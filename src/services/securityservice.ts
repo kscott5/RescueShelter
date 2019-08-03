@@ -290,7 +290,8 @@ export namespace SecurityService {
 
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
-
+        let jsonResponse = new services.JsonResponse();
+            
         app.post("/api/secure/unique/sponsor", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
             res.status(200);
@@ -298,11 +299,13 @@ export namespace SecurityService {
             const field = req.body.field;
             const value = req.body.value;
             if(!field || !value) {                
-                res.json(services.createJSONResponse("HttpPOST body not available with request"));
+                res.json(jsonResponse.createError("HttpPOST body not available with request"));
             }
 
             verifyUniqueUserField(field, value, (error, data) => {
-                    res.json(services.createJSONResponse(error,data));
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -314,10 +317,10 @@ export namespace SecurityService {
             const secret = req.body.secret;            
 
             if(!data || !secret) {
-                res.json(services.createJSONResponse("HttpPOST: request body not available"));
+                res.json(jsonResponse.createError("HttpPOST: request body not available"));
             }
 
-            res.json(services.createJSONResponse(generateEncryptedData(data,secret)));
+            res.json(jsonResponse.createData(generateEncryptedData(data,secret)));
         });
 
         app.post("/api/secure/verify", jsonBodyParser, (req,res) => {
@@ -328,11 +331,13 @@ export namespace SecurityService {
             var useremail = req.body.useremail;
 
             if(!hashid || !useremail) {
-                res.json(services.createJSONResponse("HttpPOST body not availe with request"));
+                res.json(jsonResponse.createError("HttpPOST body not availe with request"));
             }
 
             verifyHash(hashid, useremail, (error, data) => {
-                res.json(services.createJSONResponse(error, data));
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             })
             
         }); // end /api/secure/verify
@@ -345,11 +350,13 @@ export namespace SecurityService {
             var useremail = req.body.useremail;
 
             if(!hashid || !useremail) {
-                res.json(services.createJSONResponse("HttpPOST body is not available."));
+                res.json(jsonResponse.createError("HttpPOST body is not available."));
             }
 
             deauthenticate(hashid, useremail, (error, data) => {
-                res.json(services.createJSONResponse(error, data));
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -364,11 +371,13 @@ export namespace SecurityService {
             const password = req.body.password; // clear text password never saved
 
             if(!useremail || !password) {
-                res.json(services.createJSONResponse("HttpPOST: request body not available"));
+                res.json(jsonResponse.createError("HttpPOST: request body not available"));
             }
 
             authenticate(useremail, password, (error, data) =>{
-                res.json(services.createJSONResponse(error,data));
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -379,7 +388,7 @@ export namespace SecurityService {
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
-                res.json(services.createJSONResponse("HttpPOST json body not available"));
+                res.json(jsonResponse.createError("HttpPOST json body not available"));
             }
 
             // generate the security object
@@ -395,13 +404,15 @@ export namespace SecurityService {
             var model = services.getModel("sponsor");
             var sponsor = new model(item);
 
-            sponsor.save(null, (err,doc)=>{
-                    (err)? 
-                        res.json(services.createJSONResponse(err,doc)) :
+            sponsor.save(null, (err,doc) => {
+                (err)? 
+                    res.json(jsonResponse.createError(err)) :
                         
-                        authenticate(useremail, password, (err, auth) =>{
-                            res.json(services.createJSONResponse(err,auth));
-                        });
+                    authenticate(useremail, password, (error, auth) => {
+                        (error)? 
+                            res.json(jsonResponse.createError(error)) :
+                            res.json(jsonResponse.createData(auth));
+                    });
             }); // end save sponsor
         }); // end /api/secure/registration
     } // end publishWebAPI

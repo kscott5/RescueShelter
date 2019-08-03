@@ -23,13 +23,14 @@ export namespace AriaService {
     );
 
     export function publishWebAPI(app: Application) {
-        const jsonParser = bodyParser.json();
+        let jsonParser = bodyParser.json();
+        let jsonResponse = new services.JsonResponse();
 
         app.get("/api/aria/:lang", jsonParser, (req,res)=>{
             res.status(200);
 
             const lang = req.params.lang;
-            res.json(services.createJSONResponse("Not impplemented yet", {data: lang}));
+            res.json(jsonResponse.createError("Not impplemented yet"));
         });
     } // end publishWebAPI
 } // end AriaService

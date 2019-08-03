@@ -55,7 +55,7 @@ export function createFindOneAndUpdateOptions(fields?: Object|String, upsert: bo
     return options;
 }
 
-export class pagination {
+export class Pagination {
     public pages: Number;
     public pageIndex: Number;
     public documents: Array<any>;
@@ -67,10 +67,27 @@ export class pagination {
     }
 }
 
-export function createJSONResponse(error, data: any = null) {
-    return {
-        ok: !error,
-        data: error || data,
-    }
-}
+    export class JsonResponse {
+        constructor(){}
 
+        createError(error: any) : any {
+            return {
+                ok: true,
+                data: error,
+            }
+        }
+
+        createData(data: any) : any {
+            return {
+                ok: true,
+                data: data,
+            }
+        }
+
+        createPagination(data: any, pageCount: Number = 1, pageCurrent: Number = 1) : any {
+            return {
+                ok: true,
+                data: new Pagination(1,1, data)
+            }
+    } // end JsonResponse
+} // end Services namespace

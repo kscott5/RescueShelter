@@ -2,6 +2,7 @@ import {Application}  from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
 import {SecurityService as security} from "./securityservice";
+import { Aggregate } from "mongoose";
 
 export namespace AnimalService {
     let __selectionFields = '_id name description imageSrc sponsors';
@@ -46,11 +47,11 @@ export namespace AnimalService {
         animalModel.findById(id,callback);
     } 
 
-    function getAnimals(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
+    function getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Aggregate<any> {
         var animalAggregate = (!phrase)? animalModel.aggregate() :
             animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
                 
-        animalAggregate.append([
+        return animalAggregate.append([
             {
                 $lookup: {
                     from: "sponsors",
@@ -76,11 +77,12 @@ export namespace AnimalService {
                 }
             }}
         ])
-        .limit(limit)
-        .exec(function(error, data) {
-            var results = new services.pagination(1,1, data);
-            callback(error,results)
-        });
+        .limit(limit);
+
+        // .exec(function(error, data) {
+        //     var results = new services.pagination(1,1, data);
+        //     callback(error,results)
+        // });
     } 
     
     /**
@@ -88,8 +90,8 @@ export namespace AnimalService {
      */
     export function publishWebAPI(app: Application) {
         // Parser for various different custom JSON types as JSON
-        var jsonBodyParser = bodyParser.json({type: 'application/json'});
-    
+        let jsonBodyParser = bodyParser.json({type: 'application/json'});
+        let jsonResponse = new services.JsonResponse();            
 
         /**
          * @description create a new animal data 
@@ -104,17 +106,16 @@ export namespace AnimalService {
             res.status(200);
 
             if(animal === null) {
-                res.json(services.createJSONResponse("HttpPOST request body not valid"));
+                res.json(jsonResponse.createError("HttpPOST request body not valid"));
             }
 
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
             security.verifyAccess(access, (error, data) => {
                 if(error !== null){
-                    res.json(services.createJSONResponse("You do not have access.", data));
+                    res.json(jsonResponse.createError("You do not have access."));
                 } else {
                     newAnimal(req.body, function(error, data){
-                        var results = services.createJSONResponse(error,data);
-                        res.json(results);
+                        res.json(jsonResponse.createData(data));
                     });
                 }
             }); // end verify access
@@ -134,16 +135,16 @@ export namespace AnimalService {
             res.status(200);
 
             if(id === null || animal === null || animal._id != id) {
-                res.json(services.createJSONResponse("HttpPOST request parameter and/or json body not valid"));
+                res.json(jsonResponse.createError("HttpPOST request parameter and/or json body not valid"));
             }
             
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
             security.verifyAccess(access, (error, data) => {
                 if(error !== null){
-                    res.json(services.createJSONResponse("You do not have access.", data));
+                    res.json(jsonResponse.createError("You do not have access."));
                 } else {
                     saveAnimal(animal, function(error,data) {
-                        res.json(services.createJSONResponse(error,data));                
+                        res.json(jsonResponse.createData(data));                
                     });
                 }
             });
@@ -163,8 +164,9 @@ export namespace AnimalService {
 
             res.status(200);
             getAnimal(req.params.id, function(error,data){
-                var results = services.createJSONResponse(error,data);
-                res.json(results);
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -178,13 +180,10 @@ export namespace AnimalService {
             var phrase = req.query.phrase || null;
 
             res.status(200);
-            getAnimals(
-                function(error, data) {
-                        var results = services.createJSONResponse(error,data);
-                        res.json(results);
-                    }, 
-                    page, limit, phrase
-            );
+            
+            getAnimals(page, limit, phrase)
+            .then(value => res.json(jsonResponse.createPagination(1,1,value)))
+            .catch(reason => res.json(jsonResponse.createError(reason)));
         });
     } 
 } // end namespace AnimalService

@@ -66,24 +66,28 @@ export namespace SponsorService {
             .limit(limit)
             .select(__selectionFields)
             .exec(function(error, data) {
-                var results = new services.pagination(1,1, data);
+                var results = new services.Pagination(1,1, data);
                 callback(error,results)
             });
     } 
 
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
-    
+        let jsonResponse = new services.JsonResponse();
+
         app.post("/api/sponsor", jsonBodyParser, (req,res) => {
+            
             console.debug(`POST: ${req.url}`);
             if(!req.body) {
                 res.status(200);
-                res.json(services.createJSONResponse("HttpPOST json body not available"));
+                res.json(jsonResponse.createError("HttpPOST json body not available"));
            }
 
            res.status(200);
            newSponsor(req.body, function(error, data){
-               res.json(services.createJSONResponse(error,data));
+               (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
            });
         });
 
@@ -96,7 +100,9 @@ export namespace SponsorService {
 
             saveSponsor(req.body, (error, data) => {
                 res.status(200);
-                res.json(services.createJSONResponse(error, data));
+                (error)? 
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -104,7 +110,9 @@ export namespace SponsorService {
             console.debug(`GET [:id]: ${req.url}`);
             res.status(200);
             getContribtuor(req.params.id, (error, data) => {
-                res.json(services.createJSONResponse(error, data));
+                (error)?
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
             });
         });
 
@@ -115,13 +123,11 @@ export namespace SponsorService {
             var phrase = req.query.phrase || null;
 
             res.status(200);
-            getSponsors(
-                function(error, data) {
-                    var results = services.createJSONResponse(error,data);
-                    res.json(results);
-                }, 
-                page, limit, phrase
-            );            
+            getSponsors(function(error, data) {
+                (error) ?
+                    res.json(jsonResponse.createError(error)) :
+                    res.json(jsonResponse.createData(data));
+            });
         });
     }
 }
