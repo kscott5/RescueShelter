@@ -2,6 +2,7 @@ import {Application} from "express";
 import * as bodyParser from "body-parser";
 import * as crypto from "crypto";
 import * as services from "./services";
+import { Aggregate } from "mongoose";
 
 export namespace SecurityService {
     let __authSelectionFields = "_id useremail username firstname lastname photo audit";
@@ -97,13 +98,14 @@ export namespace SecurityService {
         });
     } 
 
-    export function authenticate(useremail: String, password: String, callback: Function) {
+    export function authenticate(useremail: String, password: String) : Promise<any> {
         const encryptedPassword = generateEncryptedData(password, useremail);
 
         // Format improves readable and increases the number of lines
         const now = new Date();
         const model = services.getModel("sponsor");
-        model.aggregate([
+
+        return model.aggregate([
             {
                 $lookup: { // left outer join on sponsor. token exists and valid
                     from: "tokens",
@@ -138,29 +140,23 @@ export namespace SecurityService {
             }}
         ])
         .limit(1)
-        .exec((err, doc) => {
-            if(err !== null){
-                console.debug(err);
-                callback(services.SYSTEM_UNAVAILABLE_MSG, doc);
-            } else { 
-                try {
-                    var sponsor = doc[0];                    
-                    if(sponsor.token !== null && sponsor.token === 'object') { // session exists                        
-                        var token = sponsor.token;                                                
-                        var error = (token.expired)? services.SYSTEM_SESSION_EXPIRED: null;
+        .then(doc => {
+            if(doc.length === 0)
+                throw new Error(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
 
-                        sponsor.token = null;
-                        callback(error, {hashid: token.hashid, sponsor: sponsor});
-                    } else { // session !exists
-                        generateHashId(sponsor, (error, data) => {
-                            callback(error, {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor});
-                        });
-                    }
-                } catch(error) {
-                    console.debug(error);
-                    callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, doc);
-                } // end try-catch
-            } // end if-else
+            var sponsor = doc[0];                    
+            if(sponsor.token.length === 1) { // session exists                        
+                var token = sponsor.token[0]; 
+                if(token.expired) 
+                    throw new Error(services.SYSTEM_SESSION_EXPIRED);
+
+                sponsor.token = null;
+                return {hashid: token.hashid, sponsor: sponsor};
+            } else { // session !exists                
+                return Promise.resolve(generateHashId(sponsor)).then(data => {
+                    return {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor}});
+                
+            }
         });        
     } // end authenticate
 
@@ -230,11 +226,9 @@ export namespace SecurityService {
      * @param doc authenicate sponor was ok
      * @param callback publish results of complete authentication process
      */
-    function generateHashId(doc: any, callback: Function) {
-        if(!doc) {
-            callback(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG, null);
-            return;
-        }
+    function generateHashId(doc: any) : Promise<any> {
+        if(!doc)
+            throw new Error(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
 
         var now = new Date();
         var expires = new Date(now.getTime()+SESSION_TIME);
@@ -248,14 +242,12 @@ export namespace SecurityService {
         var update = new tokenModel({useremail: useremail, hashid: hashid, expires: expires.getTime()});
 
         var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
-        tokenModel.findOneAndUpdate({useremail: useremail}, update, options, (error, product) => {
-            try {
-                callback(error, product["value"]);
-            } catch(err) {
-                console.debug(err);
-                callback(services.SYSTEM_UNAVAILABLE_MSG, product);
-            }
-        });
+        return tokenModel.findOneAndUpdate({useremail: useremail}, update, options)
+            .then(product => {return product["value"]} )
+            .catch(err => {
+                console.log(err);
+                throw new Error(services.SYSTEM_UNAVAILABLE_MSG);
+            });
     } // end generateHashId
 
     function verifyUniqueUserField(field: String, value: String, callback: Function) {
@@ -374,11 +366,9 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST: request body not available"));
             }
 
-            authenticate(useremail, password, (error, data) =>{
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+            Promise.resolve(authenticate(useremail, password))
+                .then(data => res.json(jsonResponse.createData(data)))
+                .catch(error => res.json(jsonResponse.createError(error)));
         });
 
         /**
@@ -404,16 +394,11 @@ export namespace SecurityService {
             var model = services.getModel("sponsor");
             var sponsor = new model(item);
 
-            sponsor.save(null, (err,doc) => {
-                (err)? 
-                    res.json(jsonResponse.createError(err)) :
-                        
-                    authenticate(useremail, password, (error, auth) => {
-                        (error)? 
-                            res.json(jsonResponse.createError(error)) :
-                            res.json(jsonResponse.createData(auth));
-                    });
-            }); // end save sponsor
+            var authPromise = Promise.resolve(authenticate(useremail, password));
+            Promise.resolve(sponsor.save())
+                .then(doc => authPromise)
+                .then(auth => res.json(jsonResponse.createData(auth)))
+                .catch(error => res.json(jsonResponse.createError(error)));
         }); // end /api/secure/registration
     } // end publishWebAPI
 } // end SecurityServices namespace
