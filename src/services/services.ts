@@ -1,5 +1,4 @@
 import * as mongoose from "mongoose";
-import { element } from "prop-types";
 
 console.log(`mongoosejs version: ${mongoose.version}`);
 
@@ -10,6 +9,11 @@ let __connectionString = 'mongodb://localhost:27017/rescueshelter';
 let __connection = mongoose.createConnection(__connectionString);
 
 let __models = {};
+
+export const SPONSOR_MODEL_NAME = "sponsor";
+export const ANIMAL_MODEL_NAME = "animal";
+export const SECURITY_MODEL_NAME = "token";
+export const TRACK_MODEL_NAME = "transaction";
 
 export const SYSTEM_UNAVAILABLE_MSG = "system unavailable. please try later.";
 export const SYSTEM_INVALID_USER_CREDENTIALS_MSG = "invalid useremail and/or password";

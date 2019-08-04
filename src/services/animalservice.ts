@@ -1,10 +1,9 @@
 import {Application}  from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
-import {SecurityService as security} from "./securityservice";
+import {SecurityService} from "./securityservice";
 
 export namespace AnimalService {
-
     class AnimalDb {
         __selectionFields;
         animalModel;
@@ -29,7 +28,7 @@ export namespace AnimalService {
             animalSchema.path("dates.created").default(function(){return Date.now();});
             animalSchema.path("dates.modified").default(function(){return Date.now();});
             
-            this.animalModel =  services.createMongooseModel("animal", animalSchema);    
+            this.animalModel =  services.createMongooseModel(services.ANIMAL_MODEL_NAME, animalSchema);    
         } // end constructor
 
         newAnimal(item: any) : Promise<any> {
@@ -93,7 +92,7 @@ export namespace AnimalService {
         let jsonResponse = new services.JsonResponse();            
 
         let db = new AnimalDb();
-
+        let securityDb = new SecurityService.SecurityDb();
         /**
          * @description create a new animal data 
          */
@@ -111,7 +110,7 @@ export namespace AnimalService {
             }
 
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
-            Promise.resolve(security.verifyAccess(access))
+            Promise.resolve(securityDb.verifyAccess(access))
                 .then(value => {
                     console.log(value);
                     return Promise.resolve(db.newAnimal(req.body))
@@ -141,7 +140,7 @@ export namespace AnimalService {
             }
             
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
-            Promise.resolve(security.verifyAccess(access))
+            Promise.resolve(securityDb.verifyAccess(access))
                 .then(data => {
                     return Promise.resolve(db.saveAnimal(animal))
                         .then(data => {

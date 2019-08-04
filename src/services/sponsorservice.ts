@@ -17,7 +17,7 @@ export namespace SponsorService {
                 lastname: {type: String},
                 useremail: {type: String, required: [true, '*'], unique: true},
                 username: {type: String, unique: true},
-                security: {type: SecurityService.SecuritySchema()},
+                security: {type: SecurityService.SecurityDb.schema},
                 photo: {type: String},
                 audit: [
                     {
