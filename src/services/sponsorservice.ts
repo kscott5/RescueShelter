@@ -115,7 +115,7 @@ export namespace SponsorService {
             var phrase = req.query.phrase || null;
 
             res.status(200);
-            Promise.resolve(this.getSponsors(page,limit,phrase))
+            Promise.resolve(db.getSponsors(page,limit,phrase))
                 .then(data => res.json(jsonResponse.createPagination(data)))
                 .catch(error => res.json(jsonResponse.createError(error)));
         });
