@@ -40,41 +40,33 @@ export namespace SponsorService {
             this.sponsorModel = services.createMongooseModel("sponsor", sponsorSchema);
         }
 
-        newSponsor(item: any, callback: Function) {
+        newSponsor(item: any) : Promise<any> {
             var sponsor = new this.sponsorModel(item);
 
-            sponsor.save(null, (err,doc)=>{
-                callback(err,doc);
-            })
+            return sponsor.save();
         }
 
-        saveSponsor(item: any, callback: Function) {
+        saveSponsor(item: any) : Promise<any>  {
             var sponsor = new this.sponsorModel(item);
             
             sponsor["audit"].push({modified: new Date(), sponsor_id: sponsor._id});
 
             var options = services.createFindOneAndUpdateOptions();
             
-            this.sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options, (err,doc, res) =>{
-                callback(err, doc["value"]);
-            });
+            return this.sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options);
         }
 
-        getSponsor(id: String, callback: Function) {
-            this.sponsorModel.findById(id,callback);
+        getSponsor(id: String) : Promise<any>  {
+            return this.sponsorModel.findById(id);
         }
 
-        getSponsors(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
+        getSponsors(page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
             var condition = (phrase)? {$text: {$search: phrase}}: {};
             
-            this.sponsorModel.find(condition)
+            return this.sponsorModel.find(condition)
                 .lean()
                 .limit(limit)
-                .select(this.__selectionFields)
-                .exec(function(error, data) {
-                    var results = new services.Pagination(1,1, data);
-                    callback(error,results)
-                });
+                .select(this.__selectionFields);
         } 
     } //end SponsorDb class
 
@@ -93,31 +85,27 @@ export namespace SponsorService {
            }
 
            res.status(200);
-           db.newSponsor(req.body, function(error, data){
-               (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-           });
+           Promise.resolve(db.newSponsor(req.body))
+            .catch(error => res.json(jsonResponse.createError(error)))
+            .then(data => res.json(jsonResponse.createData(data)));
         });
 
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
             console.debug(`POST [:id]: ${req.url}`);            
-            db.saveSponsor(req.body, (error, data) => {
-                res.status(200);
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+            
+            res.status(200);
+            Promise.resolve(db.saveSponsor(req.body))
+                .catch(error => res.json(jsonResponse.createError(error)) )
+                .then(data => res.json(jsonResponse.createData(data["value"])));
         });
 
         app.get("/api/sponsor/:id", (req,res) => {
             console.debug(`GET [:id]: ${req.url}`);
             res.status(200);
-            db.getSponsor(req.params.id, (error, data) => {
-                (error)?
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+
+            Promise.resolve(db.getSponsor(req.params.id))
+                .catch(error => res.json(jsonResponse.createError(error)) )
+                .then(data => res.json(jsonResponse.createData(data)) );
         });
 
         app.get("/api/sponsors", (req,res) => {
@@ -127,11 +115,9 @@ export namespace SponsorService {
             var phrase = req.query.phrase || null;
 
             res.status(200);
-            this.getSponsors(function(error, data) {
-                (error) ?
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+            Promise.resolve(this.getSponsors(page,limit,phrase))
+                .then(data => res.json(jsonResponse.createPagination(data)))
+                .catch(error => res.json(jsonResponse.createError(error)));
         });
     } // end publishWebAPI
 } // end SponsorService namespace
