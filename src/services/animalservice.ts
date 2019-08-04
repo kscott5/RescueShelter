@@ -2,81 +2,87 @@ import {Application}  from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
 import {SecurityService as security} from "./securityservice";
-import { Aggregate } from "mongoose";
 
 export namespace AnimalService {
 
-    let __selectionFields = '_id name description imageSrc sponsors';
+    class AnimalDb {
+        __selectionFields;
+        animalModel;
 
-    const animalSchema = services.createMongooseSchema({
-        name: {type: String, unique:true, required: [true, '*']},
-        imageSrc: String,
-        endangered: Boolean,
-        description: String,
-        population: Number,
-        dates: {
-            created: Date ,
-            modified: Date
-        },
-        sponsors: {type: Array<String>()}
-    });
-    
-    animalSchema.index({name: "text", description: "text", sponsors: "text"});
-    animalSchema.path("dates.created").default(function(){return Date.now();});
-    animalSchema.path("dates.modified").default(function(){return Date.now();});
-    
-    let animalModel =  services.createMongooseModel("animal", animalSchema);    
-    
-    function newAnimal(item: any) : Promise<any> {
-        var animal = new animalModel(item);
+        constructor() {
+            this.__selectionFields = '_id name description imageSrc sponsors';
+
+            var animalSchema = services.createMongooseSchema({
+                name: {type: String, unique:true, required: [true, '*']},
+                imageSrc: String,
+                endangered: Boolean,
+                description: String,
+                population: Number,
+                dates: {
+                    created: Date ,
+                    modified: Date
+                },
+                sponsors: {type: Array<String>()}
+            });
             
-        return animal.save().then(product => {return product;});
-    }
+            animalSchema.index({name: "text", description: "text", sponsors: "text"});
+            animalSchema.path("dates.created").default(function(){return Date.now();});
+            animalSchema.path("dates.modified").default(function(){return Date.now();});
+            
+            this.animalModel =  services.createMongooseModel("animal", animalSchema);    
+        } // end constructor
 
-    function saveAnimal(item: any) : Promise<any> {
-        var animal = new animalModel(item);
-
-        var options = services.createFindOneAndUpdateOptions();
-        return animalModel.findOneAndUpdate({_id: animal._id}, animal, options)
-            .then( doc => { return doc["value"]; });
-    }
-
-    function getAnimal(id: String) : Promise<any>{
-        return animalModel.findById(id).then(doc => { return doc;});
-    } 
-
-    function getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
-        var animalAggregate = (!phrase)? animalModel.aggregate() :
-            animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
+        newAnimal(item: any) : Promise<any> {
+            var animal = new this.animalModel(item);
                 
-        return animalAggregate.append([
-            {
-                $lookup: {
-                    from: "sponsors",
-                    let: {animals_sponsors: '$sponsors'},
-                    pipeline: [{
-                        $project: {
-                            _id: false, useremail: 1, username: 1, 
-                            is_sponsor: {$in: ['$useremail', '$$animals_sponsors']}
-                        }            
-                    }],
-                    as: "sponsors"
-                }        
-            },
-            {
-            $project: {
-                name: 1, description: 1, endangered: 1, imageSrc: 1,
-                sponsors: {
-                    $filter: {
-                        input: '$sponsors',
-                        as: 'contributor',
-                        cond: {$eq: ['$$contributor.is_sponsor', true]}
+            return animal.save().then(product => {return product;});
+        }
+
+        saveAnimal(item: any) : Promise<any> {
+            var animal = new this.animalModel(item);
+
+            var options = services.createFindOneAndUpdateOptions();
+            return this.animalModel.findOneAndUpdate({_id: animal._id}, animal, options)
+                .then( doc => { return doc["value"]; });
+        }
+
+        getAnimal(id: String) : Promise<any>{
+            return this.animalModel.findById(id).then(doc => { return doc;});
+        } 
+
+        getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
+            var animalAggregate = (!phrase)? this.animalModel.aggregate() :
+                this.animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
+                    
+            return animalAggregate.append([
+                {
+                    $lookup: {
+                        from: "sponsors",
+                        let: {animals_sponsors: '$sponsors'},
+                        pipeline: [{
+                            $project: {
+                                _id: false, useremail: 1, username: 1, 
+                                is_sponsor: {$in: ['$useremail', '$$animals_sponsors']}
+                            }            
+                        }],
+                        as: "sponsors"
+                    }        
+                },
+                {
+                $project: {
+                    name: 1, description: 1, endangered: 1, imageSrc: 1,
+                    sponsors: {
+                        $filter: {
+                            input: '$sponsors',
+                            as: 'contributor',
+                            cond: {$eq: ['$$contributor.is_sponsor', true]}
+                        }
                     }
-                }
-            }}
-        ])
-        .limit(limit).then(data => {return data});
-    } 
+                }}
+            ])
+            .limit(limit).then(data => {return data});
+        } 
+    } // end AnimalDb
 
     /**
      * @description Pushlishes the available Web API URLs for items
@@ -85,6 +91,8 @@ export namespace AnimalService {
         // Parser for various different custom JSON types as JSON
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
         let jsonResponse = new services.JsonResponse();            
+
+        let db = new AnimalDb();
 
         /**
          * @description create a new animal data 
@@ -106,7 +114,7 @@ export namespace AnimalService {
             Promise.resolve(security.verifyAccess(access))
                 .then(value => {
                     console.log(value);
-                    return Promise.resolve(newAnimal(req.body))
+                    return Promise.resolve(db.newAnimal(req.body))
                         .then(data => {res.json(jsonResponse.createData(data));})
                 })
                 .catch(error => { 
@@ -135,7 +143,7 @@ export namespace AnimalService {
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
             Promise.resolve(security.verifyAccess(access))
                 .then(data => {
-                    return Promise.resolve(saveAnimal(animal))
+                    return Promise.resolve(db.saveAnimal(animal))
                         .then(data => {
                             res.json(jsonResponse.createData(data));
                         });
@@ -158,7 +166,7 @@ export namespace AnimalService {
                  return;
             }
             res.status(200);
-            Promise.resolve(getAnimal(req.params.id))
+            Promise.resolve(db.getAnimal(req.params.id))
                 .then(data => {
                     res.json(jsonResponse.createData(data));
                 })
@@ -179,9 +187,9 @@ export namespace AnimalService {
 
             res.status(200);
             
-            Promise.resolve(getAnimals(page, limit, phrase))
+            Promise.resolve(db.getAnimals(page, limit, phrase))
             .then(value => res.json(jsonResponse.createPagination(1,1,value)))
             .catch(reason => res.json(jsonResponse.createError(reason)));
         });
-    } 
-} // end namespace AnimalService
+    } // end publishWebAPI
+} // end AnimalService namespace
