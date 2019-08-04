@@ -49,7 +49,7 @@ export namespace AnimalService {
             return this.animalModel.findById(id).then(doc => { return doc;});
         } 
 
-        getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
+        getAnimals(page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
             var animalAggregate = (!phrase)? this.animalModel.aggregate() :
                 this.animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
                     
