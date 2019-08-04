@@ -12,12 +12,13 @@ export namespace SponsorService {
         cnstructor() {
             this.__selectionFields =  "_id useremail username firstname lastname photo audit";
         
+            var securityDb = new SecurityService.SecurityDb();
             var sponsorSchema = services.createMongooseSchema({        
                 firstname: {type: String},
                 lastname: {type: String},
                 useremail: {type: String, required: [true, '*'], unique: true},
                 username: {type: String, unique: true},
-                security: {type: SecurityService.SecurityDb.schema},
+                security: {type: securityDb.schema},
                 photo: {type: String},
                 audit: [
                     {

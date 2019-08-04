@@ -7,6 +7,21 @@ export namespace SecurityService {
     export const SESSION_TIME = 900000; // 15 minutes = 900000 milliseconds
     
     class Track {
+        constructor() {
+            services.createMongooseModel(services.TRACK_MODEL_NAME, () => {
+                var schema = services.createMongooseSchema({
+                        name: {type: String, required: true},
+                        sponsor_id: {type: {}, required: true},
+                        data: {type: {}, required: true},
+                        date: {type: Date, required: true}
+                    }); 
+            
+                schema.path("data").default(new Date());
+
+                return schema;
+            });
+        }
+
         request(action: any) {
             console.debug("Tracking transaction");
     
@@ -101,24 +116,11 @@ export namespace SecurityService {
         
             this.generate = new Generate();
 
-            services.createMongooseModel(services.SECURITY_MODEL_NAME, services.createMongooseSchema({}, false /* disable schema strict */));
-
-            services.createMongooseModel("transaction", () => {
-                    var schema = services.createMongooseSchema({
-                            name: {type: String, required: true},
-                            sponsor_id: {type: {}, required: true},
-                            data: {type: {}, required: true},
-                            date: {type: Date, required: true}
-                        }); 
-                
-                    schema.path("data").default(new Date());
-
-                    return schema;
-                }
-            );
+            services.createMongooseModel(services.SECURITY_MODEL_NAME, 
+                services.createMongooseSchema({}, false /* disable schema strict */));
         } // end constructor
 
-        static get schema() {
+        get schema() {
             const question = services.createMongooseSchema({
                 _id: false,
                 question: {type: String, required: true},
@@ -204,7 +206,7 @@ export namespace SecurityService {
             const model = services.getModel(services.SPONSOR_MODEL_NAME);
             
             if(!securityModel["password"]) {
-                console.debug(`${securityModel}: not a valid ${SecurityDb.schema} schema`);
+                console.debug(`${securityModel}: not a valid ${this.schema} schema`);
                 return Promise.reject("Sponsor security creation issue. Contact system administrator");
             }
 
