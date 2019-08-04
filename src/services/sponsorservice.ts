@@ -5,75 +5,84 @@ import * as services from "./services";
 import {SecurityService} from "./securityservice";
 
 export namespace SponsorService {
-    let __selectionFields = "_id useremail username firstname lastname photo audit";
+    class SponsorDb {
+        private __selectionFields;
+        private sponsorModel;
 
-    let sponsorSchema = services.createMongooseSchema({        
-        firstname: {type: String},
-        lastname: {type: String},
-        useremail: {type: String, required: [true, '*'], unique: true},
-        username: {type: String, unique: true},
-        security: {type: SecurityService.SecuritySchema()},
-        photo: {type: String},
-        audit: [
-            {
-                _id: false,
-                modified: {type: Date, required: [true]},
-                sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
-            }
-        ]
-    });
-    
-    sponsorSchema.index({username: "text", useremail: "text"});
-    sponsorSchema.path("audit").default(function(){
-        return {
-            modified: Date.now(),
-            Sponsor_id: this._id,
-        };
-    });    
-    //schema.path("audit.sponssor_id").default(function(){return Date.now();});
-    
-    let sponsorModel =  services.createMongooseModel("sponsor", sponsorSchema); 
-    
-    function newSponsor(item: any, callback: Function) {
-        var sponsor = new sponsorModel(item);
-
-        sponsor.save(null, (err,doc)=>{
-            callback(err,doc);
-        })
-    }
-
-    function saveSponsor(item: any, callback: Function) {
-        var sponsor = new sponsorModel(item);
+        cnstructor() {
+            this.__selectionFields =  "_id useremail username firstname lastname photo audit";
         
-        sponsor["audit"].push({modified: new Date(), sponsor_id: sponsor._id});
-
-        var options = services.createFindOneAndUpdateOptions();
-        
-        sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options, (err,doc, res) =>{
-            callback(err, doc["value"]);
-        });
-    }
-
-    function getContribtuor(id: String, callback: Function) {
-        sponsorModel.findById(id,callback);
-    }
-
-    function getSponsors(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
-        var condition = (phrase)? {$text: {$search: phrase}}: {};
-        
-        sponsorModel.find(condition)
-            .lean()
-            .limit(limit)
-            .select(__selectionFields)
-            .exec(function(error, data) {
-                var results = new services.Pagination(1,1, data);
-                callback(error,results)
+            var sponsorSchema = services.createMongooseSchema({        
+                firstname: {type: String},
+                lastname: {type: String},
+                useremail: {type: String, required: [true, '*'], unique: true},
+                username: {type: String, unique: true},
+                security: {type: SecurityService.SecuritySchema()},
+                photo: {type: String},
+                audit: [
+                    {
+                        _id: false,
+                        modified: {type: Date, required: [true]},
+                        sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
+                    }
+                ]
             });
-    } 
+            
+            sponsorSchema.index({username: "text", useremail: "text"});
+            sponsorSchema.path("audit").default(function(){
+                return {
+                    modified: Date.now(),
+                    Sponsor_id: this._id,
+                };
+            });    
+            //schema.path("audit.sponssor_id").default(function(){return Date.now();});
+            
+            this.sponsorModel = services.createMongooseModel("sponsor", sponsorSchema);
+        }
+
+        newSponsor(item: any, callback: Function) {
+            var sponsor = new this.sponsorModel(item);
+
+            sponsor.save(null, (err,doc)=>{
+                callback(err,doc);
+            })
+        }
+
+        saveSponsor(item: any, callback: Function) {
+            var sponsor = new this.sponsorModel(item);
+            
+            sponsor["audit"].push({modified: new Date(), sponsor_id: sponsor._id});
+
+            var options = services.createFindOneAndUpdateOptions();
+            
+            this.sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options, (err,doc, res) =>{
+                callback(err, doc["value"]);
+            });
+        }
+
+        getSponsor(id: String, callback: Function) {
+            this.sponsorModel.findById(id,callback);
+        }
+
+        getSponsors(callback: Function, page: number = 1, limit: number = 5, phrase?: String) {
+            var condition = (phrase)? {$text: {$search: phrase}}: {};
+            
+            this.sponsorModel.find(condition)
+                .lean()
+                .limit(limit)
+                .select(this.__selectionFields)
+                .exec(function(error, data) {
+                    var results = new services.Pagination(1,1, data);
+                    callback(error,results)
+                });
+        } 
+    } //end SponsorDb class
 
     export function publishWebAPI(app: Application) {
         let jsonBodyParser = bodyParser.json({type: 'application/json'});
         let jsonResponse = new services.JsonResponse();
+
+        let db = new SponsorDb();
 
         app.post("/api/sponsor", jsonBodyParser, (req,res) => {
             
@@ -84,7 +93,7 @@ export namespace SponsorService {
            }
 
            res.status(200);
-           newSponsor(req.body, function(error, data){
+           db.newSponsor(req.body, function(error, data){
                (error)? 
                     res.json(jsonResponse.createError(error)) :
                     res.json(jsonResponse.createData(data));
@@ -92,13 +101,8 @@ export namespace SponsorService {
         });
 
         app.post("/api/sponsor/:id", jsonBodyParser, (req,res) => {
-            console.debug(`POST [:id]: ${req.url}`);
-            // if(!req.body.hashid) {
-            //     res.status(200);
-            //     res.json(services.jsonResponse("HttpGET json body not available"));
-            // }
-
-            saveSponsor(req.body, (error, data) => {
+            console.debug(`POST [:id]: ${req.url}`);            
+            db.saveSponsor(req.body, (error, data) => {
                 res.status(200);
                 (error)? 
                     res.json(jsonResponse.createError(error)) :
@@ -109,7 +113,7 @@ export namespace SponsorService {
         app.get("/api/sponsor/:id", (req,res) => {
             console.debug(`GET [:id]: ${req.url}`);
             res.status(200);
-            getContribtuor(req.params.id, (error, data) => {
+            db.getSponsor(req.params.id, (error, data) => {
                 (error)?
                     res.json(jsonResponse.createError(error)) :
                     res.json(jsonResponse.createData(data));
@@ -123,11 +127,11 @@ export namespace SponsorService {
             var phrase = req.query.phrase || null;
 
             res.status(200);
-            getSponsors(function(error, data) {
+            this.getSponsors(function(error, data) {
                 (error) ?
                     res.json(jsonResponse.createError(error)) :
                     res.json(jsonResponse.createData(data));
             });
         });
-    }
-}
+    } // end publishWebAPI
+} // end SponsorService namespace
