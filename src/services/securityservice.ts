@@ -66,7 +66,6 @@ export namespace SecurityService {
         /**
          * 
          * @param doc authenicate sponor was ok
-         * @param callback publish results of complete authentication process
          */
         private hashId(doc: any) : Promise<any> {
             if(!doc)
@@ -133,12 +132,10 @@ export namespace SecurityService {
             });
         }
 
-        deauthenticate(hashid: String, useremail: String, callback: Function) { 
+        deauthenticate(hashid: String, useremail: String) : Promise<any> { 
             var model = services.getModel(services.SECURITY_MODEL_NAME);
 
-            model.findOneAndRemove({hashid: hashid, useremail: useremail}, (err,doc) => {
-                callback(err,doc);
-            });
+            return Promise.resolve(model.findOneAndRemove({hashid: hashid, useremail: useremail}));
         } 
 
         authenticate(useremail: String, password: String) : Promise<any> {
@@ -203,19 +200,16 @@ export namespace SecurityService {
             });        
         } // end authenticate
 
-        newSponorSecurity(useremail: String, securityModel: any, callback: Function) {
+        newSponorSecurity(useremail: String, securityModel: any) : Promise<any> {
             const model = services.getModel(services.SPONSOR_MODEL_NAME);
             
             if(!securityModel["password"]) {
                 console.debug(`${securityModel}: not a valid ${SecurityDb.schema} schema`);
-                callback("Sponsor security creation issue. Contact system administrator");
-                return;
+                return Promise.reject("Sponsor security creation issue. Contact system administrator");
             }
 
             const options = services.createFindOneAndUpdateOptions();
-            model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options, (error, doc) => {
-                callback(error, doc);
-            });
+            return Promise.resolve(model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options));
         }
 
         verifyAccess(access: any) : Promise<any> {
@@ -348,11 +342,9 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body is not available."));
             }
 
-            this.db.deauthenticate(hashid, useremail, (error, data) => {
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+            Promise.resolve(this.db.deauthenticate(hashid, useremail))
+                .then(data => res.json(jsonResponse.createData(data)))
+                .catch(error => res.json(jsonResponse.createError(error)));
         });
 
         /**
