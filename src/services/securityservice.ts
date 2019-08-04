@@ -54,7 +54,7 @@ export namespace SecurityService {
         });
     } // end track
 
-    export function verifyAccess(access: any, callback: Function) : Promise<any> {
+    export function verifyAccess(access: any) : Promise<any> {
         try {
             var accessType = access.accessType.trim().toLowerCase() || "not required";
             switch(accessType) {

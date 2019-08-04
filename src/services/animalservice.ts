@@ -5,9 +5,10 @@ import {SecurityService as security} from "./securityservice";
 import { Aggregate } from "mongoose";
 
 export namespace AnimalService {
+
     let __selectionFields = '_id name description imageSrc sponsors';
 
-    let animalSchema = services.createMongooseSchema({
+    const animalSchema = services.createMongooseSchema({
         name: {type: String, unique:true, required: [true, '*']},
         imageSrc: String,
         endangered: Boolean,
@@ -26,28 +27,25 @@ export namespace AnimalService {
     
     let animalModel =  services.createMongooseModel("animal", animalSchema);    
     
-    function newAnimal(item: any, callback?: Function) {
+    function newAnimal(item: any) : Promise<any> {
         var animal = new animalModel(item);
-             
-        animal.save(null,(err,product)=>{
-            callback(err, product);
-        });
+            
+        return animal.save().then(product => {return product;});
     }
 
-    function saveAnimal(item: any, callback?: Function) {
+    function saveAnimal(item: any) : Promise<any> {
         var animal = new animalModel(item);
 
         var options = services.createFindOneAndUpdateOptions();
-        animalModel.findOneAndUpdate({_id: animal._id}, animal, options ,(err,doc,res)=>{
-            callback(err, doc["value"]);
-        });
+        return animalModel.findOneAndUpdate({_id: animal._id}, animal, options)
+            .then( doc => { return doc["value"]; });
     }
 
-    function getAnimal(id: String, callback: Function){
-        animalModel.findById(id,callback);
+    function getAnimal(id: String) : Promise<any>{
+        return animalModel.findById(id).then(doc => { return doc;});
     } 
 
-    function getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Aggregate<any> {
+    function getAnimals(/*callback: Function, */ page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
         var animalAggregate = (!phrase)? animalModel.aggregate() :
             animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
                 
@@ -77,14 +75,9 @@ export namespace AnimalService {
                 }
             }}
         ])
-        .limit(limit);
-
-        // .exec(function(error, data) {
-        //     var results = new services.pagination(1,1, data);
-        //     callback(error,results)
-        // });
+        .limit(limit).then(data => {return data});
     } 
-    
+
     /**
      * @description Pushlishes the available Web API URLs for items
      */
@@ -110,15 +103,16 @@ export namespace AnimalService {
             }
 
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
-            security.verifyAccess(access, (error, data) => {
-                if(error !== null){
+            Promise.resolve(security.verifyAccess(access))
+                .then(value => {
+                    console.log(value);
+                    return Promise.resolve(newAnimal(req.body))
+                        .then(data => {res.json(jsonResponse.createData(data));})
+                })
+                .catch(error => { 
+                    console.log(error);
                     res.json(jsonResponse.createError("You do not have access."));
-                } else {
-                    newAnimal(req.body, function(error, data){
-                        res.json(jsonResponse.createData(data));
-                    });
-                }
-            }); // end verify access
+                });
         });
 
         /**
@@ -139,15 +133,17 @@ export namespace AnimalService {
             }
             
             var access = {accessType: "hashid", hashid: hashid, useremail: useremail};
-            security.verifyAccess(access, (error, data) => {
-                if(error !== null){
+            Promise.resolve(security.verifyAccess(access))
+                .then(data => {
+                    return Promise.resolve(saveAnimal(animal))
+                        .then(data => {
+                            res.json(jsonResponse.createData(data));
+                        });
+                })
+                .catch(error => {
+                    console.log(error);
                     res.json(jsonResponse.createError("You do not have access."));
-                } else {
-                    saveAnimal(animal, function(error,data) {
-                        res.json(jsonResponse.createData(data));                
-                    });
-                }
-            });
+                });
         }); // end POST [update] /api/animal/:id 
 
         /**
@@ -161,13 +157,15 @@ export namespace AnimalService {
                  res.send("HttpGET id not available");
                  return;
             }
-
             res.status(200);
-            getAnimal(req.params.id, function(error,data){
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
+            Promise.resolve(getAnimal(req.params.id))
+                .then(data => {
                     res.json(jsonResponse.createData(data));
-            });
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.json(jsonResponse.createError(error));
+                });                
         });
 
         /**
@@ -181,7 +179,7 @@ export namespace AnimalService {
 
             res.status(200);
             
-            getAnimals(page, limit, phrase)
+            Promise.resolve(getAnimals(page, limit, phrase))
             .then(value => res.json(jsonResponse.createPagination(1,1,value)))
             .catch(reason => res.json(jsonResponse.createError(reason)));
         });
