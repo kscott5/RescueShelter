@@ -54,39 +54,34 @@ export namespace SecurityService {
         });
     } // end track
 
-    export function verifyAccess(access: any, callback: Function) {
+    export function verifyAccess(access: any, callback: Function) : Promise<any> {
         try {
             var accessType = access.accessType.trim().toLowerCase() || "not required";
             switch(accessType) {
                 case "not required"  || 0:
-                    callback(null, true);
-                    break;
+                    return Promise.resolve(true);
 
                 case "hashid" || 1:
-                    verifyHash(access.hashId, access.useremail, callback);
-                    break;
+                    return verifyHash(access.hashId, access.useremail);
 
                 case "uniqueuseremail" || 2:
-                    verifyUniqueUserEmail(access.email, callback);
-                    break;
+                    return verifyUniqueUserEmail(access.email);
                 
                 case "uniqueusername" || 3:
-                    verifyUniqueUserName(access.username, callback);
-                    break;
+                    return verifyUniqueUserName(access.username);
 
                 case "uniqueuserfield" || 4:
-                    verifyUniqueUserField(access.field, access.value, callback);
-                    break;
+                    return verifyUniqueUserField(access.field, access.value);
                     
                 default:
                     console.debug(`Access Type: ${accessType} not valid`);
-                    callback("Contact system administrator for access");
+                    return Promise.resolve(false);
             }
         } catch(error) {
             console.debug("verify access type not valid");
             console.debug(error);
             
-            callback("Contact system administrator for access");
+            return Promise.reject(error);
         }
     } // end verifyAccess
 
@@ -212,13 +207,11 @@ export namespace SecurityService {
         return hexEncryptedData;
     }
 
-    function verifyHash(hashid: String, useremail: String, callback: Function) { 
+    function verifyHash(hashid: String, useremail: String) : Promise<any> { 
         var model = services.getModel("token");
 
-        model.findOne({hashid: hashid, useremail: useremail}, (err, doc) =>{
-            (err)? callback(err, doc) :
-                callback(err, {verified: doc != null });
-        });
+        return model.findOne({hashid: hashid, useremail: useremail})
+            .then(doc => {return {verified: doc != null};});
     }
 
     /**
@@ -250,34 +243,32 @@ export namespace SecurityService {
             });
     } // end generateHashId
 
-    function verifyUniqueUserField(field: String, value: String, callback: Function) {
+    function verifyUniqueUserField(field: String, value: String) : Promise<any> {
         switch(field.trim().toLowerCase()) {
             case "username":
-                verifyUniqueUserName(value, callback);
-                break;
+                return verifyUniqueUserName(value);
+
             case "useremail":
-                verifyUniqueUserEmail(value, callback);
-                break;
+                return verifyUniqueUserEmail(value);
+
             default:
-                callback("value exists");
-                break;
+                console.log(`${field} is not a valid field`);
+                return Promise.reject({unique: false});
         }
     }
 
-    function verifyUniqueUserName(name: String, callback: Function) {
+    function verifyUniqueUserName(name: String) : Promise<any> {
         const model = services.getModel("sponsor");
         
-        model.findOne({useremail: name}, (error,doc)=> {
-            callback(error,{unique: !doc});
-        });
+        return model.findOne({useremail: name})
+            .then(doc => { return {unique: !doc};});
     }
 
-    function verifyUniqueUserEmail(email: String, callback: Function) {
+    function verifyUniqueUserEmail(email: String) : Promise<any> {
         const model = services.getModel("sponsor");
 
-        model.findOne({useremail: email}, (error,doc) => {
-            callback(error,{unique: !doc});
-        });
+        return model.findOne({useremail: email})
+            .then(doc => { return {unique: !doc}});
     }
 
     export function publishWebAPI(app: Application) {
@@ -294,11 +285,9 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body not available with request"));
             }
 
-            verifyUniqueUserField(field, value, (error, data) => {
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            });
+            Promise.resolve(verifyUniqueUserField(field, value))
+                .then(data => res.json(jsonResponse.createData(data)))
+                .catch(error => res.json(jsonResponse.createError(error)));
         });
 
         app.post("/api/secure/data", jsonBodyParser, (req,res) => {
@@ -326,12 +315,9 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body not availe with request"));
             }
 
-            verifyHash(hashid, useremail, (error, data) => {
-                (error)? 
-                    res.json(jsonResponse.createError(error)) :
-                    res.json(jsonResponse.createData(data));
-            })
-            
+            Promise.resolve(verifyHash(hashid, useremail))
+                .then(data => res.json(jsonResponse.createData(data)))
+                .catch(error => res.json(jsonResponse.createError(error)));            
         }); // end /api/secure/verify
 
         app.post("/api/secure/deauth", jsonBodyParser, (req,res) => {
