@@ -8,7 +8,7 @@ mongoose.set('useFindAndModify', false);
 let __connectionString = 'mongodb://localhost:27017/rescueshelter';
 let __connection = mongoose.createConnection(__connectionString);
 
-let __models = {};
+let __models = new Map();
 
 export const SPONSOR_MODEL_NAME = "sponsor";
 export const ANIMAL_MODEL_NAME = "animal";
@@ -25,19 +25,21 @@ export function createMongooseSchema(schemaDefinition: any, strictMode: boolean 
 
 export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any> | Function) 
 : mongoose.Model<mongoose.Document> {
+    if(__models.has(modelName))
+        return __models.get(modelName);
+
     var schema = (typeof modelSchema == 'function')?  modelSchema(): modelSchema;
 
     const model = __connection.model(modelName, schema);    
-    __models[modelName] = model;
+    __models.set(modelName, model);
 
-    return __models[modelName];
+    return __models.get(modelName);
 }
 
 export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {    
-    if(__models[modelName])
-        return __models[modelName];
-    throw new Error(`${modelName} not a valid model name.`);
-    
+    if(__models.has(modelName))
+        return __models.get(modelName);
+    throw new Error(`${modelName} not a valid model name.`);    
 }
 
 export function createFindOneAndUpdateOptions(fields?: Object|String, upsert: boolean = false) {
