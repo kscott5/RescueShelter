@@ -187,6 +187,7 @@ export namespace SecurityService {
             return this.model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options);
         }
 
+        // https://jsfiddle.net/karegascott/wyjgsfne/
         verifyAccess(access: any) : Promise<any> {
             try {
                 var accessType = access.accessType.trim().toLowerCase() || "not required";
