@@ -36,30 +36,29 @@ export namespace SecurityService {
         security(useremail: String, textPassword: String, questions?: any) {
             const encryptedPassword = this.encryptedData(textPassword, useremail);
             const securityModel = {password: encryptedPassword};
-    
-            if(questions) {
+
+            var secureQuestions = new Array();
+            if(questions !== undefined  && questions.length !== 0) {
                 console.debug(`${useremail} with ${questions.length} questions`);
                 
-                securityModel["questions"] = new Array();
-                
                 for(const index in questions) {
-                    const question = {
-                            question: questions[index]["question"], 
-                            answer: this.encryptedData(questions[index]["answer"])
-                    };
-    
-                    securityModel["questions"].push(question);
-                }
-            }
+                    if(questions[index]["question"] !== undefined && questions[index]["answer"] !== undefined) {
+                        const question = {
+                                question: questions[index]["question"], 
+                                answer: this.encryptedData(questions[index]["answer"])
+                        };
+        
+                        secureQuestions.push(question);
+                    } // end if
+                } // end for loop
+            } // end questions
             
+            if(secureQuestions.length > 0)
+                securityModel["questions"] = secureQuestions;
+
             return securityModel;
         }
-    
-        securityWithQuestion(useremail: String, textPassword, question: String, answer: String) {
-            return this.security(useremail, textPassword, 
-                [ {question: question, answer: answer} ]);
-        }        
-
+            
         encryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
             const tmpData = data.trim();
             const tmpSalt = salt.trim();
@@ -352,8 +351,9 @@ export namespace SecurityService {
             var item = req.body;
             var useremail = item.useremail;
             var password = item.password;
+            var questions = item.questions;
 
-            item.security = generate.security(useremail, password);
+            item.security = generate.security(useremail, password, questions);
 
             // create the new sponsor with security
             res.status(200);
