@@ -23,7 +23,7 @@ export function createMongooseSchema(schemaDefinition: any, strictMode: boolean 
 
 export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any> | Function) 
 : mongoose.Model<mongoose.Document> {
-    if(__connection.models[modelName] !== null)
+    if(__connection.models[modelName] !== undefined)
         return __connection.models[modelName];
 
     var schema = (typeof modelSchema == 'function')?  modelSchema(): modelSchema;
@@ -32,7 +32,7 @@ export function createMongooseModel(modelName: string, modelSchema: mongoose.Sch
 }
 
 export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {    
-    if(__connection.models[modelName] !== null)
+    if(__connection.models[modelName] !== undefined)
         return __connection.models[modelName];
 
     throw new Error(`${modelName} not a valid model name.`);    
