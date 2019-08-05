@@ -196,7 +196,7 @@ export namespace SecurityService {
                         return Promise.resolve(true);
 
                     case "hashid" || 1:
-                        return this.verifyHash(access.hashId, access.useremail);
+                        return this.verifyHash(access.hashid, access.useremail);
 
                     case "useremail" || 2:
                         return this.verifyUniqueUserEmail(access.useremail);
