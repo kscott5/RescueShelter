@@ -103,7 +103,7 @@ export namespace SecurityService {
         private __authSelectionFields;
         private generate;
         private model;
-
+        
         constructor() {
             this.__authSelectionFields = "_id useremail username firstname lastname photo audit";    
         
@@ -122,7 +122,8 @@ export namespace SecurityService {
             // Format improves readable and increases the number of lines
             const now = new Date();            
 
-            return this.model.aggregate([
+            const sponsor = services.getModel(services.SPONSOR_MODEL_NAME);
+            return sponsor.aggregate([
                 {
                     $lookup: { // left outer join on sponsor. token exists and valid
                         from: "tokens",
@@ -238,12 +239,14 @@ export namespace SecurityService {
         }
 
         private verifyUniqueUserName(name: String) : Promise<any> {
-            return this.model.findOne({useremail: name})
+            const sponsor = services.getModel(services.SPONSOR_MODEL_NAME);
+            return sponsor.findOne({useremail: name})
                 .then(doc => { return {unique: !doc};});
         }
 
         private verifyUniqueUserEmail(email: String) : Promise<any> {
-            return this.model.findOne({useremail: email})
+            const sponsor = services.getModel(services.SPONSOR_MODEL_NAME);
+            return sponsor.findOne({useremail: email})
                 .then(doc => { return {unique: !doc}});
         }
     } // end SecurityDb
