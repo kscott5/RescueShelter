@@ -7,26 +7,15 @@ export namespace SecurityService {
     export const SESSION_TIME = 900000; // 15 minutes = 900000 milliseconds
     
     class Track {
+        private model;
         constructor() {
-            services.createMongooseModel(services.TRACK_MODEL_NAME, () => {
-                var schema = services.createMongooseSchema({
-                        name: {type: String, required: true},
-                        sponsor_id: {type: {}, required: true},
-                        data: {type: {}, required: true},
-                        date: {type: Date, required: true}
-                    }); 
-            
-                schema.path("data").default(new Date());
-
-                return schema;
-            });
+            this.model = services.getModel(services.TRACK_MODEL_NAME);
         }
 
         request(action: any) {
             console.debug("Tracking transaction");
     
-            var model = services.getModel(services.TRACK_MODEL_NAME);
-            var obj = new model(action);
+            var obj = new this.model(action);
             
             obj.save((err, doc)=>{
                 if(err !== null) {                
@@ -39,7 +28,10 @@ export namespace SecurityService {
     } // end Track
 
     class Generate {
-        constructor(){}
+        private model;
+        constructor(){
+            this.model = services.getModel(services.SECURITY_MODEL_NAME);
+        }
 
         security(useremail: String, textPassword: String, questions?: any) {
             const encryptedPassword = this.encryptedData(textPassword, useremail);
@@ -94,7 +86,7 @@ export namespace SecurityService {
             
             var hashid = this.encryptedData(useremail, `${useremail} hash salt ${expires.getTime()}`);
     
-            var tokenModel = services.getModel(services.SECURITY_MODEL_NAME);
+            var tokenModel = this.model;
             var update = new tokenModel({useremail: useremail, hashid: hashid, expires: expires.getTime()});
     
             var options = services.createFindOneAndUpdateOptions({_id: false, hashid: 1, expiration: 1}, true);
@@ -110,44 +102,27 @@ export namespace SecurityService {
     export class SecurityDb {
         private __authSelectionFields;
         private generate;
+        private model;
 
         constructor() {
             this.__authSelectionFields = "_id useremail username firstname lastname photo audit";    
         
             this.generate = new Generate();
 
-            services.createMongooseModel(services.SECURITY_MODEL_NAME, 
-                services.createMongooseSchema({}, false /* disable schema strict */));
+            this.model = services.getModel(services.SECURITY_MODEL_NAME);
         } // end constructor
 
-        get schema() {
-            const question = services.createMongooseSchema({
-                _id: false,
-                question: {type: String, required: true},
-                answer: {type: String, required: true},
-            });
-
-            return services.createMongooseSchema({        
-                _id: false,
-                password: {type: String, required: true},
-                questions: [question]
-            });
-        }
-
         deauthenticate(hashid: String, useremail: String) : Promise<any> { 
-            var model = services.getModel(services.SECURITY_MODEL_NAME);
-
-            return Promise.resolve(model.findOneAndRemove({hashid: hashid, useremail: useremail}));
+            return this.model.findOneAndRemove({hashid: hashid, useremail: useremail});
         } 
 
         authenticate(useremail: String, password: String) : Promise<any> {
             const encryptedPassword = this.generate.encryptedData(password, useremail);
 
             // Format improves readable and increases the number of lines
-            const now = new Date();
-            const model = services.getModel(services.SPONSOR_MODEL_NAME);
+            const now = new Date();            
 
-            return model.aggregate([
+            return this.model.aggregate([
                 {
                     $lookup: { // left outer join on sponsor. token exists and valid
                         from: "tokens",
@@ -203,15 +178,13 @@ export namespace SecurityService {
         } // end authenticate
 
         newSponorSecurity(useremail: String, securityModel: any) : Promise<any> {
-            const model = services.getModel(services.SPONSOR_MODEL_NAME);
-            
             if(!securityModel["password"]) {
-                console.debug(`${securityModel}: not a valid ${this.schema} schema`);
+                console.debug(`${securityModel}: not a valid security schema`);
                 return Promise.reject("Sponsor security creation issue. Contact system administrator");
             }
 
             const options = services.createFindOneAndUpdateOptions();
-            return Promise.resolve(model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options));
+            return this.model.findOneAndUpdate({useremail: useremail}, {$set: {security: securityModel}}, options);
         }
 
         verifyAccess(access: any) : Promise<any> {
@@ -246,9 +219,7 @@ export namespace SecurityService {
         } // end verifyAccess
 
         private verifyHash(hashid: String, useremail: String) : Promise<any> { 
-            var model = services.getModel(services.SECURITY_MODEL_NAME);
-
-            return model.findOne({hashid: hashid, useremail: useremail})
+            return this.model.findOne({hashid: hashid, useremail: useremail})
                 .then(doc => {return {verified: doc != null};});
         }
 
@@ -267,16 +238,12 @@ export namespace SecurityService {
         }
 
         private verifyUniqueUserName(name: String) : Promise<any> {
-            const model = services.getModel(services.SPONSOR_MODEL_NAME);
-            
-            return model.findOne({useremail: name})
+            return this.model.findOne({useremail: name})
                 .then(doc => { return {unique: !doc};});
         }
 
         private verifyUniqueUserEmail(email: String) : Promise<any> {
-            const model = services.getModel(services.SPONSOR_MODEL_NAME);
-
-            return model.findOne({useremail: email})
+            return this.model.findOne({useremail: email})
                 .then(doc => { return {unique: !doc}});
         }
     } // end SecurityDb

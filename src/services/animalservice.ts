@@ -5,53 +5,35 @@ import {SecurityService} from "./securityservice";
 
 export namespace AnimalService {
     class AnimalDb {
-        __selectionFields;
-        animalModel;
+        private __selectionFields;
+        private model;
 
         constructor() {
             this.__selectionFields = '_id name description imageSrc sponsors';
-
-            var animalSchema = services.createMongooseSchema({
-                name: {type: String, unique:true, required: [true, '*']},
-                imageSrc: String,
-                endangered: Boolean,
-                description: String,
-                population: Number,
-                dates: {
-                    created: Date ,
-                    modified: Date
-                },
-                sponsors: {type: Array<String>()}
-            });
-            
-            animalSchema.index({name: "text", description: "text", sponsors: "text"});
-            animalSchema.path("dates.created").default(function(){return Date.now();});
-            animalSchema.path("dates.modified").default(function(){return Date.now();});
-            
-            this.animalModel =  services.createMongooseModel(services.ANIMAL_MODEL_NAME, animalSchema);    
+            this.model = services.getModel(services.ANIMAL_MODEL_NAME);
         } // end constructor
 
         newAnimal(item: any) : Promise<any> {
-            var animal = new this.animalModel(item);
+            var animal = new this.model(item);
                 
             return animal.save().then(product => {return product;});
         }
 
         saveAnimal(item: any) : Promise<any> {
-            var animal = new this.animalModel(item);
+            var animal = new this.model(item);
 
             var options = services.createFindOneAndUpdateOptions();
-            return this.animalModel.findOneAndUpdate({_id: animal._id}, animal, options)
+            return this.model.findOneAndUpdate({_id: animal._id}, animal, options)
                 .then( doc => { return doc["value"]; });
         }
 
         getAnimal(id: String) : Promise<any>{
-            return this.animalModel.findById(id).then(doc => { return doc;});
+            return this.model.findById(id).then(doc => { return doc;});
         } 
 
         getAnimals(page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
-            var animalAggregate = (!phrase)? this.animalModel.aggregate() :
-                this.animalModel.aggregate().append({$match: {$text: {$search: phrase}}});
+            var animalAggregate = (!phrase)? this.model.aggregate() :
+                this.model.aggregate().append({$match: {$text: {$search: phrase}}});
                     
             return animalAggregate.append([
                 {
@@ -93,6 +75,7 @@ export namespace AnimalService {
 
         let db = new AnimalDb();
         let securityDb = new SecurityService.SecurityDb();
+    
         /**
          * @description create a new animal data 
          */

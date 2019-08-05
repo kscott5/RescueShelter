@@ -1,70 +1,41 @@
-import {SchemaTypes}  from "mongoose";
 import {Application, json} from "express";
 import * as bodyParser from "body-parser";
 import * as services from "./services";
-import {SecurityService} from "./securityservice";
 
 export namespace SponsorService {
     class SponsorDb {
         private __selectionFields;
-        private sponsorModel;
+        private model;
 
         cnstructor() {
             this.__selectionFields =  "_id useremail username firstname lastname photo audit";
-        
-            var securityDb = new SecurityService.SecurityDb();
-            var sponsorSchema = services.createMongooseSchema({        
-                firstname: {type: String},
-                lastname: {type: String},
-                useremail: {type: String, required: [true, '*'], unique: true},
-                username: {type: String, unique: true},
-                security: {type: securityDb.schema},
-                photo: {type: String},
-                audit: [
-                    {
-                        _id: false,
-                        modified: {type: Date, required: [true]},
-                        sponsor_id: {type: SchemaTypes.ObjectId, required: [true]}
-                    }
-                ]
-            });
-            
-            sponsorSchema.index({username: "text", useremail: "text"});
-            sponsorSchema.path("audit").default(function(){
-                return {
-                    modified: Date.now(),
-                    Sponsor_id: this._id,
-                };
-            });    
-            //schema.path("audit.sponssor_id").default(function(){return Date.now();});
-            
-            this.sponsorModel = services.createMongooseModel("sponsor", sponsorSchema);
+            this.model = services.getModel(services.SPONSOR_MODEL_NAME);
         }
 
         newSponsor(item: any) : Promise<any> {
-            var sponsor = new this.sponsorModel(item);
+            var sponsor = new this.model(item);
 
             return sponsor.save();
         }
 
         saveSponsor(item: any) : Promise<any>  {
-            var sponsor = new this.sponsorModel(item);
+            var sponsor = new this.model(item);
             
             sponsor["audit"].push({modified: new Date(), sponsor_id: sponsor._id});
 
             var options = services.createFindOneAndUpdateOptions();
             
-            return this.sponsorModel.findOneAndUpdate({_id: sponsor._id}, sponsor, options);
+            return this.model.findOneAndUpdate({_id: sponsor._id}, sponsor, options);
         }
 
         getSponsor(id: String) : Promise<any>  {
-            return this.sponsorModel.findById(id);
+            return this.model.findById(id);
         }
 
         getSponsors(page: number = 1, limit: number = 5, phrase?: String) : Promise<any> {
             var condition = (phrase)? {$text: {$search: phrase}}: {};
             
-            return this.sponsorModel.find(condition)
+            return this.model.find(condition)
                 .lean()
                 .limit(limit)
                 .select(this.__selectionFields);

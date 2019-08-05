@@ -5,13 +5,92 @@ console.log(`mongoosejs version: ${mongoose.version}`);
 mongoose.set('debug', true);
 mongoose.set('useFindAndModify', false);
 
-let __connectionString = 'mongodb://localhost:27017/rescueshelter';
-let __connection = mongoose.createConnection(__connectionString, { useNewUrlParser: true } );
+const __connectionString = 'mongodb://localhost:27017/rescueshelter';
+const __connection = mongoose.createConnection(__connectionString, { useNewUrlParser: true } );
+
+export const SECURITY_MODEL_NAME = "token";
+createMongooseModel(SECURITY_MODEL_NAME, 
+    createMongooseSchema({}, false /* disable schema strict */));
+
+export const TRACK_MODEL_NAME = "transaction";
+createMongooseModel(TRACK_MODEL_NAME, () => {
+    var schema = createMongooseSchema({
+            name: {type: String, required: true},
+            sponsor_id: {type: {}, required: true},
+            data: {type: {}, required: true},
+            date: {type: Date, required: true}
+        }); 
+
+    schema.path("data").default(new Date());
+
+    return schema;
+});
 
 export const SPONSOR_MODEL_NAME = "sponsor";
+createMongooseModel("sponsor", ()=>{
+    
+    var question = createMongooseSchema({
+        _id: false,
+        question: {type: String, required: true},
+        answer: {type: String, required: true},
+    });
+
+    var securityShema = createMongooseSchema({        
+        _id: false,
+        password: {type: String, required: true},
+        questions: [question]
+    });
+
+
+    var schema = createMongooseSchema({        
+        firstname: {type: String},
+        lastname: {type: String},
+        useremail: {type: String, required: [true, '*'], unique: true},
+        username: {type: String, unique: true},
+        security: {type: securityShema},
+        photo: {type: String},
+        audit: [
+            {
+                _id: false,
+                modified: {type: Date, required: [true]},
+                sponsor_id: {type: mongoose.SchemaTypes.ObjectId, required: [true]}
+            }
+        ]
+    });
+    
+    schema.index({username: "text", useremail: "text"});
+    schema.path("audit").default(function(){
+        return {
+            modified: Date.now(),
+            Sponsor_id: this._id,
+        };
+    });    
+    //schema.path("audit.sponssor_id").default(function(){return Date.now();});
+    
+    return schema;
+});
+
 export const ANIMAL_MODEL_NAME = "animal";
-export const SECURITY_MODEL_NAME = "token";
-export const TRACK_MODEL_NAME = "transaction";
+createMongooseModel(ANIMAL_MODEL_NAME, ()=>{
+    var schema = createMongooseSchema({
+        name: {type: String, unique:true, required: [true, '*']},
+        imageSrc: String,
+        endangered: Boolean,
+        description: String,
+        population: Number,
+        dates: {
+            created: Date ,
+            modified: Date
+        },
+        sponsors: {type: Array<String>()}
+    });
+    
+    schema.index({name: "text", description: "text", sponsors: "text"});
+    schema.path("dates.created").default(function(){return Date.now();});
+    schema.path("dates.modified").default(function(){return Date.now();});
+    
+    return schema;
+});    
 
 export const SYSTEM_UNAVAILABLE_MSG = "system unavailable. please try later.";
 export const SYSTEM_INVALID_USER_CREDENTIALS_MSG = "invalid useremail and/or password";
