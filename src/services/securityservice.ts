@@ -58,7 +58,7 @@ export namespace SecurityService {
 
             return securityModel;
         }
-            
+
         encryptedData(data: String, salt: String = 'Rescue Shelter: Security Question Answer') {
             const tmpData = data.trim();
             const tmpSalt = salt.trim();
@@ -168,10 +168,10 @@ export namespace SecurityService {
                         return Promise.reject(services.SYSTEM_SESSION_EXPIRED);
 
                     sponsor.token = null;
-                    return {hashid: token.hashid, sponsor: sponsor};
+                    return Promise.resolve({hashid: token.hashid, sponsor: sponsor});
                 } else { // session !exists                
                     return Promise.resolve(this.generate.hashId(sponsor)).then(data => {
-                        return {hashid: data._doc.hashid /* find alternative */, sponsor: sponsor}});
+                        return Promise.resolve({hashid: data._doc.hashid /* find alternative */, sponsor: sponsor})});
                     
                 }
             });        
@@ -219,8 +219,14 @@ export namespace SecurityService {
         } // end verifyAccess
 
         private verifyHash(hashid: String, useremail: String) : Promise<any> { 
+            console.debug(`verify ${useremail} hash id ${hashid}`);
+
             return this.model.findOne({hashid: hashid, useremail: useremail})
-                .then(doc => {return {verified: doc != null};});
+                .then(doc => {
+                    return (doc !== null)? 
+                    Promise.resolve({verified: true}) :
+                    Promise.reject({verified: false});
+                });
         }
 
         private verifyUniqueUserField(field: String, value: String) : Promise<any> {
@@ -240,13 +246,21 @@ export namespace SecurityService {
         private verifyUniqueUserName(name: String) : Promise<any> {
             const sponsor = services.getModel(services.SPONSOR_MODEL_NAME);
             return sponsor.findOne({useremail: name})
-                .then(doc => { return {unique: !doc};});
+                .then(doc => { 
+                    return (doc === null)? 
+                        Promise.resolve({unique: true}) :
+                        Promise.reject({unique: false});
+                });
         }
 
         private verifyUniqueUserEmail(email: String) : Promise<any> {
             const sponsor = services.getModel(services.SPONSOR_MODEL_NAME);
             return sponsor.findOne({useremail: email})
-                .then(doc => { return {unique: !doc}});
+                .then(doc =>  {
+                    return (doc === null)? 
+                        Promise.resolve({unique: true}) :
+                        Promise.reject({unique: false});
+                });
         }
     } // end SecurityDb
 
