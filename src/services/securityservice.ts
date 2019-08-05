@@ -76,7 +76,7 @@ export namespace SecurityService {
          */
         private hashId(doc: any) : Promise<any> {
             if(!doc)
-                throw new Error(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
+                return Promise.reject(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
     
             var now = new Date();
             var expires = new Date(now.getTime()+SESSION_TIME);
@@ -94,7 +94,7 @@ export namespace SecurityService {
                 .then(product => {return product["value"]} )
                 .catch(err => {
                     console.log(err);
-                    throw new Error(services.SYSTEM_UNAVAILABLE_MSG);
+                    return Promise.reject(services.SYSTEM_UNAVAILABLE_MSG);
                 });
         } // end hashId
     } // end Generate
@@ -160,13 +160,13 @@ export namespace SecurityService {
             .limit(1)
             .then(doc => {
                 if(doc.length === 0)
-                    throw new Error(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
+                    return Promise.reject(services.SYSTEM_INVALID_USER_CREDENTIALS_MSG);
 
                 var sponsor = doc[0];                    
                 if(sponsor.token.length === 1) { // session exists                        
                     var token = sponsor.token[0]; 
                     if(token.expired) 
-                        throw new Error(services.SYSTEM_SESSION_EXPIRED);
+                        return Promise.reject(services.SYSTEM_SESSION_EXPIRED);
 
                     sponsor.token = null;
                     return {hashid: token.hashid, sponsor: sponsor};
