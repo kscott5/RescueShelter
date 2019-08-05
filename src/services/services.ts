@@ -6,9 +6,7 @@ mongoose.set('debug', true);
 mongoose.set('useFindAndModify', false);
 
 let __connectionString = 'mongodb://localhost:27017/rescueshelter';
-let __connection = mongoose.createConnection(__connectionString);
-
-let __models = new Map();
+let __connection = mongoose.createConnection(__connectionString, { useNewUrlParser: true } );
 
 export const SPONSOR_MODEL_NAME = "sponsor";
 export const ANIMAL_MODEL_NAME = "animal";
@@ -25,20 +23,18 @@ export function createMongooseSchema(schemaDefinition: any, strictMode: boolean 
 
 export function createMongooseModel(modelName: string, modelSchema: mongoose.Schema<any> | Function) 
 : mongoose.Model<mongoose.Document> {
-    if(__models.has(modelName))
-        return __models.get(modelName);
+    if(__connection.models[modelName] !== null)
+        return __connection.models[modelName];
 
     var schema = (typeof modelSchema == 'function')?  modelSchema(): modelSchema;
 
-    const model = __connection.model(modelName, schema);    
-    __models.set(modelName, model);
-
-    return __models.get(modelName);
+    return __connection.model(modelName, schema);    
 }
 
 export function getModel(modelName: string) : mongoose.Model<mongoose.Document> {    
-    if(__models.has(modelName))
-        return __models.get(modelName);
+    if(__connection.models[modelName] !== null)
+        return __connection.models[modelName];
+
     throw new Error(`${modelName} not a valid model name.`);    
 }
 
