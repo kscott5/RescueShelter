@@ -224,10 +224,10 @@ export namespace SecurityService {
                     case "hashid" || 1:
                         return this.verifyHash(access.hashId, access.useremail);
 
-                    case "uniqueuseremail" || 2:
-                        return this.verifyUniqueUserEmail(access.email);
+                    case "useremail" || 2:
+                        return this.verifyUniqueUserEmail(access.useremail);
                     
-                    case "uniqueusername" || 3:
+                    case "username" || 3:
                         return this.verifyUniqueUserName(access.username);
 
                     case "uniqueuserfield" || 4:
@@ -286,7 +286,7 @@ export namespace SecurityService {
         let jsonResponse = new services.JsonResponse();
         
         let db = new SecurityDb();
-        let generator = new Generate();
+        let generate = new Generate();
         
         app.post("/api/secure/unique/sponsor", jsonBodyParser, (req,res) => {
             console.debug(`POST: ${req.url}`);
@@ -298,7 +298,7 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body not available with request"));
             }
 
-            Promise.resolve(this.db.verifyUniqueUserField(field, value))
+            Promise.resolve(db.verifyAccess({accessType: field, field: value}))
                 .then(data => res.json(jsonResponse.createData(data)))
                 .catch(error => res.json(jsonResponse.createError(error)));
         });
@@ -314,7 +314,7 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST: request body not available"));
             }
 
-            res.json(jsonResponse.createData(this.generate.encryptedData(data,secret)));
+            res.json(jsonResponse.createData(generate.encryptedData(data,secret)));
         });
 
         app.post("/api/secure/verify", jsonBodyParser, (req,res) => {
@@ -328,7 +328,7 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body not availe with request"));
             }
 
-            Promise.resolve(this.db.verifyHash(hashid, useremail))
+            Promise.resolve(db.verifyAccess({accessType: 'hashid', hashid: hashid, useremail: useremail}))
                 .then(data => res.json(jsonResponse.createData(data)))
                 .catch(error => res.json(jsonResponse.createError(error)));            
         }); // end /api/secure/verify
@@ -344,7 +344,7 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST body is not available."));
             }
 
-            Promise.resolve(this.db.deauthenticate(hashid, useremail))
+            Promise.resolve(db.deauthenticate(hashid, useremail))
                 .then(data => res.json(jsonResponse.createData(data)))
                 .catch(error => res.json(jsonResponse.createError(error)));
         });
@@ -363,7 +363,7 @@ export namespace SecurityService {
                 res.json(jsonResponse.createError("HttpPOST: request body not available"));
             }
 
-            Promise.resolve(this.db.authenticate(useremail, password))
+            Promise.resolve(db.authenticate(useremail, password))
                 .then(data => res.json(jsonResponse.createData(data)))
                 .catch(error => res.json(jsonResponse.createError(error)));
         });
@@ -383,7 +383,7 @@ export namespace SecurityService {
             var useremail = item.useremail;
             var password = item.password;
 
-            item.security = this.generate.security(useremail, password);
+            item.security = generate.security(useremail, password);
 
             // create the new sponsor with security
             res.status(200);
@@ -391,7 +391,7 @@ export namespace SecurityService {
             var model = services.getModel(services.SPONSOR_MODEL_NAME);
             var sponsor = new model(item);
 
-            var authPromise = Promise.resolve(this.db.authenticate(useremail, password));
+            var authPromise = Promise.resolve(db.authenticate(useremail, password));
             Promise.resolve(sponsor.save())
                 .then(doc => authPromise)
                 .then(auth => res.json(jsonResponse.createData(auth)))
