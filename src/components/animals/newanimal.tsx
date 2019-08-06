@@ -3,6 +3,46 @@ import {Redirect} from "react-router";
 import {AnimalStateModel} from "../state/animal";
 import {AppContext} from "../state/context";
 
+const a11y = {
+    lang: 'en',
+    titles: {
+       t1: 'Animal Details',
+       t2: 'New Animal',
+    },
+    headings: {
+        h3: 'Sponsors'
+    },
+    buttons: {
+        delete: 'Delete',
+        save: 'Save',
+    },
+    links: {
+    },
+    forms: {
+        animal: {
+            name: {
+                label: 'Animal Name',
+                placeholder: 'Animal Name'
+            },
+            description: {
+                label: 'Description',
+                placeholder: 'Details Animal Description'
+            },
+            endangered: {
+                label: 'Endangered',                
+            },
+            imageUrl: {
+                label: 'Image Url',
+                placeholder: 'http://animal.image.url.img'
+            },
+            sponsor: {
+                label: 'Sponsor',
+                placeholder: 'info@rescueshelter.com'
+            }
+        }
+    }
+};
+
 class NewAnimal extends React.Component<any,any> {
     static contextType = AppContext;
     state: AnimalStateModel;
@@ -135,43 +175,43 @@ class NewAnimal extends React.Component<any,any> {
                         <h4 className="ui diving header">{this.state.pageTitle}</h4>
                         <div className="ui error">{this.state.message}</div>
                         <div className="field">
-                            <label>Name</label>
+                            <label htmlFor="name">{a11y.forms.animal.name.label}</label>
                             <div className="ui field input">                                
-                                <input id='name' onChange={this.onChange} name='name' required placeholder='Animal Name' type='text' value={this.state.animal.name}/>
+                                <input id='name' onChange={this.onChange} name='name' required placeholder={a11y.forms.animal.name.placeholder} type='text' value={this.state.animal.name}/>
                             </div>
                         </div>
                         <div className="field">
-                            <label>Description</label>
+                            <label htmlFor='description'>{a11y.forms.animal.description.label}</label>
                             <div className="ui field input">
-                                <textarea id='description' onChange={this.onChange} name='description' placeholder='Animal Description' value={this.state.animal.description}/>
+                                <textarea id='description' onChange={this.onChange} name='description' placeholder={a11y.forms.animal.description.placeholder} value={this.state.animal.description}/>
                             </div>
                         </div>
                         <div className="field">
-                            <label>Image Url</label>
+                            <label htmlFor='imageSrc'>{a11y.forms.animal.imageUrl.label}</label>
                             <div className="ui field input">
-                                <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder='Animal url image' type='text' value={this.state.animal.imageSrc}/>
+                                <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder={a11y.forms.animal.imageUrl.placeholder} type='text' value={this.state.animal.imageSrc}/>
                             </div>
                         </div>
                         <div className="inline field">
                             <div className="ui checkbox">
                                 <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
-                                <label>Endangered</label>                            
+                                <label htmlFor='endangered'>{a11y.forms.animal.endangered.label}</label>
                             </div>
                         </div>
                         <div className="field">
-                            <label>Sponsor</label>
+                            <label htmlFor='sponsor'>{a11y.forms.animal.sponsor.label}</label>
                             <div className="ui field input">
-                                <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder="sponsor@email.com" type='text'  value={this.state.sponsor}/>
+                                <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder={a11y.forms.animal.sponsor.placeholder} type='text'  value={this.state.sponsor}/>
                             </div>
                         </div>
                         <div className="field">
-                            <label>Sponsor</label>                                
+                            <h3>{a11y.headings.h3}</h3>                                
                             <div className="ui field input">
                                 {sponsors}    
                             </div>
                         </div>
                         <div className="field">
-                            <button id='addanimal' name='addanimal' type="button" onClick={this.onSaveNewAnimal}>Save</button>
+                            <button id='addanimal' name='addanimal' type="button" onClick={this.onSaveNewAnimal}>{a11y.buttons.save}</button>
                         </div>
                     </form>
             );

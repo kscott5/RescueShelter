@@ -3,6 +3,25 @@ import {Link} from 'react-router-dom';
 
 import {AppContext} from "../state/context";
 
+const a11y = {
+    lang: 'en',
+    titles: {
+        t1: ''
+    },
+    headings: {
+        h2: 'Animal Rescurers! We need YOU!'
+    },
+    buttons: {
+    },
+    links: {
+        new: 'New',
+        edit: 'Edit',
+        view: 'View'
+    },
+    forms: {
+    }
+};
+
 class ListAnimals extends React.Component {
     static contextType = AppContext;
     state = { documents: [], pages: 1, pageIndex: 1};
@@ -12,8 +31,8 @@ class ListAnimals extends React.Component {
         this.onSponsorClick = this.onSponsorClick.bind(this);
     }
 
-    componentDidMount() {
-        fetch("http://localhost:3302/api/animals?limit=100")
+    componentDidMount() { 
+        fetch(`http://localhost:3302/api/animals?limit=100&lang=${a11y.lang}`)
             .then(response =>response.json())
             .then(response => {
                 if(response.ok) 
@@ -47,7 +66,7 @@ class ListAnimals extends React.Component {
                 <span>{document.description}</span>
                 <img src={document.imageSrc} className="ui image"/>
 
-                <Link to={`/animal/${document._id}`}>Edit</Link>        
+                <Link to={`/animal/${document._id}`}>{a11y.links.edit}</Link>        
             </div>
         );
         
@@ -55,8 +74,8 @@ class ListAnimals extends React.Component {
 
         return (
             <div className="ui containter">
-                <h2>Animal Rescurers! We need YOU!</h2>
-                {(model.loggedIn)? (<Link to="/animal">New</Link>) : <div/>}
+                <h2>{a11y.headings.h2}</h2>
+                {(model.loggedIn)? (<Link to="/animal">{a11y.links.new}</Link>) : <div/>}
                 {documentItems}
             </div>
             
