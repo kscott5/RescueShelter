@@ -48,7 +48,7 @@ class LoginSponsor extends React.Component<any> {
 
         return (
             (!model.loggedIn)?
-                <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
+                <Login defaultView="true" onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
                 <Redirect to={"/sponsor/"+ model.sponsor._id } />
         );
     }
