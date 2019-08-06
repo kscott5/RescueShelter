@@ -62,8 +62,8 @@ class ListSponsors extends React.Component {
         return (
             <Container>
                 <h2>{a11y.headings.h2}</h2>
-                <Link to="/sponsor">{a11y.links.new}</Link>
                 {documentItems}
+                <Link to="/sponsor">{a11y.links.new}</Link>
             </Container>
         );
     }

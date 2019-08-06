@@ -1,7 +1,51 @@
 import * as React from 'react';
-import {SponsorStateModel} from "../state/sponsor";
 import {AppContext} from '../state/context';
-import { callbackify } from 'util';
+
+const a11y = {
+    titles: {},
+    headings: {},
+    links: {},
+    buttons: {
+        save: 'Save'
+    },
+    forms:{
+        newsponsor: {
+            useremail: {
+                label: 'Email address *',
+                placeholder: 'your@email.com',
+            },
+            username: { 
+                label: 'Screen name *',
+                placeholder: 'unique screen name'
+            },
+            firstname: {
+                label: 'First name',
+                placeholder: 'Legal first name'
+            },
+            lastname: {
+                label: 'Last name',
+                placeholder: 'Legal last name'
+            },
+            password: {
+                label: 'Password *',
+                placeholder: 'Password',
+                spec: {
+                    regex: '',
+                    rules: {
+                        r1: 'Password length, minimium 6 and maximium 10 characters',
+                        r2: 'At least 1 upper case character',
+                        r3: 'At least 1 lower case character',
+                        r4: 'At least 1 special character [!@#$%-+.~]'
+                    }
+                }              
+            },
+            passwordVerifier: {
+                label: 'Verify password *',
+                placeholder: 'Verify password'
+            }
+        }
+    }
+};
 
 class NewSponsor extends React.Component<any> {
     static contextType = AppContext;
@@ -102,44 +146,45 @@ class NewSponsor extends React.Component<any> {
             <form className="ui form register">
                 <h4 className="ui diving header">{model.pageTitle}</h4>
                 <div className="field">
-                    <label>Email *</label>
+                    <label htmlFor='useremail'>{a11y.forms.newsponsor.useremail.label}</label>
                     <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
-                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder="User Email" value={model.sponsor.useremail}/>
+                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder={a11y.forms.newsponsor.useremail.placeholder} value={model.sponsor.useremail}/>
                     </div>
                 </div>
                 <div className="field">
-                    <label>Password *</label>
+                    <label htmlFor='password'>{a11y.forms.newsponsor.password.label}</label>
                     <div id="password" className={"ui field input " + model.matchSuccess}>
-                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder="Password" value={model.sponsor.password} />
+                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder={a11y.forms.newsponsor.password.placeholder} value={model.sponsor.password} />
                     </div>
                 </div>
                 <div className="field">
-                    <label>Confirm Password *</label>
-                    <div id="confirmPassword" className="ui field input">
-                        <input type="password" id="passwordConfirmed" name="passwordConfirmed" onChange={this.compareTo} placeholder="Password Confirmed" value={model.confirmPassword}/>
+                    <label htmlFor='verifyPassword'>{a11y.forms.newsponsor.passwordVerifier.label}</label>
+                    <div id="passwordVerifier" className="ui field input">
+                        <input type="password" id="verifyPassword" name="verifyPassword" onChange={this.compareTo} placeholder={a11y.forms.newsponsor.passwordVerifier.placeholder} value={model.confirmPassword}/>
                     </div>
                 </div>
                 <div className="field">
-                    <label>First Name</label>
+                    <label htmlFor='firstname'>{a11y.forms.newsponsor.firstname.label}</label>
                     <div id="firstname" className="ui field input">
-                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder="First Name" value={model.sponsor.firstname}/>
+                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.firstname.placeholder} value={model.sponsor.firstname}/>
                     </div>
                 </div>
                 <div className="field">
-                    <label>Last name</label>
+                    <label htmlFor='lastname'>{a11y.forms.newsponsor.lastname.label}</label>
                     <div id="lastname" className="ui field input">
-                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder="Last Name" value={model.sponsor.lastname}/>
+                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.lastname.placeholder} value={model.sponsor.lastname}/>
                     </div>
                 </div>
                 <div className="field">
-                    <button id="save" name="save" className="ui button" type="button" onClick={this.onClick}>Save</button>
+                    <button id="save" name="save" className="ui button" type="button" onClick={this.onClick}>{a11y.buttons.save}</button>
                 </div>
             </form>
         );           
     }
 }
 
-export function NewContributorView(){
+export function NewSponsorView(){
     return <NewSponsor/>
 }
-export {NewSponsor as default, NewSponsor as NewSponsor};
+
+export {NewSponsor as default, NewSponsor, NewSponsorView as NewSponsorFunc};
