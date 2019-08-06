@@ -51,7 +51,7 @@ class Login extends React.Component<any> {
     constructor(props) {
         super(props);
 
-        this.defaultView = this.props.defaultView || false;
+        this.defaultView = this.props.defaultView || true;
 
         this.onLoggedIn = this.props.onLoggedIn;
         this.onError = this.props.onError;
