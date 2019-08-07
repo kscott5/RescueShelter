@@ -10,3 +10,5 @@ class OpenGraph {
 
     constructor() {}
 }
+
+export {OpenGraph as default, OpenGraph};

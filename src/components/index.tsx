@@ -6,6 +6,7 @@ import Layout from './shared/layout'
 
 import registerServiceWorker from '../registerServiceWorker';
 import AppContext from './state/context';
+import OpenGraph from "./state/opengraph";
 import SponsorStateModel from './state/sponsor';
 
 class App extends React.Component<any> {
