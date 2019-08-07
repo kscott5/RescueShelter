@@ -31,12 +31,12 @@ class App extends React.Component<any> {
 
     componentDidMount() {
         this.querySelector("title").innerText = this.title;
-        this.querySelector("meta[property=og:description").innerText = this.og.description;
-        this.querySelector("meta[property=og:determiner").innerText = this.og.determiner;
-        this.querySelector("meta[property=og:locale").innerText = this.og.locale;
-        this.querySelector("meta[property=og:site_name").innerText = this.og.siteName;
-        this.querySelector("meta[property=og:title").innerText = this.og.title;
-        this.querySelector("meta[property=og:url").innerText = this.og.url;
+        this.querySelector("meta[property=og:description]").innerText = this.og.description;
+        this.querySelector("meta[property=og:determiner]").innerText = this.og.determiner;
+        this.querySelector("meta[property=og:locale]").innerText = this.og.locale;
+        this.querySelector("meta[property=og:site_name]").innerText = this.og.siteName;
+        this.querySelector("meta[property=og:title]").innerText = this.og.title;
+        this.querySelector("meta[property=og:url]").innerText = this.og.url;
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
