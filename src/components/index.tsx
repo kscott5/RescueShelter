@@ -10,15 +10,38 @@ import SponsorStateModel from './state/sponsor';
 
 class App extends React.Component<any> {
     state;
-    model: SponsorStateModel;
 
+    /**
+     * NOTE: use the SetState() method 
+     */
+    model: SponsorStateModel;
+    title: string;
+    og: OpenGraph;
+    
     constructor(props) {
         super(props);
 
         this.updateAppContext = this.updateAppContext.bind(this);
         this.model = new SponsorStateModel();
+        this.og = new OpenGraph();
         this.state = this;
-        
+        this.title = 'Rescue Shelter: Home Page';
+    }
+
+    componentDidMount() {
+        this.querySelector("title").innerText = this.title;
+        this.querySelector("meta[property=og:description").innerText = this.og.description;
+        this.querySelector("meta[property=og:determiner").innerText = this.og.determiner;
+        this.querySelector("meta[property=og:locale").innerText = this.og.locale;
+        this.querySelector("meta[property=og:site_name").innerText = this.og.siteName;
+        this.querySelector("meta[property=og:title").innerText = this.og.title;
+        this.querySelector("meta[property=og:url").innerText = this.og.url;
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return (this.props !== nextProps) ||
+            (this.state !== nextState) ||
+            (this.context !== nextContext);
     }
 
     querySelector(selector: string) : any {
@@ -42,5 +65,5 @@ class App extends React.Component<any> {
     }
 }
 
-ReactDOM.render(<App/> , document.querySelector('#root'));
+ReactDOM.render(<App/> , document.querySelector('#appContent'));
 registerServiceWorker();
