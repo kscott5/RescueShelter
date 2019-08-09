@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { number } from "prop-types";
 
 console.log(`mongoosejs version: ${mongoose.version}`);
 
@@ -141,7 +142,7 @@ export class Pagination {
     public pageIndex: Number;
     public documents: Array<any>;
 
-    constructor(pageCount: Number, pageCurrent: Number, data: Array<any>){
+    constructor(data: Array<any>, pageCount: Number, pageCurrent: Number){
         this.pages = pageCount;
         this.pageIndex = pageCurrent;
         this.documents = data;
@@ -168,7 +169,7 @@ export class Pagination {
         createPagination(data: any, pageCount: Number = 1, pageCurrent: Number = 1) : any {
             return {
                 ok: true,
-                data: new Pagination(1,1, data)
+                data: new Pagination(data,pageCount, pageCurrent)
             }
     } // end JsonResponse
 } // end Services namespace

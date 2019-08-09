@@ -88,7 +88,7 @@ export namespace SponsorService {
 
             res.status(200);
             Promise.resolve(db.getSponsors(page,limit,phrase))
-                .then(data => res.json(jsonResponse.createPagination(data)))
+                .then(data => res.json(jsonResponse.createPagination(data, 1, page)))
                 .catch(error => res.json(jsonResponse.createError(error)));
         });
     } // end publishWebAPI

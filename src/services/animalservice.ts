@@ -170,7 +170,7 @@ export namespace AnimalService {
             res.status(200);
             
             Promise.resolve(db.getAnimals(page, limit, phrase))
-            .then(value => res.json(jsonResponse.createPagination(1,1,value)))
+            .then(value => res.json(jsonResponse.createPagination(value,1,page)))
             .catch(reason => res.json(jsonResponse.createError(reason)));
         });
     } // end publishWebAPI
