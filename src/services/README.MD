@@ -9,6 +9,7 @@ Join collections with MongoDB aggregate function
 > \$isArray  
 > \$eq  
   
+security.password is #P@ssw0rd1.  
   
 ## Animals Collection
 ``` 
