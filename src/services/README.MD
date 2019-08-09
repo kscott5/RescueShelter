@@ -19,7 +19,7 @@ db.animals.insert([
         "created" : ISODate("2019-07-12T16:29:52.732Z"),
         "modified" : ISODate("2019-07-12T16:29:52.732Z")
     },
-    "contributors" : [ 
+    "sponsors" : [ 
         "flname@outlook.com"
     ],
     "name" : "Florida bonneted bat (Eumops floridanus)",
@@ -34,10 +34,9 @@ db.animals.insert([
         "created" : ISODate("2019-07-12T18:33:54.218Z"),
         "modified" : ISODate("2019-07-12T18:33:54.218Z")
     },
-    "contributors" : [ 
+    "sponsors" : [ 
         "user.name@outlook.com", 
-        "temp@gmail.com", 
-        ""
+        "temp@gmail.com"
     ],
     "name" : "Elephant",
     "description" : "African region",
@@ -47,19 +46,19 @@ db.animals.insert([
 }])
 ```
   
-## Contributors Collection
+## Sponsors Collection
 ``` 
-db.contributors.insert([
+db.sponsors.insert([
 {
     "_id" : ObjectId("5d2c98df871e577d7304cf8f"),
     "firstname" : "FirstName",
     "lastname" : "LastName",
-    "useremail" : "firs.last@outlook.com",
+    "useremail" : "flname@outlook.com",
     "username" : "flnames",
     "audit" : [ 
         {
             "modified" : ISODate("2019-07-15T15:16:47.161Z"),
-            "contributor_id" : ObjectId("5d2c98df871e577d7304cf8f")
+            "sponsor_id" : ObjectId("5d2c98df871e577d7304cf8f")
         }
     ],
     "__v" : 0
@@ -73,7 +72,7 @@ db.contributors.insert([
     "audit" : [ 
         {
             "modified" : ISODate("2019-07-15T00:00:00.000Z"),
-            "contributor_id" : ObjectId("5d2cd9ed72cd95995f4c9e43")
+            "sponsor_id" : ObjectId("5d2cd9ed72cd95995f4c9e43")
         }
     ],
     "__v" : 0
@@ -87,27 +86,27 @@ db.contributors.insert([
 db.animals.aggregate([
     {
         $lookup: {
-            from: "contributors",
-            let: {animals_contributors: '$contributors'},
+            from: "sponsors",
+            let: {animals_sponsors: '$sponsors'},
             pipeline: [{
                 $project: {
                     _id: false, useremail: 1, username: 1, 
-                    is_contributor: {$in: ['$useremail', '$$animals_contributors']}
+                    is_sponsor: {$in: ['$useremail', '$$animals_sponsors']}
                 }            
             }],
-            as: "contributors"
+            as: "sponsors"
         }        
     },
     {
     $project: {
-        name: 1, description: 1, contributors: 1, endangered: 1, imageSrc: 1,
-        contributors_is_array: {$isArray: '$contributors'},
-        contributors: '$contributors',
-        contributors_filtered: {
+        name: 1, description: 1, sponsors: 1, endangered: 1, imageSrc: 1,
+        sponsors_is_array: {$isArray: '$sponsors'},
+        sponsors: '$sponsors',
+        sponsors_filtered: {
             $filter: {
-                input: '$contributors',
-                as: 'sponsor',
-                cond: {$eq: ['$$sponsor.is_contributor', false]}
+                input: '$sponsors',
+                as: 'constributor',
+                cond: {$eq: ['$$constributor.is_sponsor', true]}
             }
         }
     }}
@@ -123,24 +122,24 @@ db.animals.aggregate([
     "description" : "bat man",
     "imageSrc" : "https://live.staticflickr.com/3949/15541718041_300757f800_b.jpg",
     "endangered" : true,
-    "contributors" : [ 
+    "sponsors" : [ 
         {
             "useremail" : "flname@outlook.com",
-            "username" : "flname",
-            "is_contributor" : true
+            "username" : "flnames",
+            "is_sponsor" : true
         }, 
         {
             "useremail" : "user.name@outlook.com",
             "username" : "username",
-            "is_contributor" : false
+            "is_sponsor" : false
         }
     ],
-    "contributors_is_array" : true,
-    "contributors_filtered" : [
+    "sponsors_is_array" : true,
+    "sponsors_filtered" : [ 
         {
             "useremail" : "flname@outlook.com",
-            "username" : "flname",
-            "is_contributor" : true
+            "username" : "flnames",
+            "is_sponsor" : true
         }
     ]
 }
@@ -152,24 +151,24 @@ db.animals.aggregate([
     "description" : "African region",
     "imageSrc" : "https://c402277.ssl.cf1.rackcdn.com/photos/11552/images/hero_small/rsz_namibia_will_burrard_lucas_wwf_us_1.jpg?1462219623",
     "endangered" : false,
-    "contributors" : [ 
+    "sponsors" : [ 
         {
             "useremail" : "flname@outlook.com",
-            "username" : "flname",
-            "is_contributor" : false
+            "username" : "flnames",
+            "is_sponsor" : false
         }, 
         {
             "useremail" : "user.name@outlook.com",
             "username" : "username",
-            "is_contributor" : true
+            "is_sponsor" : true
         }
     ],
-    "contributors_is_array" : true,
-    "contributors_filtered" : [ 
+    "sponsors_is_array" : true,
+    "sponsors_filtered" : [ 
         {
             "useremail" : "user.name@outlook.com",
             "username" : "username",
-            "is_contributor" : true
+            "is_sponsor" : true
         }
     ]
 }
