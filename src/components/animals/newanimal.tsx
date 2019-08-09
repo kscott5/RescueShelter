@@ -197,7 +197,7 @@ class NewAnimal extends React.Component<any,any> {
                             </div>
                         </div>
                         <div className="inline field">
-                            <div className="ui checkbox">
+                            <div className={"ui checkbox " + formState.checkboxCss}>
                                 <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
                                 <label htmlFor='endangered'>{a11y.forms.animal.endangered.label}</label>
                             </div>
