@@ -1,3 +1,5 @@
+import {FormStateModel} from "./form";
+
 class AnimalModel {
     public name: string='';
     public description: string='';
@@ -12,10 +14,12 @@ class AnimalStateModel {
     public animal: AnimalModel;
     public sponsor: string='';
     public pageTitle: string='New Animal';
-    constructor(id: string) {
+    public form: FormStateModel;
 
+    constructor(id: string) {
         this.id = id;
-        this.animal = new AnimalModel();
+        this.animal = new AnimalModel(); 
+        this.form = new FormStateModel();       
     }
 }
 
