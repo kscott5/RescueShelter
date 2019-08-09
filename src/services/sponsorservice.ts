@@ -7,7 +7,7 @@ export namespace SponsorService {
         private __selectionFields;
         private model;
 
-        cnstructor() {
+        constructor() {
             this.__selectionFields =  "_id useremail username firstname lastname photo audit";
             this.model = services.getModel(services.SPONSOR_MODEL_NAME);
         }
