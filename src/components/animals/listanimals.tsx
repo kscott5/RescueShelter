@@ -60,18 +60,19 @@ class ListAnimals extends React.Component {
     }
 
     render() {
+        const model = this.context.state.model;
+        const linkText = (model.loggedIn)? a11y.links.edit : a11y.links.view;
+
         const documentItems = this.state.documents.map((document)=>
             <div key={document._id}>
                 <span>{document.name}</span>
                 <span>{document.description}</span>
                 <img src={document.imageSrc} className="ui image"/>
 
-                <Link to={`/animal/${document._id}`}>{a11y.links.edit}</Link>        
+                <Link to={`/animal/${document._id}`}>{linkText}</Link>        
             </div>
         );
         
-        const model = this.context.state.model;
-
         return (
             <div className="ui containter">
                 <h2>{a11y.headings.h2}</h2>
