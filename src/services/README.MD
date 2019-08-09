@@ -55,6 +55,10 @@ db.sponsors.insert([
     "lastname" : "LastName",
     "useremail" : "flname@outlook.com",
     "username" : "flnames",
+    "security" : {
+        "password" : "9bc4448f71fcd2eeff26c5afc0b62578ac1363426f1185896704428045e1e9f886dbab587ab5590d0c7ee3e73a4e78340ef9",
+        "questions" : []
+    },
     "audit" : [ 
         {
             "modified" : ISODate("2019-07-15T15:16:47.161Z"),
@@ -69,6 +73,10 @@ db.sponsors.insert([
     "lastname" : "Name",
     "useremail" : "user.name@outlook.com",
     "username" : "username",
+    "security" : {
+        "password" : "9bc4448f71fcd2eeff26c5afc0b62578ac1363426f1185896704428045e1e9f886dbab587ab5590d0c7ee3e73a4e78340ef9",
+        "questions" : []
+    },
     "audit" : [ 
         {
             "modified" : ISODate("2019-07-15T00:00:00.000Z"),
