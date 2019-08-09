@@ -47,7 +47,7 @@ class NewAnimal extends React.Component<any,any> {
     static contextType = AppContext;
     state: AnimalStateModel;
 
-    constructor(props,state) {
+    constructor(props) {
         super(props);
 
         this.state =  new AnimalStateModel(this.props.animalId);
