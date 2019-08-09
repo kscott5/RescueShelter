@@ -64,11 +64,14 @@ class NewAnimal extends React.Component<any,any> {
         fetch(`http://localhost:3302/api/animal/${objThis.state.id}`)
             .then(response =>response.json())
             .then(response => {
+                var formState = objThis.state.form;
+                formState.updateState(objThis.context.loggedIn);
+        
                 objThis.setState({pageTitle: 'Animal Details'});
                 if(response.ok) 
-                    objThis.setState({animal: response.data, sponsor: ''});
+                    objThis.setState({animal: response.data, sponsor: '', form: formState});
                 else
-                    objThis.setState({message: response.data});
+                    objThis.setState({message: response.data, form: formState});
             })
             .catch(error => objThis.setState({message: error}));
     }
@@ -107,7 +110,7 @@ class NewAnimal extends React.Component<any,any> {
         if(!form.checkValidity()) return;
 
         var url = `http://localhost:3302/api/animal/${objThis.state.id}`;
-        if(this.state.id == "0")
+        if(objThis.state.id == "0")
             url = `http://localhost:3302/api/animal/new`;
 
         fetch(url, {
@@ -118,7 +121,7 @@ class NewAnimal extends React.Component<any,any> {
             }
         }).then(response => response.json())
         .then(response => {
-            if(response.ok)    
+            if(response.ok) 
                 objThis.setState({id: response.data._id, animal: response.data, sponsor: ''});
             else
                 objThis.setState({message: response.data});
@@ -157,17 +160,18 @@ class NewAnimal extends React.Component<any,any> {
         this.setState(stateObj);
     }
 
-    render() {        
+    render() {
+        const formState = this.state.form;
         const sponsors = this.state.animal.sponsors.map((sponsor) => {
             return (
                 <div key={sponsor}>
-                    <span>{sponsor}</span> <button id="removesponsor" name={sponsor}  onClick={this.onClick}>Delete</button>
+                    <span>{sponsor}</span> <button id="removesponsor" className={"ui button " + formState.buttonCss } name={sponsor} type="button" onClick={this.onClick}>Delete</button>
                 </div>
             ); 
         });
 
         const model = this.context.state.model;
-        if(!model.loggedIn)
+        if(model.loggedIn)
             return (<Redirect to="/login?/animal" /> );
         else
             return (
@@ -176,19 +180,19 @@ class NewAnimal extends React.Component<any,any> {
                         <div className="ui error">{this.state.message}</div>
                         <div className="field">
                             <label htmlFor="name">{a11y.forms.animal.name.label}</label>
-                            <div className="ui field input">                                
+                            <div className={"ui field input " + formState.textCss}>                                
                                 <input id='name' onChange={this.onChange} name='name' required placeholder={a11y.forms.animal.name.placeholder} type='text' value={this.state.animal.name}/>
                             </div>
                         </div>
                         <div className="field">
                             <label htmlFor='description'>{a11y.forms.animal.description.label}</label>
-                            <div className="ui field input">
+                            <div className={"ui field input " + formState.textCss}>
                                 <textarea id='description' onChange={this.onChange} name='description' placeholder={a11y.forms.animal.description.placeholder} value={this.state.animal.description}/>
                             </div>
                         </div>
                         <div className="field">
                             <label htmlFor='imageSrc'>{a11y.forms.animal.imageUrl.label}</label>
-                            <div className="ui field input">
+                            <div className={"ui field input " + formState.textCss}>
                                 <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder={a11y.forms.animal.imageUrl.placeholder} type='text' value={this.state.animal.imageSrc}/>
                             </div>
                         </div>
@@ -200,7 +204,7 @@ class NewAnimal extends React.Component<any,any> {
                         </div>
                         <div className="field">
                             <label htmlFor='sponsor'>{a11y.forms.animal.sponsor.label}</label>
-                            <div className="ui field input">
+                            <div className={"ui field input " + formState.textCss}>
                                 <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder={a11y.forms.animal.sponsor.placeholder} type='text'  value={this.state.sponsor}/>
                             </div>
                         </div>
@@ -211,7 +215,7 @@ class NewAnimal extends React.Component<any,any> {
                             </div>
                         </div>
                         <div className="field">
-                            <button id='addanimal' name='addanimal' type="button" onClick={this.onSaveNewAnimal}>{a11y.buttons.save}</button>
+                            <button id='addanimal' name='addanimal' className={"ui button " + formState.buttonCss} type="button" onClick={this.onSaveNewAnimal}>{a11y.buttons.save}</button>
                         </div>
                     </form>
             );
