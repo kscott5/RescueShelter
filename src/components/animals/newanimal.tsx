@@ -176,7 +176,7 @@ class NewAnimal extends React.Component<any,any> {
         else
             return (
                     <form id="animalForm" className="ui form">
-                        <h4 className="ui diving header">{this.state.pageTitle}</h4>
+                        <legend className="ui diving header">{this.state.pageTitle}</legend>
                         <div className="ui error">{this.state.message}</div>
                         <div className="field">
                             <label htmlFor="name">{a11y.forms.animal.name.label}</label>
