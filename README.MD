@@ -14,7 +14,7 @@ NOTE: The app.js could function within a serverless cloud environment or API exp
   
   Tools | Javascript | Database  | Live Code Testing  
   ------- | ---------- | -------- | -------  
- [Markdown Guide](https://guides.github.com/features/mastering-markdown/) | [ReactJS](https://reactjs.org/) | [MongoDB Ecosystem](https://docs.mongodb.com/ecosystem/drivers/) | [jsfiddle](http://jsfiddle.net/)  
+ [Markdown Guide](https://guides.github.com/features/mastering-markdown/) | [ReactJS](https://reactjs.org/) | [MongoDB Ecosystem](https://docs.mongodb.com/ecosystem/drivers/) | [jsfiddle](https://jsfiddle.net/user/karegascott/fiddles/)  
  [GitHub](https://github.com/) | [Mozilla Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | [Mongo Docker Hub](https://hub.docker.com/_/mongo) | [codepend.io](https://codepen.io/)  
  [Visual Code](https://code.visualstudio.com/) | [Typescript](https://www.typescriptlang.org/) | [Mongoose JS](https://mongoosejs.com/) | [Regexr](http://regexr.com/)  
  [Powershell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6) | | [Robo3t](https://www.robomongo.org/) | 
