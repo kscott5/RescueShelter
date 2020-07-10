@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {HashRouter} from "react-router-dom";
+import {HashRouter} from 'react-router-dom';
 
-import Layout from './shared/layout'
+import './styles/index.css'
+import Layout from './components/shared/layout'
 
-import registerServiceWorker from '../registerServiceWorker';
-import AppContext from './state/context';
-import OpenGraph from "./state/opengraph";
-import SponsorStateModel from './state/sponsor';
+import * as serviceWorker from './serviceWorker';
+import AppContext from './components/state/context';
+import OpenGraph from "./components/state/opengraph";
+import SponsorStateModel from './components/state/sponsor';
 
 class App extends React.Component<any> {
     state;
@@ -66,5 +67,12 @@ class App extends React.Component<any> {
     }
 }
 
+export default { App };
+
 ReactDOM.render(<App/> , document.querySelector('#appContent'));
-registerServiceWorker();
+
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
