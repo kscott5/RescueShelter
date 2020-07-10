@@ -73,7 +73,7 @@ class NewSponsor extends React.Component<any> {
 
     onClick(event) {
         const appCtx = this.context.state;
-        if(appCtx.querySelector("form.ui.form.register").checkValidity()) {
+        if(!appCtx.querySelector("form.ui.form.register").checkValidity()) {
             console.log("not valid");
             return false;
         }
