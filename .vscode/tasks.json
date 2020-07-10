@@ -6,7 +6,7 @@
         {
             "label": "PreLaunchTask",
             "type": "shell",
-            "command": "bash ./preLaunchTask.sh --webapp",
+            "command": "yarn run clean & yarn run start",
             "options": {
                 "cwd": "${workspaceFolder}"
             }
