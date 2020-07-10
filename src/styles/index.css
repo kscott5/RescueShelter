@@ -1,0 +1,28 @@
+/*
+  https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
+  !important avoid. use CSS at rule with @import
+*/
+
+@import 'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css';
+
+.ui.button.disabled {
+  display: none;
+}
+
+.ui.inverted.segment {
+  background-color: #71a6da;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
