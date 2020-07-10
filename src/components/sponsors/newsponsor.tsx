@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {AppContext} from '../state/context';
+import FormStateModel from '../state/form';
 
 const a11y = {
     titles: {},
@@ -49,13 +50,15 @@ const a11y = {
 
 class NewSponsor extends React.Component<any> {
     static contextType = AppContext;
-
+    state: FormStateModel;
     constructor(props) {
         super(props);
 
+        this.state = new FormStateModel();
         this.onClick = this.onClick.bind(this);
         this.onChange = this.onChange.bind(this);
         this.compareTo = this.compareTo.bind(this);
+        this.toggleDisplay = this.toggleDisplay.bind(this);
         this.verifyUniquiness = this.verifyUniquiness.bind(this);
     }
 
@@ -117,6 +120,13 @@ class NewSponsor extends React.Component<any> {
         this.context.state.updateAppContext(model);
     }
 
+    toggleDisplay(event) {
+        const formModel = this.state;
+        formModel.toggleDisplay();
+
+        this.setState(formModel);
+    }
+
     verifyUniquiness(event) {
         const name = event.target.name;
         const value = event.target.value;
@@ -144,7 +154,20 @@ class NewSponsor extends React.Component<any> {
         var model = this.context.state.model;
         return (
             <form className="ui form register">
-                <h4 className="ui diving header">{model.pageTitle}</h4>
+                <legend className="ui diving header">{model.pageTitle}</legend>
+                <button type="button" onClick={this.toggleDisplay}><img className="ui icon"/></button><span>First & Last name</span>
+                <div className={this.state.displayCss}>
+                    <label htmlFor='firstname'>{a11y.forms.newsponsor.firstname.label}</label>
+                    <div id="firstname" className="ui field input">
+                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.firstname.placeholder} value={model.sponsor.firstname}/>
+                    </div>
+                </div>
+                <div className={this.state.displayCss}>
+                    <label htmlFor='lastname'>{a11y.forms.newsponsor.lastname.label}</label>
+                    <div id="lastname" className="ui field input">
+                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.lastname.placeholder} value={model.sponsor.lastname}/>
+                    </div>
+                </div>
                 <div className="field">
                     <label htmlFor='useremail'>{a11y.forms.newsponsor.useremail.label}</label>
                     <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
@@ -161,18 +184,6 @@ class NewSponsor extends React.Component<any> {
                     <label htmlFor='verifyPassword'>{a11y.forms.newsponsor.passwordVerifier.label}</label>
                     <div id="passwordVerifier" className="ui field input">
                         <input type="password" id="verifyPassword" name="verifyPassword" onChange={this.compareTo} placeholder={a11y.forms.newsponsor.passwordVerifier.placeholder} value={model.confirmPassword}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor='firstname'>{a11y.forms.newsponsor.firstname.label}</label>
-                    <div id="firstname" className="ui field input">
-                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.firstname.placeholder} value={model.sponsor.firstname}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor='lastname'>{a11y.forms.newsponsor.lastname.label}</label>
-                    <div id="lastname" className="ui field input">
-                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.lastname.placeholder} value={model.sponsor.lastname}/>
                     </div>
                 </div>
                 <div className="field">

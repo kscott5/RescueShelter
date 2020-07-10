@@ -65,7 +65,7 @@ class NewAnimal extends React.Component<any,any> {
             .then(response =>response.json())
             .then(response => {
                 var formState = objThis.state.form;
-                formState.updateState(objThis.context.loggedIn);
+                formState.toggleEditable(objThis.context.loggedIn);
         
                 objThis.setState({pageTitle: 'Animal Details'});
                 if(response.ok) 

@@ -1,17 +1,37 @@
 class FormStateModel {
-    public textCss: string = 'editable';
-    public checkboxCss: string = 'editable';
-    public buttonCss: string = 'editable';
-
-    constructor() {
-        this.updateState(true);
+    private cssText = 'editable';
+    public textCss(): string {
+        return this.cssText;
     }
 
-    updateState(editable: boolean) {
-        this.textCss = (editable)? 'editable': 'disabled';
-        this.checkboxCss = (editable)? 'editable': 'disabled';
-        this.buttonCss = (editable)? 'editable': 'disabled';    
+    private cssCheckbox = 'editable';
+    public checkboxCss() : string {
+        return this.cssCheckbox;
+    }
+    
+    private cssButton: string = 'editable';
+    public get buttonCss() : string {
+        return this.cssButton;
+    }
+
+    private cssDisplay: string = 'hidden';
+    public get displayCss() : string {
+        return this.cssDisplay;
+    }
+
+    constructor() {
+        this.toggleEditable(true);
+    }
+
+    toggleDisplay() {
+        this.cssDisplay = (this.cssDisplay == 'hidden')? 'visible' : 'hidden';
+    }
+
+    toggleEditable(editable: boolean) {
+        this.cssText = (editable)? 'editable': 'disabled';
+        this.cssCheckbox = (editable)? 'editable': 'disabled';
+        this.cssButton = (editable)? 'editable': 'disabled';    
     }
 }
 
-export { FormStateModel as default, FormStateModel};
+export { FormStateModel as default, FormStateModel}; 
