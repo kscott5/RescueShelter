@@ -1,25 +1,28 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        //"outDir": "built",
-        "rootDir": "./",
-        "noImplicitAny": false,
-        "jsx": "react",
-        "strict": false,
-        "allowJs": false,
-        "noImplicitUseStrict": true
-    },
-    "typeAcquisition": {
-        "enable": true
-    },
-    "exclude": [
-        "config",
-        "node_modules",
-        "public",
-        "scripts",
-        "logs",
-        "build",
-        "data"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/services"
+  ]
 }
