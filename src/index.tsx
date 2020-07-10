@@ -24,6 +24,8 @@ class App extends React.Component<any> {
         super(props);
 
         this.updateAppContext = this.updateAppContext.bind(this);
+        this.querySelector = this.querySelector.bind(this);
+        
         this.model = new SponsorStateModel();
         this.og = new OpenGraph();
         this.state = this;
