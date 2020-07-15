@@ -61,7 +61,7 @@ class NewAnimal extends React.Component<any,any> {
         if(objThis.state.id == "0") return;
 
         // edit existing details
-        fetch(`http://localhost:3302/api/animal/${objThis.state.id}`)
+        fetch(`http://localhost:3302/api/animals/${objThis.state.id}`)
             .then(response =>response.json())
             .then(response => {
                 var formState = objThis.state.form;
@@ -109,9 +109,9 @@ class NewAnimal extends React.Component<any,any> {
         var form = document.querySelector("form");
         if(!form.checkValidity()) return;
 
-        var url = `http://localhost:3302/api/animal/${objThis.state.id}`;
+        var url = `http://localhost:3302/api/animals/${objThis.state.id}`;
         if(objThis.state.id == "0")
-            url = `http://localhost:3302/api/animal/new`;
+            url = `http://localhost:3302/api/animals/new`;
 
         fetch(url, {
             method: 'POST',
