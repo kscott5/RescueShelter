@@ -4,9 +4,10 @@
   "description": "Simple application using Express and React",
   "main": "index.js",
   "author": "Karega K. Scott",
-  "license": "GNU",
+  "license": "GPL-3.0-or-later",
   "private": true,
   "dependencies": {
+    "chart.js": "^2.9.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -44,9 +45,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-
-    "typescript": "~3.7.2",
-    
-    "jshint": "^2.11.1"
+    "jshint": "^2.11.1",
+    "typescript": "~3.7.2"
   }
 }
