@@ -67,8 +67,11 @@ class ListAnimals extends React.Component {
             <div key={document._id}>
                 <span>{document.name}</span>
                 <span>{document.description}</span>
-                <img src={document.imageSrc} className="ui image"/>
-
+                {
+                    (document.image.contenttype == 'icon')?
+                    (<i className={document.image.content + ' ui massive ' + document.image.contenttype}/>) :
+                    ('&nbsp;')
+                }
                 <Link to={`/animal/${document._id}`}>{linkText}</Link>        
             </div>
         );
