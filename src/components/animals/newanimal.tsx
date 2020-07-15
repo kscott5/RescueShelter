@@ -193,7 +193,7 @@ class NewAnimal extends React.Component<any,any> {
                         <div className="field">
                             <label htmlFor='imageSrc'>{a11y.forms.animal.imageUrl.label}</label>
                             <div className={"ui field input " + formState.textCss}>
-                                <input id='imageSrc' onChange={this.onChange} name='imageSrc' placeholder={a11y.forms.animal.imageUrl.placeholder} type='text' value={this.state.animal.imageSrc}/>
+                                <input id='image.content' onChange={this.onChange} name='image.content' placeholder={a11y.forms.animal.imageUrl.placeholder} type='text' value={this.state.animal.image.content}/>
                             </div>
                         </div>
                         <div className="inline field">

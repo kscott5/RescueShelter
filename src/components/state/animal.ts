@@ -3,7 +3,7 @@ import {FormStateModel} from "./form";
 class AnimalModel {
     public name: string='';
     public description: string='';
-    public imageSrc: string='';
+    public image = {'content': '', 'contenttype': ''};
     public endangered: boolean = false;
     public sponsors: Array<string> = [];
 }
