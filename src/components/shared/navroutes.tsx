@@ -16,13 +16,16 @@ class NavRoutes extends React.Component {
                     <Route exact path="/animals" component={Animals.ListAnimalsView}/>
                     <Route exact path="/animal" component={Animals.NewEditAnimalView}/>
                     <Route exact path="/animal/:id" component={Animals.NewEditAnimalView}/>
-                    
+
                     <Route exact path="/sponsors" component={Sponsors.ListSponsorsView}/>
                     <Route exact path="/sponsor" component={Sponsors.NewEditSponsorView}/>
                     <Route exact path="/sponsor/:id" component={Sponsors.NewEditSponsorView}/>
-
-                    <Route exact path="/login" component={Sponsors.LoginSponsorView} />
                     
+                    <Route exact path="/login" component={Sponsors.LoginSponsorView} />
+
+                    <Route exact path="/animal/reports" component={Animals.ListAnimalsView}/>
+                    <Route exact path="/sponsor/reports" component={Sponsors.ListSponsorsView}/>
+
                 </Container>
             </Segment>
         );

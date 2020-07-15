@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import {Link} from "react-router-dom";
-import {Segment, Container, Menu} from "semantic-ui-react";
+import {Segment, Container, Menu, Dropdown} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
 import * as Members from "../sponsors/index";
@@ -31,6 +31,20 @@ class NavLinks extends React.Component {
                         <Menu.Item id='home' name='home' as='div' active onClick={this.onMenuItemClicked}><i className="home icon"></i><Link to="/">Home</Link></Menu.Item>
                         <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><i className="paw icon"></i><Link to="/animals">Animals</Link></Menu.Item>
                         <Menu.Item id='sponsors' name='sponsors' as='div' onClick={this.onMenuItemClicked}><i className="users icon"></i><Link to="/sponsors">Sponsors</Link></Menu.Item>
+                        <Menu.Item id='reports' name='reports' as='div'>
+                            <i className='chart line icon'></i>
+                            <Dropdown text='Reports'>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item as='div' text='Animals'>
+                                        <Link to='/animal/reports'>Animals</Link>
+                                    </Dropdown.Item>
+                                    <Dropdown.Item as='div' text='Sponsors' >
+                                    <Link to='/sponsor/reports'>Sponsors</Link>
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Menu.Item>
+                        
                     </Menu>
                 </Container>
                 <Container className="right float">
