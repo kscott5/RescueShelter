@@ -17,11 +17,11 @@ export class ChartJS extends React.Component<any> {
 
     componentDidMount() { 
         // Stub 
-        var data = {
+        var model = {
             datasets: [{
-                'label': 'Stub label',
-                'data': [10, 20, 30, 18, 9, 13],
-                'backgroundColor': [
+                label: 'Stub label',
+                data: [10, 20, 30, 18, 9, 13],
+                backgroundColor: [
                     'rgb(255, 99, 132)',
                     'rgb(75, 192, 192)',
                     'rgb(255, 205, 86)',
@@ -41,12 +41,34 @@ export class ChartJS extends React.Component<any> {
             ]
         };
 
+        fetch('http://localhost:3303/api/report/categories', {
+            method: `GET`,
+            //body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then((response) => {
+            console.log(response);
+            model.labels = [];
+            model.datasets[0].data = [];
+            
+            response.data.forEach((item) => {
+                model.labels.push(item['_id'])
+                model.datasets[0].data.push(item['count']);
+            });            
+            
+        })
+        .catch((reason) => {
+            console.log(reason);
+        });
         
         new Chart('chartCanvas', {
-            data: data,
+            data: model,
             type: 'polarArea',
             //options: options
         });
+
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
