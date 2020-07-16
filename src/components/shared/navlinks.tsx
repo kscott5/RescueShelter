@@ -35,10 +35,10 @@ class NavLinks extends React.Component {
                             <i className='chart line icon'></i>
                             <Dropdown text='Reports'>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item as='div' text='Animals'>
-                                        <Link to='/animal/reports'>Animals</Link>
+                                    <Dropdown.Item as='div' className="item inverted">
+                                        <Link to='/animal/reports/polarArea'>Animals</Link>
                                     </Dropdown.Item>
-                                    <Dropdown.Item as='div' text='Sponsors' >
+                                    <Dropdown.Item as='div' className="item inverted" >
                                     <Link to='/sponsor/reports'>Sponsors</Link>
                                     </Dropdown.Item>
                                 </Dropdown.Menu>

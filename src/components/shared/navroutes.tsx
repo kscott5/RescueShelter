@@ -6,6 +6,7 @@ import {Segment, Container, Image} from "semantic-ui-react";
 import * as home from "../../images/home.png"
 import * as Animals from "../animals/index";
 import * as Sponsors from "../sponsors/index";
+import * as Reports from "../reports/index";
 
 class NavRoutes extends React.Component {
     render() {
@@ -23,8 +24,8 @@ class NavRoutes extends React.Component {
                     
                     <Route exact path="/login" component={Sponsors.LoginSponsorView} />
 
-                    <Route exact path="/animal/reports" component={Animals.ListAnimalsView}/>
-                    <Route exact path="/sponsor/reports" component={Sponsors.ListSponsorsView}/>
+                    <Route exact path="/animal/reports/:reportType" component={Reports.ChartJsReport}/>
+                    <Route exact path="/sponsor/reports/:reportType" component={Reports.ChartJsReport}/>
 
                 </Container>
             </Segment>
