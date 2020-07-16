@@ -3,8 +3,6 @@ import AppContext from "../state/context";
 
 import Chart from "chart.js";
 
-
-
 export class ChartJS extends React.Component<any> {
     static contextType = AppContext;
     state = {};
@@ -57,18 +55,19 @@ export class ChartJS extends React.Component<any> {
                 model.labels.push(item['_id'])
                 model.datasets[0].data.push(item['count']);
             });            
-            
-        })
-        .catch((reason) => {
-            console.log(reason);
-        });
-        
+
+                    
         new Chart('chartCanvas', {
             data: model,
             type: 'polarArea',
             //options: options
         });
 
+
+        })
+        .catch((reason) => {
+            console.log(reason);
+        });
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
