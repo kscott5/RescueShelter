@@ -32,7 +32,7 @@ class ListAnimals extends React.Component {
     }
 
     componentDidMount() { 
-        fetch(`http://localhost:3302/api/animals?limit=100&lang=${a11y.lang}`)
+        fetch(`http://localhost/api/report/animals?limit=100&lang=${a11y.lang}`)
             .then(response =>response.json())
             .then(response => {
                 if(response.ok) 

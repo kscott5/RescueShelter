@@ -91,7 +91,7 @@ class Login extends React.Component<any> {
             password: model.sponsor.password
         };
 
-        fetch(`http://localhost:3302/api/secure/auth`, { 
+        fetch(`http://localhost/api/secure/auth`, { 
             method: `POST`,
             body: JSON.stringify(body),
             headers: {
@@ -179,7 +179,7 @@ class Logout extends React.Component<any> {
             useremail: model.sponsor.useremail
         };
 
-        fetch(`http://localhost:3302/api/secure/deauth`, { 
+        fetch(`http://localhost/api/secure/deauth`, { 
             method: `POST`,
             body: JSON.stringify(body),
             headers: {
