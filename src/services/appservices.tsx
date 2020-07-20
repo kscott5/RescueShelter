@@ -3,7 +3,7 @@ class AppServices {
      * 
      * @param options any
      */
-    async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100}) {
+    async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100, phrase: ''}) {
         try {
             let response = await fetch(`/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
 
