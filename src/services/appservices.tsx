@@ -34,9 +34,9 @@ class AppServices {
      */
     async updateAnimal(options: any = {data: {}, withId: '0'}) {
         try {
-            var url = `/api/animals/${options.withId}`;
+            var url = `/api/manage/animals/${options.withId}`;
             if(options.withId === undefined || options.withId == "0")
-                url = `/api/animals/new`;
+                url = `/api/mange/animals/new`;
 
             let response = await fetch(url, {
                 method: 'POST',
@@ -58,7 +58,7 @@ class AppServices {
      */
     async getCategories(options: any = {}) {
         try {
-            let response = await fetch('/api/report/categories', {
+            let response = await fetch('/api/report/animals/categories', {
                 method: `GET`,
                 //body: JSON.stringify(body),
                 headers: {
