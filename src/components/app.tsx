@@ -5,6 +5,7 @@ import '../styles/index.css'
 import Layout from './shared/layout'
 
 import AppContext from './state/context';
+import AppServices from '../services/appservices';
 import OpenGraph from "./state/opengraph";
 import SponsorStateModel from './state/sponsor';
 
@@ -17,13 +18,14 @@ class App extends React.Component<any> {
     model: SponsorStateModel;
     title: string;
     og: OpenGraph;
+    services: AppServices;
     
     constructor(props) {
         super(props);
 
         this.updateAppContext = this.updateAppContext.bind(this);
         this.querySelector = this.querySelector.bind(this);
-        
+        this.services = new AppServices();
         this.model = new SponsorStateModel();
         this.og = new OpenGraph();
         this.state = this;
