@@ -39,7 +39,7 @@ export class ChartJS extends React.Component<any> {
             ]
         };
 
-        fetch('http://localhost:3303/api/report/categories', {
+        fetch('/api/report/animals/categories', {
             method: `GET`,
             //body: JSON.stringify(body),
             headers: {

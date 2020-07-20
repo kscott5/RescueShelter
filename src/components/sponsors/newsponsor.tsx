@@ -78,7 +78,7 @@ class NewSponsor extends React.Component<any> {
             return false;
         }
 
-        fetch(`http://localhost/api/secure/registration`, {
+        fetch(`/api/secure/registration`, {
             method: "POST",
             body: JSON.stringify(appCtx.model.sponsor),
             headers: {
@@ -132,7 +132,7 @@ class NewSponsor extends React.Component<any> {
         const value = event.target.value;
         
         const appCtx = this.context.state;
-        fetch(`http://localhost/api/secure/unique/sponsor`, {
+        fetch(`/api/secure/unique/sponsor`, {
             method: "POST",
             body: JSON.stringify({field: name, value: value}),
             headers: {

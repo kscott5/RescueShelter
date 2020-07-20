@@ -31,7 +31,7 @@ class ListSponsors extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`http://localhost/api/sponsors?limit=100&lang=${a11y.lang}`)
+        fetch(`/api/report/sponsors?limit=100&lang=${a11y.lang}`)
             .then(response =>response.json())
             .then(response => {
                 if(response.ok) 

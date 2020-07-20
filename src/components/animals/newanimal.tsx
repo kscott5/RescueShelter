@@ -109,9 +109,9 @@ class NewAnimal extends React.Component<any,any> {
         var form = document.querySelector("form");
         if(!form.checkValidity()) return;
 
-        var url = `http://localhost/api/animals/${objThis.state.id}`;
+        var url = `/api/manager/animals/${objThis.state.id}`;
         if(objThis.state.id == "0")
-            url = `http://localhost/api/animals/new`;
+            url = `/api/manager/animals/new`;
 
         fetch(url, {
             method: 'POST',
