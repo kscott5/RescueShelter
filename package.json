@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "Karega K. Scott",
   "license": "GPL-3.0-or-later",
-  "private": true,
+  "private": false,
   "dependencies": {
     "chart.js": "^2.9.3",
     "react": "^16.13.1",
