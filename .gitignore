@@ -18,6 +18,7 @@
 .env.test.local
 .env.production.local
 
+/dist
 /logs
 /data
 package-lock.json
