@@ -59,7 +59,7 @@ class NewSponsor extends React.Component<any> {
         this.onChange = this.onChange.bind(this);
         this.compareTo = this.compareTo.bind(this);
         this.toggleDisplay = this.toggleDisplay.bind(this);
-        this.verifyUniquiness = this.verifyUniquiness.bind(this);
+        this.verifyUniqueness = this.verifyUniqueness.bind(this);
     }
 
     componentDidMount() {        
@@ -78,7 +78,7 @@ class NewSponsor extends React.Component<any> {
             return false;
         }
 
-        let response = await this.context.services.registerSponsor({data: JSON.stringify(appCtx.model.sponsor)})
+        let response = await this.context.services.registration({data: appCtx.model.sponsor})
         if(response.ok) {
             var model = appCtx.model;
             model.hashid = response.data.hashid;
@@ -117,12 +117,12 @@ class NewSponsor extends React.Component<any> {
         this.setState(formModel);
     }
 
-    async verifyUniquiness(event) {
+    async verifyUniqueness(event) {
         const name = event.target.name;
         const value = event.target.value;
         
         var model = this.context.state.model;
-        let response = await this.context.services.uniqueSponsor({data: JSON.stringify({field: name, value: value})});
+        let response = await this.context.services.verifyUniqueness({data: {field: name, value: value}});
         
         model.uniqueSuccess = (!response.ok)? "error": "";
         model.sponsor.useremail = value;
@@ -150,7 +150,7 @@ class NewSponsor extends React.Component<any> {
                 <div className="field">
                     <label htmlFor='useremail'>{a11y.forms.newsponsor.useremail.label}</label>
                     <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
-                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniquiness} placeholder={a11y.forms.newsponsor.useremail.placeholder} value={model.sponsor.useremail}/>
+                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniqueness} placeholder={a11y.forms.newsponsor.useremail.placeholder} value={model.sponsor.useremail}/>
                     </div>
                 </div>
                 <div className="field">

@@ -122,14 +122,14 @@ class AppServices {
         }
     } // end getSponsors
 
-    async register(options: any = {data: undefined}) {            
+    async registration(options: any = {data: undefined}) {            
         try {
             if(options.data === undefined)
                 throw new Error('register data undefined');
         
                 const fetchObj = fetch(`${this.origin}/api/secure/registration`, {
                 method: "POST",
-                body: options.data,
+                body: JSON.stringify(options.data),
                 headers: {
                     "content-type": "application/json"
                 }
@@ -141,10 +141,10 @@ class AppServices {
                 
             return await response.json();
         } catch(error) {
-            console.log(`[ERROR] registerSponsor: ${error}`);
+            console.log(`[ERROR] registration: ${error}`);
             return {ok: false, data: error}; 
         }
-    } // end register
+    } // end registration
 
     async login(options: any = {data: undefined}) {
         try {
@@ -186,7 +186,32 @@ class AppServices {
             console.log(`[ERROR] logout: ${error}`);
             return {ok: false, data: error};
         }
-    }
+    } // end logout
+
+    async verifyUniqueness(options: any = {data: {field: undefined, value: undefined}}) {
+        try {
+            if(options.data === undefined || options.data.field === undefined || options.data.value === undefined)
+                throw new Error(`verifyUniqueness data undefined`);
+            if(options.data.field === undefined)
+                throw new Error(`verifyUniqueness {data: {field: undefined}}`);
+            if(options.data.value === undefined)
+                throw new Error(`verifyUniqueness {data: {value: undefined}}`)
+
+            const fetchObj = fetch(`${this.origin}/api/manage/secure/unique`, {
+                method: 'POST',
+                body: JSON.stringify(options.data),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            let response = await fetchObj;
+            return await response.json();
+        } catch(error) {
+            console.log(`[ERROR] uniqueness: ${error}`);
+            return {ok: false, data: error};
+        }
+    } // end uniqueSponsor
 } // end AppServices
 
 export {AppServices, AppServices as default};
