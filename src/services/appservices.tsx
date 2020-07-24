@@ -84,7 +84,7 @@ class AppServices {
      */
     async getCategories(options: any = {}) {
         try {
-            const fetchObj = fetch('/api/report/animals/categories', {
+            const fetchObj = fetch(`${this.origin}/api/report/animals/categories`, {
                 method: `GET`,
                 //body: JSON.stringify(body),
                 headers: {
