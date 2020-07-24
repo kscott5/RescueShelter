@@ -32,16 +32,11 @@ class ListAnimals extends React.Component {
     }
 
     async componentDidMount() { 
-        let list = await this.context.services.getAnimals();
-        fetch(`/api/report/animals?limit=100&lang=${a11y.lang}`)
-            .then(response =>response.json())
-            .then(response => {
-                if(response.ok) 
-                    this.setState(response.data);
-                else
-                    this.setState({message: response.data});
-            })
-            .catch(error => console.log(error));
+        let response = await this.context.services.getAnimals();
+        if(response.ok) 
+            this.setState(response.data);
+        else
+            this.setState({message: response.data});
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
