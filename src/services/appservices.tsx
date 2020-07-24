@@ -1,10 +1,12 @@
 class AppServices {    
-    origin: string
+    origin: string = '';
 
     constructor() {
-        
-        let location = document.location;
-        this.origin = `${location.protocol}://${location.hostname}`;
+        // TODO: use https://create-react-app.dev/docs/adding-custom-environment-variables/
+        if(true /* Development */ ) {
+            let location = document.location;
+            this.origin = `${location.protocol}://${location.hostname}`;
+        }
     }
 
     /**
