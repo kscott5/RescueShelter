@@ -16,8 +16,10 @@ class AppServices {
     async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100, phrase: ''}) {
         try {
             let response = await fetch(`${this.origin}/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
-
-            return { ok: response.ok, data: await response.json()};
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
         } catch(error) {
             console.log(`ERROR with getAnimals: ${error}`);
 
@@ -31,8 +33,10 @@ class AppServices {
                 throw new Error('getAnimal id undefined');
 
             let response = await fetch(`${this.origin}/api/report/animals/${options.id}`);
-
-            return { ok: response.ok, data: await response.json()};            
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
         } catch(error) {
             console.log(`Error with getAnimal: ${error}`);
         }        
@@ -56,7 +60,10 @@ class AppServices {
                 }
             });
 
-            return {ok: response.ok, data: await response.json()};
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
         } catch(error) {
             console.log(`[ERROR] updateAnimal: ${error}`);
         }
@@ -76,7 +83,10 @@ class AppServices {
                 }
             });
             
-            return {ok: response.ok, data: await response.json()};    
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+
+            return await response.json();
         } catch(error) {
             console.log(`[ERROR] getCategories: ${error}`);
         }
@@ -90,7 +100,10 @@ class AppServices {
         try {
             let response = await fetch(`${this.origin}/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
 
-            return {ok: response.ok, data: await response.json()};
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
         } catch(error) {
             console.log(`[ERROR] getSponsors: ${error}`);
         }
@@ -109,7 +122,10 @@ class AppServices {
                 }
             });
             
-            return {ok: response.ok, data: await response.json()};
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
         } catch(error) {
             console.log(`[ERROR] registerSponsor: ${error}`);
         }
