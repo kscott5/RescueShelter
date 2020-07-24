@@ -30,16 +30,12 @@ class ListSponsors extends React.Component {
         super(props);
     }
 
-    componentDidMount() {
-        fetch(`/api/report/sponsors?limit=100&lang=${a11y.lang}`)
-            .then(response =>response.json())
-            .then(response => {
-                if(response.ok) 
-                    this.setState(response.data);
-                else
-                    this.setState({message: response.data});
-            })
-            .catch(error => console.log(error));
+    async componentDidMount() {
+        let response = await this.context.services.getSponsors();
+        if(response.ok) 
+            this.setState(response.data);
+        else
+            this.setState({message: response.data});
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {

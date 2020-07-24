@@ -71,31 +71,21 @@ class NewSponsor extends React.Component<any> {
             (nextContext !== this.context);
     }
 
-    onClick(event) {
+    async onClick(event) {
         const appCtx = this.context.state;
         if(!appCtx.querySelector("form.ui.form.register").checkValidity()) {
             console.log("not valid");
             return false;
         }
 
-        fetch(`/api/secure/registration`, {
-            method: "POST",
-            body: JSON.stringify(appCtx.model.sponsor),
-            headers: {
-                "content-type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(response => { 
-            if(response.ok) {
-                var model = appCtx.model;
-                model.hashid = response.data.hashid;
-                model.sponsor = response.data.sponsor;
+        let response = await this.context.services.registerSponsor({data: JSON.stringify(appCtx.model.sponsor)})
+        if(response.ok) {
+            var model = appCtx.model;
+            model.hashid = response.data.hashid;
+            model.sponsor = response.data.sponsor;
 
-                appCtx.updateAppContext(model);
-            }
-        })
-        .catch(error => console.log(error));
+            appCtx.updateAppContext(model);
+        }
     }
 
     onChange(event) {
@@ -127,27 +117,16 @@ class NewSponsor extends React.Component<any> {
         this.setState(formModel);
     }
 
-    verifyUniquiness(event) {
+    async verifyUniquiness(event) {
         const name = event.target.name;
         const value = event.target.value;
         
-        const appCtx = this.context.state;
-        fetch(`/api/secure/unique/sponsor`, {
-            method: "POST",
-            body: JSON.stringify({field: name, value: value}),
-            headers: {
-                "content-type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(response => {
-            var model = appCtx.model;
-
-            model.uniqueSuccess = (!response.ok)? "error": "";
-            model.sponsor.useremail = value;
-            appCtx.updateAppContext(model);
-        })
-        .catch(error => console.log(error));
+        var model = this.context.state.model;
+        let response = await this.context.services.uniqueSponsor({data: JSON.stringify({field: name, value: value})});
+        
+        model.uniqueSuccess = (!response.ok)? "error": "";
+        model.sponsor.useremail = value;
+        this.context.updateAppContext(model);
     }
 
     render()  {

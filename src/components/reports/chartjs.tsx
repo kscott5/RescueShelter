@@ -13,7 +13,7 @@ export class ChartJS extends React.Component<any> {
         this.reportType = this.props.reportType;
     }
 
-    componentDidMount() { 
+    async componentDidMount() { 
         // Stub 
         var model = {
             datasets: [{
@@ -39,34 +39,20 @@ export class ChartJS extends React.Component<any> {
             ]
         };
 
-        fetch('/api/report/animals/categories', {
-            method: `GET`,
-            //body: JSON.stringify(body),
-            headers: {
-                'content-type': 'application/json'
-            }
-        }).then(response => response.json())
-        .then((response) => {
-            console.log(response);
-            model.labels = [];
-            model.datasets[0].data = [];
-            
-            response.data.forEach((item) => {
-                model.labels.push(item['_id'])
-                model.datasets[0].data.push(item['count']);
-            });            
-
+        let response = await this.context.services.getCategories();
+        console.log(response);
+        model.labels = [];
+        model.datasets[0].data = [];
+        
+        response.data.forEach((item) => {
+            model.labels.push(item['_id'])
+            model.datasets[0].data.push(item['count']);
+        });            
                     
         new Chart('chartCanvas', {
             data: model,
             type: 'polarArea',
             //options: options
-        });
-
-
-        })
-        .catch((reason) => {
-            console.log(reason);
         });
     }
 

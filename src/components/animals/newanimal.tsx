@@ -56,24 +56,18 @@ class NewAnimal extends React.Component<any,any> {
         this.onClick = this.onClick.bind(this);
     }
 
-    componentDidMount() {
-        var objThis = this;
-        if(objThis.state.id == "0") return;
+    async componentDidMount() {
+        if(this.state.id == "0") return;
 
-        // edit existing details
-        fetch(`http://localhost/api/report/animals/${objThis.state.id}`)
-            .then(response =>response.json())
-            .then(response => {
-                var formState = objThis.state.form;
-                formState.toggleEditable(objThis.context.loggedIn);
-        
-                objThis.setState({pageTitle: 'Animal Details'});
-                if(response.ok) 
-                    objThis.setState({animal: response.data, sponsor: '', form: formState});
-                else
-                    objThis.setState({message: response.data, form: formState});
-            })
-            .catch(error => objThis.setState({message: error}));
+        let response = await this.context.services.getAnimal({id: this.state.id});
+        var formState = this.state.form;
+        formState.toggleEditable(this.context.loggedIn);
+
+        this.setState({pageTitle: 'Animal Details'});
+        if(response.ok) 
+            this.setState({animal: response.data, sponsor: '', form: formState});
+        else
+            this.setState({message: response.data, form: formState});
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -104,29 +98,15 @@ class NewAnimal extends React.Component<any,any> {
         return JSON.stringify({hashid: hashid, useremail: useremail, animal: animal});
     }
 
-    onSaveNewAnimal(event) {
-        var objThis = this;
+    async onSaveNewAnimal(event) {
         var form = document.querySelector("form");
         if(!form.checkValidity()) return;
 
-        var url = `/api/manage/animals/${objThis.state.id}`;
-        if(objThis.state.id == "0")
-            url = `/api/manage/animals/new`;
-
-        fetch(url, {
-            method: 'POST',
-            body: objThis.stateToJson(),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json())
-        .then(response => {
-            if(response.ok) 
-                objThis.setState({id: response.data._id, animal: response.data, sponsor: ''});
-            else
-                objThis.setState({message: response.data});
-        })
-        .catch(error => objThis.setState({message: error}));
+        let response = await this.context.services.updateAnimal({data: this.stateToJson(), withId: this.state.id});
+        if(response.ok) 
+            this.setState({id: response.data._id, animal: response.data, sponsor: ''});
+        else
+            this.setState({message: response.data});
     }
 
     onClick(event) {
