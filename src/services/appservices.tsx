@@ -49,6 +49,14 @@ class AppServices {
         }        
     } // end getAnimal
 
+    async updateSponsor(options: any = {data: {}, withId: '0'}) {
+        throw new Error('updateSponsor not implemented');
+    }
+
+    async getSponsor(options: any = {id: undefined}) {
+        throw new Error('getSponsor not implemented');
+    }
+     
     /**
      * 
      * @param options any
@@ -127,7 +135,7 @@ class AppServices {
             if(options.data === undefined)
                 throw new Error('register data undefined');
         
-                const fetchObj = fetch(`${this.origin}/api/secure/registration`, {
+                const fetchObj = fetch(`${this.origin}/api/manage/secure/registration`, {
                 method: "POST",
                 body: JSON.stringify(options.data),
                 headers: {
@@ -151,7 +159,7 @@ class AppServices {
             if(options.data === undefined)
                 throw new Error('login data undefined');
 
-            const fetchObj = fetch(`${this.origin}/api/secure/auth`, { 
+            const fetchObj = fetch(`${this.origin}/api/manage/secure/auth`, { 
                 method: `POST`,
                 body: JSON.stringify(options.data),
                 headers: {
@@ -172,7 +180,7 @@ class AppServices {
             if(options.data === undefined)
                 throw new Error('logout data undefined');
 
-            let fetchObj = fetch(`${this.origin}/api/secure/deauth`, { 
+            let fetchObj = fetch(`${this.origin}/api/manage/secure/deauth`, { 
                 method: `POST`,
                 body: JSON.stringify(options.data),
                 headers: {
@@ -197,7 +205,7 @@ class AppServices {
             if(options.data.value === undefined)
                 throw new Error(`verifyUniqueness {data: {value: undefined}}`)
 
-            const fetchObj = fetch(`${this.origin}/api/manage/secure/unique`, {
+            const fetchObj = fetch(`${this.origin}/api/manage/secure/unique/sponsor`, {
                 method: 'POST',
                 body: JSON.stringify(options.data),
                 headers: {
