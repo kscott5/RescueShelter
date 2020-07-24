@@ -1,11 +1,19 @@
 class AppServices {    
+    origin: string
+
+    constructor() {
+        
+        let location = document.location;
+        this.origin = `${location.protocol}://${location.hostname}`;
+    }
+
     /**
      * 
      * @param options any
      */
     async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100, phrase: ''}) {
         try {
-            let response = await fetch(`/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
+            let response = await fetch(`${this.origin}/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
 
             return { ok: response.ok, data: await response.json()};
         } catch(error) {
@@ -20,7 +28,7 @@ class AppServices {
             if(options.id === undefined)
                 throw new Error('getAnimal id undefined');
 
-            let response = await fetch(`/api/report/animals/${options.id}`);
+            let response = await fetch(`${this.origin}/api/report/animals/${options.id}`);
 
             return { ok: response.ok, data: await response.json()};            
         } catch(error) {
@@ -34,9 +42,9 @@ class AppServices {
      */
     async updateAnimal(options: any = {data: {}, withId: '0'}) {
         try {
-            var url = `/api/manage/animals/${options.withId}`;
+            var url = `${this.origin}/api/manage/animals/${options.withId}`;
             if(options.withId === undefined || options.withId == "0")
-                url = `/api/mange/animals/new`;
+                url = `${this.origin}/api/mange/animals/new`;
 
             let response = await fetch(url, {
                 method: 'POST',
@@ -78,7 +86,7 @@ class AppServices {
      */
     async getSponsors(options: any = {a11y: {lang: 'en-US'}, limit: 100}) {
         try {
-            let response = await fetch(`/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
+            let response = await fetch(`${this.origin}/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
 
             return {ok: response.ok, data: await response.json()};
         } catch(error) {
@@ -91,7 +99,7 @@ class AppServices {
             if(options.data === undefined)
                 throw new Error('registerSponsor data undefined');
         
-            let response = await fetch(`/api/secure/registration`, {
+            let response = await fetch(`${this.origin}/api/secure/registration`, {
                 method: "POST",
                 body: options.data,
                 headers: {

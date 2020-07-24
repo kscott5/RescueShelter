@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {HashRouter} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 
 import '../styles/index.css'
 import Layout from './shared/layout'
@@ -61,9 +61,9 @@ class App extends React.Component<any> {
     render() {
         return (
             <AppContext.Provider value={this}>
-                <HashRouter>
+                <BrowserRouter>
                     <Layout/>
-                </HashRouter>
+                </BrowserRouter>
             </AppContext.Provider>
         );
     }

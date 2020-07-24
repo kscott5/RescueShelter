@@ -31,7 +31,8 @@ class ListAnimals extends React.Component {
         this.onSponsorClick = this.onSponsorClick.bind(this);
     }
 
-    componentDidMount() { 
+    async componentDidMount() { 
+        let list = await this.context.services.getAnimals();
         fetch(`/api/report/animals?limit=100&lang=${a11y.lang}`)
             .then(response =>response.json())
             .then(response => {
