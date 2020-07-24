@@ -1,3 +1,5 @@
+// https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await
+
 class AppServices {    
     origin: string = '';
 
@@ -15,14 +17,16 @@ class AppServices {
      */
     async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100, phrase: ''}) {
         try {
-            let response = await fetch(`${this.origin}/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
+            const fetchObj = fetch(`${this.origin}/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
+
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
                 
             return await response.json();
         } catch(error) {
             console.log(`ERROR with getAnimals: ${error}`);
-
+            return {ok: false, data: error}; 
         }
     } // end getAnimals
 
@@ -32,13 +36,16 @@ class AppServices {
             if(options.id === undefined)
                 throw new Error('getAnimal id undefined');
 
-            let response = await fetch(`${this.origin}/api/report/animals/${options.id}`);
+            const fetchObj = fetch(`${this.origin}/api/report/animals/${options.id}`);
+            
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
                 
             return await response.json();
         } catch(error) {
             console.log(`Error with getAnimal: ${error}`);
+            return {ok: false, data: error}; 
         }        
     } // end getAnimal
 
@@ -52,7 +59,7 @@ class AppServices {
             if(options.withId === undefined || options.withId == "0")
                 url = `${this.origin}/api/mange/animals/new`;
 
-            let response = await fetch(url, {
+                const fetchObj = fetch(url, {
                 method: 'POST',
                 body: options.data,
                 headers: {
@@ -60,12 +67,14 @@ class AppServices {
                 }
             });
 
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
                 
             return await response.json();
         } catch(error) {
             console.log(`[ERROR] updateAnimal: ${error}`);
+            return {ok: false, data: error}; 
         }
     } // end updateAnimal
 
@@ -75,7 +84,7 @@ class AppServices {
      */
     async getCategories(options: any = {}) {
         try {
-            let response = await fetch('/api/report/animals/categories', {
+            const fetchObj = fetch('/api/report/animals/categories', {
                 method: `GET`,
                 //body: JSON.stringify(body),
                 headers: {
@@ -83,12 +92,14 @@ class AppServices {
                 }
             });
             
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
 
             return await response.json();
         } catch(error) {
             console.log(`[ERROR] getCategories: ${error}`);
+            return {ok: false, data: error}; 
         }
     } // end getCategories
 
@@ -98,23 +109,25 @@ class AppServices {
      */
     async getSponsors(options: any = {a11y: {lang: 'en-US'}, limit: 100}) {
         try {
-            let response = await fetch(`${this.origin}/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
+            const fetchObj = fetch(`${this.origin}/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
 
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
                 
             return await response.json();
         } catch(error) {
             console.log(`[ERROR] getSponsors: ${error}`);
+            return {ok: false, data: error}; 
         }
     } // end getSponsors
 
-    async registerSponsor(options: any = {data: undefined}) {            
+    async register(options: any = {data: undefined}) {            
         try {
             if(options.data === undefined)
-                throw new Error('registerSponsor data undefined');
+                throw new Error('register data undefined');
         
-            let response = await fetch(`${this.origin}/api/secure/registration`, {
+                const fetchObj = fetch(`${this.origin}/api/secure/registration`, {
                 method: "POST",
                 body: options.data,
                 headers: {
@@ -122,14 +135,58 @@ class AppServices {
                 }
             });
             
+            let response = await fetchObj;
             if(!response.ok)
                 return {ok: response.ok, data: response.statusText};
                 
             return await response.json();
         } catch(error) {
             console.log(`[ERROR] registerSponsor: ${error}`);
+            return {ok: false, data: error}; 
         }
-    } // end registerSponsor
+    } // end register
+
+    async login(options: any = {data: undefined}) {
+        try {
+            if(options.data === undefined)
+                throw new Error('login data undefined');
+
+            const fetchObj = fetch(`${this.origin}/api/secure/auth`, { 
+                method: `POST`,
+                body: JSON.stringify(options.data),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            let response = await fetchObj;
+            return await response.json()
+        } catch(error) {
+            console.log(`[ERROR] login: ${error}`);
+            return {ok: false, data: error}; 
+        }
+    } // end login
+
+    async logout(options: any = {data: undefined}) {
+        try {
+            if(options.data === undefined)
+                throw new Error('logout data undefined');
+
+            let fetchObj = fetch(`${this.origin}/api/secure/deauth`, { 
+                method: `POST`,
+                body: JSON.stringify(options.data),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            let response = await fetchObj;
+            return await response.json();            
+        } catch(error) {
+            console.log(`[ERROR] logout: ${error}`);
+            return {ok: false, data: error};
+        }
+    }
 } // end AppServices
 
 export {AppServices, AppServices as default};

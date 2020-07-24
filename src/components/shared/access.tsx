@@ -80,7 +80,7 @@ class Login extends React.Component<any> {
         this.context.updateAppContext(model);
     }
 
-    onClick(event) {
+    async onClick(event) {
         var form = document.querySelector("form");
         if(!form.checkValidity()) 
             return;
@@ -91,20 +91,9 @@ class Login extends React.Component<any> {
             password: model.sponsor.password
         };
 
-        fetch(`http://localhost/api/secure/auth`, { 
-            method: `POST`,
-            body: JSON.stringify(body),
-            headers: {
-                'content-type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(response => {
+        let response = await this.context.services.login({data: body});
+        if(response.ok)
             this.onLoggedIn(response);
-        })
-        .catch(error => {
-            this.onError(error);
-        });
     }
 
     render()  {
@@ -172,27 +161,16 @@ class Logout extends React.Component<any> {
             (nextContext !== this.context);
     }
 
-    onClick(event) {
+    async onClick(event) {
         var model = this.context.state.model;
         var body = { 
             hashid: model.hashid,
             useremail: model.sponsor.useremail
         };
 
-        fetch(`http://localhost/api/secure/deauth`, { 
-            method: `POST`,
-            body: JSON.stringify(body),
-            headers: {
-                'content-type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(response => {
+        let response = await this.context.services.logout({data: body});
+        if(response.ok)
             this.onLoggedOut(response);
-        })
-        .catch(error => {
-            this.onError(error);
-        });
     }
 
     render()  {
