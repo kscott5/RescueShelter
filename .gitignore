@@ -21,7 +21,6 @@
 /dist
 /logs
 /data
-package-lock.json
 #.vscode
 /src/**/*.js
 
@@ -29,4 +28,4 @@ package-lock.json
 *.pid
 
 yarn-error.log
-yarn.lock
+
