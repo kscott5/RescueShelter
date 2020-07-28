@@ -3,7 +3,7 @@ import {Route} from "react-router-dom";
 
 import {Segment, Container, Image} from "semantic-ui-react";
 
-import * as home from "../../images/home.png"
+import * as home from 'home.png';
 import * as Animals from "../animals/index";
 import * as Sponsors from "../sponsors/index";
 import * as Reports from "../reports/index";
