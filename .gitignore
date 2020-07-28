@@ -18,10 +18,11 @@
 .env.test.local
 .env.production.local
 
+/lib
 /dist
 /logs
 /data
-package-lock.json
+#package-lock.json
 #.vscode
 /src/**/*.js
 
@@ -29,4 +30,4 @@ package-lock.json
 *.pid
 
 yarn-error.log
-yarn.lock
+#yarn.lock
