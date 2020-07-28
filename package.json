@@ -2,6 +2,9 @@
   "name": "rescueshelter",
   "version": "1.0.6",
   "description": "Rescue Shelter Simple application using React",
+  "repository": {
+    "url": "https://github.com/kscott5/rescueshelter"
+  },
   "main": "index.js",
   "author": "Karega K. Scott",
   "license": "GPL-3.0-or-later",
@@ -40,17 +43,13 @@
     "semantic-ui-react": "^1.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
     "@types/chart.js": "^2.9.23",
-    "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "24.9.0",
-    "ts-jest": "^26.1.3",
-    "typescript": "~3.7.2"
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "eslint": "^6.8.0",
+    "typescript": "^3.7.5"
   }
 }
