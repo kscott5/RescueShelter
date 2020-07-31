@@ -23,4 +23,4 @@ i18next
   });
 
 
-export default i18next;
+export {i18next as localizer, i18next as default};
