@@ -1,3 +1,4 @@
+import { i18n } from 'i18next';
 import * as React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 
@@ -20,7 +21,7 @@ class App extends React.Component<any> {
     title: string;
     og: OpenGraph;
     services: AppServices;
-    localizer: any | null;
+    localizer: i18n;
 
     constructor(props) {
         super(props);
@@ -28,7 +29,7 @@ class App extends React.Component<any> {
         this.updateAppContext = this.updateAppContext.bind(this);
         this.querySelector = this.querySelector.bind(this);
         this.services = new AppServices();
-        this.localizer = LaaServices; // Arrg
+        this.localizer = LaaServices(); // Arrg
         this.model = new SponsorStateModel();
         this.og = new OpenGraph();
         this.state = this;
