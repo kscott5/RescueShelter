@@ -6,6 +6,7 @@ import Layout from './shared/layout'
 
 import AppContext from './state/context';
 import AppServices from '../services/appservices';
+import LaaServices from '../services/laaservices';
 import OpenGraph from "./state/opengraph";
 import SponsorStateModel from './state/sponsor';
 
@@ -19,13 +20,15 @@ class App extends React.Component<any> {
     title: string;
     og: OpenGraph;
     services: AppServices;
-    
+    localizer: any | null;
+
     constructor(props) {
         super(props);
 
         this.updateAppContext = this.updateAppContext.bind(this);
         this.querySelector = this.querySelector.bind(this);
         this.services = new AppServices();
+        this.localizer = LaaServices; // Arrg
         this.model = new SponsorStateModel();
         this.og = new OpenGraph();
         this.state = this;

@@ -23,4 +23,4 @@ i18next
   });
 
 
-export {i18next as localizer, i18next as default};
+export {i18next as LaaServices, i18next as default};
