@@ -15,14 +15,18 @@
         "links": {
             "new": "New",
             "edit": "Edit",
-            "view": "View"
+            "view": "View",
+            "save": "Save",
+            "delete": "Delete"
         },
         "animals": {
                 "titles": {
-                    "t1": ""
+                    "animal_details": "Animal Details",
+                    "new_animal": "New Animal"
                 },
                 "headings": {
-                    "h2": "Animal Rescurers! We need YOU!"
+                    "animal_list": "Animal Rescurers! We need YOU!",
+                    "sponsors": "Sponsors'"
                 },
                 "forms": {
                 }
