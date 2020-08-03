@@ -37,7 +37,6 @@ const a11y = {
 class NewAnimal extends React.Component<any,any> {
     static contextType = AppContext;
     state: AnimalStateModel;
-    localizer: i18n;
 
     constructor(props) {
         super(props);
@@ -46,7 +45,6 @@ class NewAnimal extends React.Component<any,any> {
         this.onSaveNewAnimal = this.onSaveNewAnimal.bind(this);
         this.onChange = this.onChange.bind(this);
         this.onClick = this.onClick.bind(this);
-        this.localizer = this.context.localizer;
     }
 
     async componentDidMount() {
@@ -134,6 +132,7 @@ class NewAnimal extends React.Component<any,any> {
     }
 
     render() {
+        const localizer = this.context.localizer as i18n;
         const formState = this.state.form;
         const sponsors = this.state.animal.sponsors.map((sponsor) => {
             return (
@@ -152,43 +151,43 @@ class NewAnimal extends React.Component<any,any> {
                         <legend className="ui diving header">{this.state.pageTitle}</legend>
                         <div className="ui error">{this.state.message}</div>
                         <div className="field">
-                            <label htmlFor="name">{this.localizer.t('components.animal.forms..name.label')}</label>
+                            <label htmlFor="name">{localizer.t('components.animal.forms.name.label')}</label>
                             <div className={"ui field input " + formState.textCss}>                                
-                                <input id='name' onChange={this.onChange} name='name' required placeholder={this.localizer.t('components.animal.forms..name.placeholder')} type='text' value={this.state.animal.name}/>
+                                <input id='name' onChange={this.onChange} name='name' required placeholder={localizer.t('components.animal.forms.name.placeholder')} type='text' value={this.state.animal.name}/>
                             </div>
                         </div>
                         <div className="field">
-                            <label htmlFor='description'>{this.localizer.t('components.animal.forms..description.label')}</label>
+                            <label htmlFor='description'>{localizer.t('components.animal.forms.description.label')}</label>
                             <div className={"ui field input " + formState.textCss}>
-                                <textarea id='description' onChange={this.onChange} name='description' placeholder={this.localizer.t('components.animal.forms..description.placeholder')} value={this.state.animal.description}/>
+                                <textarea id='description' onChange={this.onChange} name='description' placeholder={localizer.t('components.animal.forms.description.placeholder')} value={this.state.animal.description}/>
                             </div>
                         </div>
                         <div className="field">
-                            <label htmlFor='imageSrc'>{this.localizer.t('components.animal.forms..imageUrl.labe')}</label>
+                            <label htmlFor='imageSrc'>{localizer.t('components.animal.forms.imageUrl.labe')}</label>
                             <div className={"ui field input " + formState.textCss}>
-                                <input id='image.content' onChange={this.onChange} name='image.content' placeholder={this.localizer.t('components.animal.forms..imageUrl.placeholder')} type='text' value={this.state.animal.image.content}/>
+                                <input id='image.content' onChange={this.onChange} name='image.content' placeholder={localizer.t('components.animal.forms.imageUrl.placeholder')} type='text' value={this.state.animal.image.content}/>
                             </div>
                         </div>
                         <div className="inline field">
                             <div className={"ui checkbox " + formState.checkboxCss}>
                                 <input id='endangered' onChange={this.onChange} name='endangered' type='checkbox' checked={this.state.animal.endangered}/>
-                                <label htmlFor='endangered'>{this.localizer.t('components.animal.forms..endangered.label')}</label>
+                                <label htmlFor='endangered'>{localizer.t('components.animal.forms.endangered.label')}</label>
                             </div>
                         </div>
                         <div className="field">
-                            <label htmlFor='sponsor'>{this.localizer.t('components.animal.forms..sponsor.label')}</label>
+                            <label htmlFor='sponsor'>{localizer.t('components.animal.forms.sponsor.label')}</label>
                             <div className={"ui field input " + formState.textCss}>
-                                <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder={this.localizer.t('components.animal.forms..sponsor.placeholder')} type='text'  value={this.state.sponsor}/>
+                                <input id='sponsor' onChange={this.onChange} name='sponsor' placeholder={localizer.t('components.animal.forms.sponsor.placeholder')} type='text'  value={this.state.sponsor}/>
                             </div>
                         </div>
                         <div className="field">
-                            <h3>{this.localizer.t('components.headings.sponsors')}</h3>                                
+                            <h3>{localizer.t('components.headings.sponsors')}</h3>                                
                             <div className="ui field input">
                                 {sponsors}    
                             </div>
                         </div>
                         <div className="field">
-                            <button id='addanimal' name='addanimal' className={"ui button " + formState.buttonCss} type="button" onClick={this.onSaveNewAnimal}>{this.localizer.t('components.buttons.save')}</button>
+                            <button id='addanimal' name='addanimal' className={"ui button " + formState.buttonCss} type="button" onClick={this.onSaveNewAnimal}>{localizer.t('components.buttons.save')}</button>
                         </div>
                     </form>
             );

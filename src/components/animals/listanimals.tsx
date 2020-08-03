@@ -59,7 +59,7 @@ class ListAnimals extends React.Component {
         
         return (
             <div className="ui containter">
-                <h2>{a11y.headings.h2}</h2>
+                <h2>{localizer.t('components.animals.headings.h2')}</h2>
                 {(model.loggedIn)? (<Link to="/animal">{localizer.t('components.links.new')}</Link>) : <div/>}
                 {documentItems}
             </div>
