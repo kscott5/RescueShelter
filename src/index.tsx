@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -5,10 +6,35 @@ import App from "./components/app";
 
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App/> , document.querySelector('#appContent'));
+// NOTE: https://www.i18next.com/overview/configuration-options#configuration-options
 
+import i18next from 'i18next';
+import {initReactI18next} from 'react-i18next';
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+import SyncBackend from 'i18next-http-backend';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+i18next
+  .use(SyncBackend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  // init i18next
+  // for all options read: https://www.i18next.com/overview/configuration-options
+  .init({
+    fallbackLng: 'en',
+    debug: true,
+    initImmediate: false,
+    interpolation: {
+      escapeValue: false, // not needed for react as it escapes by default
+    }
+  }).then(() =>{
+
+    ReactDOM.render(<App/> , document.querySelector('#appContent'));
+
+    // If you want your app to work offline and load faster, you can change
+    // unregister() to register() below. Note this comes with some pitfalls.
+    // Learn more about service workers: https://bit.ly/CRA-PWA
+    serviceWorker.unregister();
+    
+  });
+
