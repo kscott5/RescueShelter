@@ -1,0 +1,12 @@
+{
+    "head": {
+        "title": "Rescue Shelter Home",
+        "og": {
+            "title": "define an open graph title",
+            "description": "define an open graph description",
+            "url": "define an open graph url",
+            "localizer": "define an open graph localizer",
+            "site_name": "define an open graph site_name"
+        }
+    }
+}
