@@ -8,5 +8,24 @@
             "localizer": "define an open graph localizer",
             "site_name": "define an open graph site_name"
         }
+    },
+    "components": {
+        "buttons": {
+        },
+        "links": {
+            "new": "New",
+            "edit": "Edit",
+            "view": "View"
+        },
+        "animals": {
+                "titles": {
+                    "t1": ""
+                },
+                "headings": {
+                    "h2": "Animal Rescurers! We need YOU!"
+                },
+                "forms": {
+                }
+        }
     }
 }

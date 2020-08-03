@@ -1,26 +1,9 @@
+import 'i18next';
+
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 
 import {AppContext} from "../state/context";
-
-const a11y = {
-    lang: 'en',
-    titles: {
-        t1: ''
-    },
-    headings: {
-        h2: 'Animal Rescurers! We need YOU!'
-    },
-    buttons: {
-    },
-    links: {
-        new: 'New',
-        edit: 'Edit',
-        view: 'View'
-    },
-    forms: {
-    }
-};
 
 class ListAnimals extends React.Component {
     static contextType = AppContext;
@@ -28,7 +11,7 @@ class ListAnimals extends React.Component {
     
     constructor(props) {
         super(props);
-        this.onSponsorClick = this.onSponsorClick.bind(this);
+        this.onSponsorClick = this.onSponsorClick.bind(this);        
     }
 
     async componentDidMount() { 
@@ -57,7 +40,9 @@ class ListAnimals extends React.Component {
 
     render() {
         const model = this.context.state.model;
-        const linkText = (model.loggedIn)? a11y.links.edit : a11y.links.view;
+        const localizer = this.context.localizer;
+
+        const linkText = (model.loggedIn)? localizer.t('components.links.edit') : localizer.t('components.links.view');
 
         const documentItems = this.state.documents.map((document)=>
             <div key={document._id}>
@@ -75,7 +60,7 @@ class ListAnimals extends React.Component {
         return (
             <div className="ui containter">
                 <h2>{a11y.headings.h2}</h2>
-                {(model.loggedIn)? (<Link to="/animal">{a11y.links.new}</Link>) : <div/>}
+                {(model.loggedIn)? (<Link to="/animal">{localizer.t('components.links.new')}</Link>) : <div/>}
                 {documentItems}
             </div>
             
