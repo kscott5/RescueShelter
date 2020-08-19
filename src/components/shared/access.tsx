@@ -1,45 +1,7 @@
 import * as React from "react";
 import AppContext from "../state/context";
 import SponsorStateModel, {SponsorModel} from "../state/sponsor";
-
-const a11y = {
-    titles: {},
-    headings: {},
-    links: {},
-    buttons: {
-        login: 'Login',
-        logoff: 'Logout'
-    },
-    forms:{
-        login: {
-            useremail: {
-                label: 'Email address *',
-                placeholder: 'your@email.com',
-            },
-            password: {
-                label: 'Password *',
-                placeholder: 'Password',
-                spec: {
-                    regex: '',
-                    rules: {
-                        r1: 'Password length, minimium 6 and maximium 10 characters',
-                        r2: 'At least 1 upper case character',
-                        r3: 'At least 1 lower case character',
-                        r4: 'At least 1 special character [!@#$%-+.~]'
-                    }
-                }              
-            }
-        },
-        logout: {
-            hello: {
-                label: 'Hello'
-            },
-            welcome: {
-                label: 'Welcome back'
-            }
-        }
-    }
-};
+import { i18n } from "i18next";
 
 class Login extends React.Component<any> {
     static contextType = AppContext;
@@ -98,39 +60,40 @@ class Login extends React.Component<any> {
 
     render()  {
         const model = this.context.state.model;
+        const localizer = this.context.localizer as i18n;
 
         const defaultView = 
             (<form id="loginForm" className="ui form">
                 <div id="useremail" className="ui left corner labeled input">
-                    <input id="useremail" className="ui input error" required name="useremail" type="email" onChange={this.onChange} value={model.sponsor.useremail} placeholder={a11y.forms.login.useremail.placeholder} />
-                    <div className="ui left corner label" aria-label={a11y.forms.login.useremail.label}>
+                    <input id="useremail" className="ui input error" required name="useremail" type="email" onChange={this.onChange} value={model.sponsor.useremail} placeholder={localizer.t('components.access.forms.login.useremail.placeholder')} />
+                    <div className="ui left corner label" aria-label={localizer.t('components.access.forms.login.useremail.label')}>
                         <i className="asterisk icon red"></i>
                     </div>
                 </div>
                 <div id="password" className="ui left corner labeled input">
-                    <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={a11y.forms.login.password.placeholder} />
-                    <div className="ui left corner label" aria-label={a11y.forms.login.password.label}>
+                    <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={localizer.t('components.access.forms.login.password.placeholder')} />
+                    <div className="ui left corner label" aria-label={localizer.t('access.forms.login.password.label')}>
                         <i className="asterisk icon red"></i>
                     </div>
                 </div>
-                <button type="button" className="ui button tiny circular" onClick={this.onClick} aria-label={a11y.buttons.login}>{a11y.buttons.login}</button>
+                <button type="button" className="ui button tiny circular" onClick={this.onClick} aria-label={localizer.t('components.buttons.login')}>{localizer.t('components.buttons.login')}</button>
             </form>)
 
         const verticalView = 
             (<form id="loginForm" className="ui form">
                 <div className="ui field">
-                    <label className="ui field label" htmlFor="useremail">{a11y.forms.login.useremail.label}</label>
+                    <label className="ui field label" htmlFor="useremail">{localizer.t('components.access.forms.login.useremail.label')}</label>
                     <div className="ui field input">
-                        <input id="useremail" className="ui input error" required name="useremail" type="email" onChange={this.onChange} value={model.sponsor.useremail} placeholder={a11y.forms.login.useremail.placeholder} />
+                        <input id="useremail" className="ui input error" required name="useremail" type="email" onChange={this.onChange} value={model.sponsor.useremail} placeholder={localizer.t('components.access.forms.login.useremail.placeholder')} />
                     </div>
                 </div>
                 <div id="password" className="ui field">
                 <label className="ui field label" htmlFor="password">{a11y.forms.login.password.label}</label>
                     <div className="ui field input">
-                        <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={a11y.forms.login.password.placeholder} />
+                        <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={localizer.t('components.access.forms.login.password.placeholder')} />
                     </div>
                 </div>
-                <button type="button" className="ui button tiny circular" onClick={this.onClick} aria-label={a11y.buttons.login}>{a11y.buttons.login}</button>
+                <button type="button" className="ui button tiny circular" onClick={this.onClick} aria-label={localizer.t('components.buttons.login')}>{localizer.t('components.buttons.login')}</button>
             </form>)
 
         return  (this.defaultView)? defaultView : verticalView;
@@ -175,10 +138,12 @@ class Logout extends React.Component<any> {
 
     render()  {
         const model = this.context.state.model;
+        const localizer = this.context.localizer as i18n;
+
         return (       
             <form className="ui form">
-                <div aria-label={a11y.forms.logout.hello + ' ' + model.sponsor.useremail}>{model.sponsor.useremail}</div>
-                <button type="button" onClick={this.onClick}>{a11y.buttons.logoff}</button>
+                <div aria-label={localizer.t('components.access.forms.logout.hello', {'useremail': model.sponsor.useremail})}>{model.sponsor.useremail}</div>
+                <button type="button" onClick={this.onClick}>{localizer.t('components.buttons.logout')}</button>
             </form>
         );
     }
