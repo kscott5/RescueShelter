@@ -44,7 +44,7 @@
                 },
                 "logout": {
                     "hello": {
-                        "label": "Hello"
+                        "label": "Hello {{useremail}}"
                     },
                     "welcome": {
                         "label": "Welcome back"
