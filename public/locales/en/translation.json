@@ -11,6 +11,8 @@
     },
     "components": {
         "buttons": {
+            "login": "Login",
+            "logout": "Logout"
         },
         "links": {
             "new": "New",
@@ -18,6 +20,37 @@
             "view": "View",
             "save": "Save",
             "delete": "Delete"
+        },
+        "access": {
+            "forms": {
+                "login": {
+                    "useremail": {
+                        "label": "Email address *",
+                        "placeholder": "your@email.com"
+                    },
+                    "password": {
+                        "label": "Password *",
+                        "placeholder": "Password",
+                        "spec": {
+                            "regex": "",
+                            "rules": {
+                                "r1": "Password length, minimum 6 and maximum 10 characters",
+                                "r2": "At least 1 upper case character",
+                                "r3": "At least 1 lower case character",
+                                "r4": "At least 1 special character [!@#$%-+.~]"
+                            }
+                        }              
+                    }
+                },
+                "logout": {
+                    "hello": {
+                        "label": "Hello"
+                    },
+                    "welcome": {
+                        "label": "Welcome back"
+                    }
+                }
+            }
         },
         "animals": {
                 "titles": {
