@@ -72,7 +72,7 @@ class Login extends React.Component<any> {
                 </div>
                 <div id="password" className="ui left corner labeled input">
                     <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={localizer.t('components.access.forms.login.password.placeholder')} />
-                    <div className="ui left corner label" aria-label={localizer.t('access.forms.login.password.label')}>
+                    <div className="ui left corner label" aria-label={localizer.t('components.access.forms.login.password.label')}>
                         <i className="asterisk icon red"></i>
                     </div>
                 </div>
@@ -88,7 +88,7 @@ class Login extends React.Component<any> {
                     </div>
                 </div>
                 <div id="password" className="ui field">
-                <label className="ui field label" htmlFor="password">{a11y.forms.login.password.label}</label>
+                <label className="ui field label" htmlFor="password">{localizer.t('components.access.forms.login.password.label')}</label>
                     <div className="ui field input">
                         <input id="password" className="ui input error" required name="password" type="password" onChange={this.onChange} value={model.sponsor.password} placeholder={localizer.t('components.access.forms.login.password.placeholder')} />
                     </div>
