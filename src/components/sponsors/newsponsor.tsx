@@ -81,7 +81,7 @@ class NewSponsor extends React.Component<any> {
         let response = await this.context.services.registration({data: appCtx.model.sponsor})
         if(response.ok) {
             var model = appCtx.model;
-            model.hashid = response.data.hashid;
+            model.access_token = response.data.access_token;
             model.sponsor = response.data.sponsor;
 
             appCtx.updateAppContext(model);

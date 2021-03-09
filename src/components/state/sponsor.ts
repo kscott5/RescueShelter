@@ -8,7 +8,7 @@ class SponsorModel {
 }
 
 class SponsorStateModel {
-    public hashid: string = '';
+    public access_token: string = '';
     public message: string = '';
     public sponsor: SponsorModel = new SponsorModel();
     public matchSuccess: string = '';

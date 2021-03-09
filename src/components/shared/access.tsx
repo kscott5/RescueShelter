@@ -127,7 +127,7 @@ class Logout extends React.Component<any> {
     async onClick(event) {
         var model = this.context.state.model;
         var body = { 
-            hashid: model.hashid,
+            access_token: model.access_token,
             useremail: model.sponsor.useremail
         };
 
@@ -175,7 +175,7 @@ class Access extends React.Component<any> {
             console.log("Login failed.");
         
         const model = new SponsorStateModel();
-        model.hashid = login.data.hashid || '';
+        model.access_token = login.data.access_token || '';
         model.loggedIn = login.ok || false;
         model.sponsor = login.data.sponsor || new SponsorModel();
         

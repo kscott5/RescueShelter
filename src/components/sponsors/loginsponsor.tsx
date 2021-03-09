@@ -32,7 +32,7 @@ class LoginSponsor extends React.Component<any> {
         console.log("Login sponsor is complete.");
         
         const model = new SponsorStateModel();
-        model.hashid = login.data.hashid || '';
+        model.access_token = login.data.access_token || '';
         model.loggedIn = login.ok || false;
         model.sponsor = login.data.sponsor || new SponsorModel();
         
