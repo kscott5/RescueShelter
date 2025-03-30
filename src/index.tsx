@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as Client from 'react-dom/client';
 
 import App from "./components/app";
 
@@ -29,7 +29,8 @@ i18next
     }
   }).then(() =>{
 
-    ReactDOM.render(<App/> , document.querySelector('#appContent'));
+    const root = Client.createRoot(document.querySelector('#appContent'));
+    root.render(<App/>);
 
     // If you want your app to work offline and load faster, you can change
     // unregister() to register() below. Note this comes with some pitfalls.

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {Container} from 'semantic-ui-react';
-import {AppContext} from '../state/context';
 
 const a11y = {
     lang: 'en',
@@ -23,15 +22,35 @@ const a11y = {
 };
 
 class ListSponsors extends React.Component {
-    static contextType = AppContext;
     state = { documents: [], pages: 1, pageIndex: 1};
 
     constructor(props) {
         super(props);
     }
 
+    /**
+     * get list of animal sponsors
+     * 
+     * @param options: any 
+     */
+    async getSponsors(options: any = {a11y: {lang: 'en-US'}, limit: 100}) {
+        try {
+            const fetchObj = fetch(`/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
+
+            let response = await fetchObj;
+            if(!response.ok)
+                return {ok: response.ok, data: response.statusText};
+                
+            return await response.json();
+        } catch(error) {
+            console.log(`[ERROR] getSponsors: ${error}`);
+            return {ok: false, data: error}; 
+        }
+    } // end getSponsors
+
+
     async componentDidMount() {
-        let response = await this.context.services.getSponsors();
+        let response = await this.getSponsors();
         if(response.ok) 
             this.setState(response.data);
         else

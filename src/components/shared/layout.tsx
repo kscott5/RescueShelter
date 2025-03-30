@@ -1,7 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-
-import {Segment, Container} from "semantic-ui-react";
 
 import {NavRoutes} from "./navroutes";
 import {NavLinks} from "./navlinks";

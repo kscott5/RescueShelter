@@ -1,5 +1,6 @@
 
-import i18next, { i18n } from 'i18next';
+import { getI18n } from 'react-i18next';
+
 import * as React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 
@@ -21,42 +22,43 @@ class App extends React.Component<any> {
     title: string;
     og: OpenGraph;
     services: AppServices;
-    localizer: i18n;
 
     constructor(props) {
         super(props);
-
+        
         this.updateAppContext = this.updateAppContext.bind(this);
         this.querySelector = this.querySelector.bind(this);
         this.services = new AppServices();
-        this.localizer = i18next;
         this.model = new SponsorStateModel();
         this.og = new OpenGraph();
         this.state = this;
         this.title = 'Rescue Shelter: Home Page';
+        
     }
 
     componentDidMount() {                
+        const localizer = getI18n();
+
         this.querySelector("title").innerText = 
-            this.localizer.t('head.title', this.title);
+            localizer.t('head.title', this.title);
 
         this.querySelector("meta[property='og:description']").content = 
-            this.localizer.t('head.og.description', this.og.description);
+            localizer.t('head.og.description', this.og.description);
 
         this.querySelector("meta[property='og:determiner']").content = 
-            this.localizer.t('head.og.determiner', this.og.determiner);
+            localizer.t('head.og.determiner', this.og.determiner);
 
         this.querySelector("meta[property='og:locale']").content = 
-            this.localizer.t('head.og.localizer', this.og.locale);
+            localizer.t('head.og.localizer', this.og.locale);
 
         this.querySelector("meta[property='og:site_name']").content = 
-            this.localizer.t('head.og.site_name', this.og.siteName);
+            localizer.t('head.og.site_name', this.og.siteName);
 
         this.querySelector("meta[property='og:title']").content = 
-            this.localizer.t('head.og.title', this.og.title);
+            localizer.t('head.og.title', this.og.title);
 
         this.querySelector("meta[property='og:url']").content = 
-            this.localizer.t('head.og.url', this.og.url);
+            localizer.t('head.og.url', this.og.url);
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -76,12 +78,15 @@ class App extends React.Component<any> {
     }
 
     render() {
+        var context = React.useContext(AppContext);
+        context.set("loggedIn", false);
+        
         return (
-            <AppContext.Provider value={this}>
+            <AppContext.Provider value={context}>
                 <BrowserRouter>
                     <Layout/>
                 </BrowserRouter>
-            </AppContext.Provider>
+                </AppContext.Provider>
         );
     }
 }

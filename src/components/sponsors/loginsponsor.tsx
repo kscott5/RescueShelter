@@ -1,11 +1,13 @@
 import * as React from "react";
-import {Redirect} from "react-router";
+import {Navigate} from "react-router";
+
 import {AppContext} from "../state/context";
 import {Login} from "../shared/access";
 import {SponsorStateModel, SponsorModel } from "../state/sponsor";
 
 class LoginSponsor extends React.Component<any> {
     static contextType = AppContext;
+    context!: React.ContextType<typeof AppContext>;
 
     constructor(props) {
         super(props);
@@ -31,12 +33,12 @@ class LoginSponsor extends React.Component<any> {
 
         console.log("Login sponsor is complete.");
         
-        const model = new SponsorStateModel();
+        let model = new SponsorStateModel();
         model.access_token = login.data.access_token || '';
         model.loggedIn = login.ok || false;
         model.sponsor = login.data.sponsor || new SponsorModel();
-        
-        this.context.updateAppContext(model);        
+
+        this.context.set("model", model);
     }
 
     onError(error){
@@ -44,13 +46,14 @@ class LoginSponsor extends React.Component<any> {
     }
 
     render()  {
-        const model = this.context.state.model;
+        if (this.context.has("loggedIn") && !this.context.get("loggedIn")) {
+            return (<Login defaultView="false" onLoggedIn={this.onLoggedIn} onError={this.onError} /> );
 
-        return (
-            (!model.loggedIn)?
-                <Login defaultView="false" onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
-                <Redirect to={"/sponsor/"+ model.sponsor._id } />
-        );
+        } else if(this.context.has("model")) {
+            
+            const model = this.context.get("model");
+            return (<Navigate to={"/sponsor/"+ model._id } replace /> );
+        }
     }
 } // end LoginSponsor
 

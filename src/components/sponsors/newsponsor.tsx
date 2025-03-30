@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {AppContext} from '../state/context';
 import FormStateModel from '../state/form';
+import SponsorStateModel from '../state/sponsor';
 
 const a11y = {
     titles: {},
@@ -50,6 +51,8 @@ const a11y = {
 
 class NewSponsor extends React.Component<any> {
     static contextType = AppContext;
+    context!: React.ContextType<typeof AppContext>;
+
     state: FormStateModel;
     constructor(props) {
         super(props);
@@ -72,19 +75,19 @@ class NewSponsor extends React.Component<any> {
     }
 
     async onClick(event) {
-        const appCtx = this.context.state;
-        if(!appCtx.querySelector("form.ui.form.register").checkValidity()) {
+        
+        if(!document.querySelector("form.ui.form.register").checkValidity()) {
             console.log("not valid");
             return false;
         }
 
         let response = await this.context.services.registration({data: appCtx.model.sponsor})
         if(response.ok) {
-            var model = appCtx.model;
+            var model = new SponsorStateModel();
             model.access_token = response.data.access_token;
             model.sponsor = response.data.sponsor;
 
-            appCtx.updateAppContext(model);
+            this.context.set("model",model);
         }
     }
 

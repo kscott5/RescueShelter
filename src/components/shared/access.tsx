@@ -1,10 +1,12 @@
 import * as React from "react";
 import AppContext from "../state/context";
 import SponsorStateModel, {SponsorModel} from "../state/sponsor";
+import { getI18n } from "react-i18next";
 import { i18n } from "i18next";
 
 class Login extends React.Component<any> {
     static contextType = AppContext;
+    context!: React.ContextType<typeof AppContext>;
 
     onLoggedIn: Function;
     onError: Function;
@@ -19,8 +21,29 @@ class Login extends React.Component<any> {
         this.onError = this.props.onError;
 
         this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);         
+        this.onChange = this.onChange.bind(this);
     }
+
+    async login(options: any = {data: undefined}) {
+        try {
+            if(options.data === undefined)
+                throw new Error('login data undefined');
+
+            const fetchObj = fetch(`/api/manage/secure/auth`, { 
+                method: `POST`,
+                body: JSON.stringify(options.data),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            let response = await fetchObj;
+            return await response.json()
+        } catch(error) {
+            console.log(`[ERROR] login: ${error}`);
+            return {ok: false, data: error}; 
+        }
+    } // end login
 
     componentDidMount() {        
     }
@@ -35,11 +58,11 @@ class Login extends React.Component<any> {
         var key = event.target.name;
         var value = event.target.value;
 
-        var model = this.context.state.model;
+        var model = this.context.get("model");
 
         model.sponsor[key] = value;
 
-        this.context.updateAppContext(model);
+        //this.context.updateAppContext(model);
     }
 
     async onClick(event) {
@@ -47,20 +70,20 @@ class Login extends React.Component<any> {
         if(!form.checkValidity()) 
             return;
         
-        var model = this.context.state.model;
+        var model = this.context.get("model") as SponsorStateModel
         var body = { 
             useremail: model.sponsor.useremail,
             password: model.sponsor.password
         };
 
-        let response = await this.context.services.login({data: body});
+        let response = await this.login({data: body});
         if(response.ok)
             this.onLoggedIn(response);
     }
 
     render()  {
-        const model = this.context.state.model;
-        const localizer = this.context.localizer as i18n;
+        const model = this.context.get("model") as SponsorStateModel
+        const localizer = getI18n();
 
         const defaultView = 
             (<form id="loginForm" className="ui form">
@@ -102,6 +125,7 @@ class Login extends React.Component<any> {
 
 class Logout extends React.Component<any> {
     static contextType = AppContext;
+    context!: React.ContextType<typeof AppContext>;
 
     onLoggedOut: Function;
     onError: Function;
@@ -114,6 +138,27 @@ class Logout extends React.Component<any> {
 
         this.onClick = this.onClick.bind(this);
     }
+
+    async logout(options: any = {data: undefined}) {
+        try {
+            if(options.data === undefined)
+                throw new Error('logout data undefined');
+
+            let fetchObj = fetch(`api/manage/secure/deauth`, { 
+                method: `POST`,
+                body: JSON.stringify(options.data),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            let response = await fetchObj;
+            return await response.json();            
+        } catch(error) {
+            console.log(`[ERROR] logout: ${error}`);
+            return {ok: false, data: error};
+        }
+    } // end logout
 
     componentDidMount() {        
     }
@@ -131,14 +176,14 @@ class Logout extends React.Component<any> {
             useremail: model.sponsor.useremail
         };
 
-        let response = await this.context.services.logout({data: body});
+        let response = await this.logout({data: body});
         if(response.ok)
             this.onLoggedOut(response);
     }
 
     render()  {
         const model = this.context.state.model;
-        const localizer = this.context.localizer as i18n;
+        const localizer = getI18n();
 
         return (       
             <form className="ui form">
@@ -150,7 +195,6 @@ class Logout extends React.Component<any> {
 } // end Logout
 
 class Access extends React.Component<any> {
-    static contextType = AppContext;
 
     constructor(props) {
         super(props);
@@ -174,12 +218,13 @@ class Access extends React.Component<any> {
             console.log("Login is complete.") :
             console.log("Login failed.");
         
+
         const model = new SponsorStateModel();
         model.access_token = login.data.access_token || '';
         model.loggedIn = login.ok || false;
         model.sponsor = login.data.sponsor || new SponsorModel();
-        
-        this.context.updateAppContext(model);        
+                
+        //this.context.updateAppContext(model);        
     }
 
     onLoggedOut(logout) {
@@ -195,6 +240,7 @@ class Access extends React.Component<any> {
     }
 
     render() {
+        const loggedIn = React.useContext(AppContext);
         return (        
             (!this.context.state.model.loggedIn)? 
                 <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :

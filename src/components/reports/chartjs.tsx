@@ -1,7 +1,33 @@
 import * as React from "react";
 import AppContext from "../state/context";
 
-import Chart from "chart.js";
+import * as Report from "chart.js";
+
+/**
+ * get list of report categories
+ * 
+ * @param options any
+ */
+async function getCategories(options: any = {}) {
+    try {
+        const fetchObj = fetch(`/api/report/animals/categories`, {
+            method: `GET`,
+            //body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        
+        let response = await fetchObj;
+        if(!response.ok)
+            return {ok: response.ok, data: response.statusText};
+
+        return await response.json();
+    } catch(error) {
+        console.log(`[ERROR] getCategories: ${error}`);
+        return {ok: false, data: error}; 
+    }
+} // end getCategories
 
 export class ChartJS extends React.Component<any> {
     static contextType = AppContext;
@@ -39,7 +65,7 @@ export class ChartJS extends React.Component<any> {
             ]
         };
 
-        let response = await this.context.services.getCategories();
+        let response = await getCategories();
         console.log(response);
         model.labels = [];
         model.datasets[0].data = [];
@@ -49,7 +75,7 @@ export class ChartJS extends React.Component<any> {
             model.datasets[0].data.push(item['count']);
         });            
                     
-        new Chart('chartCanvas', {
+        new Report.Chart('chartCanvas', {
             data: model,
             type: 'polarArea',
             //options: options
@@ -65,4 +91,4 @@ export class ChartJS extends React.Component<any> {
     render()  {
         return (<canvas id="chartCanvas" className="chartjs" width="553" height="276"></canvas>);
     }
-} // end ChartJs5
+} // end ChartJS
