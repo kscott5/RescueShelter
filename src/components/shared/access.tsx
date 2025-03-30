@@ -170,27 +170,29 @@ class Logout extends React.Component<any> {
     }
 
     async onClick(event) {
-        var model = this.context.state.model;
-        var body = { 
-            access_token: model.access_token,
-            useremail: model.sponsor.useremail
-        };
+        // var model = this.context.state.model;
+        // var body = { 
+        //     access_token: model.access_token,
+        //     useremail: model.sponsor.useremail
+        // };
 
-        let response = await this.logout({data: body});
-        if(response.ok)
-            this.onLoggedOut(response);
+        // let response = await this.logout({data: body});
+        // if(response.ok)
+        //     this.onLoggedOut(response);
     }
 
     render()  {
-        const model = this.context.state.model;
-        const localizer = getI18n();
+        return (<button type="button">(Logout)</button>);
 
-        return (       
-            <form className="ui form">
-                <div aria-label={localizer.t('components.access.forms.logout.hello', {'useremail': model.sponsor.useremail})}>{model.sponsor.useremail}</div>
-                <button type="button" onClick={this.onClick}>{localizer.t('components.buttons.logout')}</button>
-            </form>
-        );
+        // const model = this.context.state.model;
+        // const localizer = getI18n();
+
+        // return (       
+        //     <form className="ui form">
+        //         <div aria-label={localizer.t('components.access.forms.logout.hello', {'useremail': model.sponsor.useremail})}>{model.sponsor.useremail}</div>
+        //         <button type="button" onClick={this.onClick}>{localizer.t('components.buttons.logout')}</button>
+        //     </form>
+        // );
     }
 } // end Logout
 
@@ -232,7 +234,7 @@ class Access extends React.Component<any> {
             console.log("Logout is complete.") :
             console.log("Logout failed.");
 
-        this.context.updateAppContext(new SponsorStateModel());
+        // this.context.updateAppContext(new SponsorStateModel());
     }
 
     onError(error){
@@ -240,12 +242,13 @@ class Access extends React.Component<any> {
     }
 
     render() {
-        const loggedIn = React.useContext(AppContext);
-        return (        
-            (!this.context.state.model.loggedIn)? 
-                <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
-                <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} />
-        );
+        return (<Login onLoggedIn={this.onLoggedIn} onError={this.onError} />)
+        // const loggedIn = React.useContext(AppContext);
+        // return (        
+        //     (!this.context.state.model.loggedIn)? 
+        //         <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
+        //         <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} />
+        // );
     }
 }
 

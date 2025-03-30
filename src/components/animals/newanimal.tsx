@@ -188,15 +188,16 @@ class NewAnimal extends React.Component<any,any> {
         const key = target.name;
         const value = (target.type === 'checkbox')? target.checked : target.value;
 
-        let stateObj = this.state;
+        // let stateObj = this.state;
         
-        if(key === "sponsor") {
-            stateObj[key] = value;
-        } else {
-            stateObj["animal"][key] = value;            
-        }
+        // if(key === "sponsor") {
+        //     stateObj[key] = value;
+        // } else {
+        //     stateObj["animal"][key] = value;            
+        // }
          
-        this.setState(stateObj);
+        // this.setState(stateObj);
+        alert("not available yet!");
     }
 
     render() {

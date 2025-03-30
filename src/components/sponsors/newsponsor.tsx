@@ -57,12 +57,12 @@ class NewSponsor extends React.Component<any> {
     constructor(props) {
         super(props);
 
-        this.state = new FormStateModel();
-        this.onClick = this.onClick.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.compareTo = this.compareTo.bind(this);
-        this.toggleDisplay = this.toggleDisplay.bind(this);
-        this.verifyUniqueness = this.verifyUniqueness.bind(this);
+        // this.state = new FormStateModel();
+        // this.onClick = this.onClick.bind(this);
+        // this.onChange = this.onChange.bind(this);
+        // this.compareTo = this.compareTo.bind(this);
+        // this.toggleDisplay = this.toggleDisplay.bind(this);
+        // this.verifyUniqueness = this.verifyUniqueness.bind(this);
     }
 
     componentDidMount() {        
@@ -74,105 +74,107 @@ class NewSponsor extends React.Component<any> {
             (nextContext !== this.context);
     }
 
-    async onClick(event) {
+    // async onClick(event) {
         
-        if(!document.querySelector("form.ui.form.register").checkValidity()) {
-            console.log("not valid");
-            return false;
-        }
+    //     if(!document.querySelector("form.ui.form.register").checkValidity()) {
+    //         console.log("not valid");
+    //         return false;
+    //     }
 
-        let response = await this.context.services.registration({data: appCtx.model.sponsor})
-        if(response.ok) {
-            var model = new SponsorStateModel();
-            model.access_token = response.data.access_token;
-            model.sponsor = response.data.sponsor;
+    //     let response = await this.context.services.registration({data: appCtx.model.sponsor})
+    //     if(response.ok) {
+    //         var model = new SponsorStateModel();
+    //         model.access_token = response.data.access_token;
+    //         model.sponsor = response.data.sponsor;
 
-            this.context.set("model",model);
-        }
-    }
+    //         this.context.set("model",model);
+    //     }
+    // }
 
-    onChange(event) {
-        const target = event.target;
-        const name = target.name;
-        const value = target.value;
-        const model = this.context.state.model;
+    // onChange(event) {
+    //     const target = event.target;
+    //     const name = target.name;
+    //     const value = target.value;
+    //     const model = this.context.state.model;
 
-        model.sponsor[name] = value;
-        this.context.state.updateAppContext(model);
-    }
+    //     model.sponsor[name] = value;
+    //     this.context.state.updateAppContext(model);
+    // }
 
-    compareTo(event) {
-        const target = event.target;
-        const value = target.value;
+    // compareTo(event) {
+    //     const target = event.target;
+    //     const value = target.value;
         
-        var model = this.context.state.model;
+    //     var model = this.context.state.model;
 
-        model.matchSuccess = (model.sponsor.password === value)? "success": "";
-        model.confirmPassword = value;
+    //     model.matchSuccess = (model.sponsor.password === value)? "success": "";
+    //     model.confirmPassword = value;
 
-        this.context.state.updateAppContext(model);
-    }
+    //     this.context.state.updateAppContext(model);
+    // }
 
-    toggleDisplay(event) {
-        const formModel = this.state;
-        formModel.toggleDisplay();
+    // toggleDisplay(event) {
+    //     const formModel = this.state;
+    //     formModel.toggleDisplay();
 
-        this.setState(formModel);
-    }
+    //     this.setState(formModel);
+    // }
 
-    async verifyUniqueness(event) {
-        const name = event.target.name;
-        const value = event.target.value;
+    // async verifyUniqueness(event) {
+    //     const name = event.target.name;
+    //     const value = event.target.value;
         
-        var model = this.context.state.model;
-        let response = await this.context.services.verifyUniqueness({data: {field: name, value: value}});
+    //     var model = this.context.state.model;
+    //     let response = await this.context.services.verifyUniqueness({data: {field: name, value: value}});
         
-        model.uniqueSuccess = (!response.ok)? "error": "";
-        model.sponsor.useremail = value;
-        this.context.updateAppContext(model);
-    }
+    //     model.uniqueSuccess = (!response.ok)? "error": "";
+    //     model.sponsor.useremail = value;
+    //     this.context.updateAppContext(model);
+    // }
 
     render()  {
-        var model = this.context.state.model;
-        return (
-            <form className="ui form register">
-                <legend className="ui diving header">{model.pageTitle}</legend>
-                <button type="button" onClick={this.toggleDisplay}><img className="ui icon"/></button><span>First & Last name</span>
-                <div className={this.state.displayCss}>
-                    <label htmlFor='firstname'>{a11y.forms.newsponsor.firstname.label}</label>
-                    <div id="firstname" className="ui field input">
-                        <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.firstname.placeholder} value={model.sponsor.firstname}/>
-                    </div>
-                </div>
-                <div className={this.state.displayCss}>
-                    <label htmlFor='lastname'>{a11y.forms.newsponsor.lastname.label}</label>
-                    <div id="lastname" className="ui field input">
-                        <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.lastname.placeholder} value={model.sponsor.lastname}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor='useremail'>{a11y.forms.newsponsor.useremail.label}</label>
-                    <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
-                        <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniqueness} placeholder={a11y.forms.newsponsor.useremail.placeholder} value={model.sponsor.useremail}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor='password'>{a11y.forms.newsponsor.password.label}</label>
-                    <div id="password" className={"ui field input " + model.matchSuccess}>
-                        <input type="password" id="password" name="password" onChange={this.onChange} placeholder={a11y.forms.newsponsor.password.placeholder} value={model.sponsor.password} />
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor='verifyPassword'>{a11y.forms.newsponsor.passwordVerifier.label}</label>
-                    <div id="passwordVerifier" className="ui field input">
-                        <input type="password" id="verifyPassword" name="verifyPassword" onChange={this.compareTo} placeholder={a11y.forms.newsponsor.passwordVerifier.placeholder} value={model.confirmPassword}/>
-                    </div>
-                </div>
-                <div className="field">
-                    <button id="save" name="save" className="ui button" type="button" onClick={this.onClick}>{a11y.buttons.save}</button>
-                </div>
-            </form>
-        );           
+        return (<h1>not available yet!</h1>);
+
+        // var model = this.context.state.model;
+        // return (
+        //     <form className="ui form register">
+        //         <legend className="ui diving header">{model.pageTitle}</legend>
+        //         <button type="button" onClick={this.toggleDisplay}><img className="ui icon"/></button><span>First & Last name</span>
+        //         <div className={this.state.displayCss}>
+        //             <label htmlFor='firstname'>{a11y.forms.newsponsor.firstname.label}</label>
+        //             <div id="firstname" className="ui field input">
+        //                 <input type="text" id="firstname" name="firstname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.firstname.placeholder} value={model.sponsor.firstname}/>
+        //             </div>
+        //         </div>
+        //         <div className={this.state.displayCss}>
+        //             <label htmlFor='lastname'>{a11y.forms.newsponsor.lastname.label}</label>
+        //             <div id="lastname" className="ui field input">
+        //                 <input type="text" id="lastname" name="lastname" onChange={this.onChange} placeholder={a11y.forms.newsponsor.lastname.placeholder} value={model.sponsor.lastname}/>
+        //             </div>
+        //         </div>
+        //         <div className="field">
+        //             <label htmlFor='useremail'>{a11y.forms.newsponsor.useremail.label}</label>
+        //             <div id="useremail" className={"ui field input " + model.uniqueSuccess}>
+        //                 <input type="text" id="useremail" className="" name="useremail" onChange={this.verifyUniqueness} placeholder={a11y.forms.newsponsor.useremail.placeholder} value={model.sponsor.useremail}/>
+        //             </div>
+        //         </div>
+        //         <div className="field">
+        //             <label htmlFor='password'>{a11y.forms.newsponsor.password.label}</label>
+        //             <div id="password" className={"ui field input " + model.matchSuccess}>
+        //                 <input type="password" id="password" name="password" onChange={this.onChange} placeholder={a11y.forms.newsponsor.password.placeholder} value={model.sponsor.password} />
+        //             </div>
+        //         </div>
+        //         <div className="field">
+        //             <label htmlFor='verifyPassword'>{a11y.forms.newsponsor.passwordVerifier.label}</label>
+        //             <div id="passwordVerifier" className="ui field input">
+        //                 <input type="password" id="verifyPassword" name="verifyPassword" onChange={this.compareTo} placeholder={a11y.forms.newsponsor.passwordVerifier.placeholder} value={model.confirmPassword}/>
+        //             </div>
+        //         </div>
+        //         <div className="field">
+        //             <button id="save" name="save" className="ui button" type="button" onClick={this.onClick}>{a11y.buttons.save}</button>
+        //         </div>
+        //     </form>
+        // );           
     }
 }
 
