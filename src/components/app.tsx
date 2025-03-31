@@ -13,6 +13,9 @@ import OpenGraph from "./state/opengraph";
 import SponsorStateModel from './state/sponsor';
 
 class App extends React.Component<any> {
+    static contextType = AppContext;
+    declare context: React.ContextType<typeof AppContext>;
+
     /**
      * NOTE: use the SetState() method 
      */
@@ -76,11 +79,11 @@ class App extends React.Component<any> {
     }
 
     render() {
-        var context = React.useContext(AppContext);
-        context.set("loggedIn", false);
+        
+        this.context.set("loggedIn", false);
         
         return (
-            <AppContext.Provider value={context}>
+            <AppContext.Provider value={this.context}>
                 <BrowserRouter>
                     <Layout/>
                 </BrowserRouter>

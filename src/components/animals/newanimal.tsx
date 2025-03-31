@@ -6,7 +6,6 @@ import { Navigate } from "react-router";
 
 import {AnimalStateModel} from "../state/animal";
 import {AppContext} from "../state/context";
-import { useFormState } from "react-dom";
 
 const a11y = {
     headings: {

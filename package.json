@@ -11,14 +11,14 @@
   "license": "GPL-3.0-or-later",
   "private": false,
   "scripts": {
-    "build": "tsc -b && vite build" ,
+    "build": "tsc -b && vite build",
     "start": "vite --port 3000"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
     "@types/node": "^22.13.14",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
     "@types/react-i18next": "^8.1.0",
     "@vitejs/plugin-react": "^4.3.4",
     "dotenv": "^16.4.7",
@@ -36,11 +36,11 @@
     "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
     "i18next-http-backend": "^3.0.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-i18next": "^15.4.1",
-    "react-router": "^7.4.0",
-    "react-router-dom": "^7.4.0",
+    "react-router": "^7.4.1",
+    "react-router-dom": "^7.4.1",
     "semantic-ui-react": "^2.1.5"
   }
 }
