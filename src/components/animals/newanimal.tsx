@@ -41,7 +41,7 @@ const a11y = {
 class NewAnimal extends React.Component<any,any> {
     // shares global values
     static contextType = AppContext;
-    context!: React.ContextType<typeof AppContext>;
+    declare context: React.ContextType<typeof AppContext>;
 
     id: string;
     message: string;

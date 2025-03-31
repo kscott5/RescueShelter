@@ -51,9 +51,9 @@ const a11y = {
 
 class NewSponsor extends React.Component<any> {
     static contextType = AppContext;
-    context!: React.ContextType<typeof AppContext>;
+    declare context: React.ContextType<typeof AppContext>;
 
-    state: FormStateModel;
+    //state: FormStateModel;
     constructor(props) {
         super(props);
 

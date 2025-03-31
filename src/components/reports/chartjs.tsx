@@ -1,7 +1,13 @@
 import * as React from "react";
 import AppContext from "../state/context";
 
+// module: ES2025, target: node16
+// error: TS1479 with 
+//
 import * as Report from "chart.js";
+// 
+// Recommendation: use dynamic import
+//const Chart = require("chart.js");
 
 /**
  * get list of report categories
@@ -74,7 +80,7 @@ export class ChartJS extends React.Component<any> {
             model.labels.push(item['_id'])
             model.datasets[0].data.push(item['count']);
         });            
-                    
+        
         new Report.Chart('chartCanvas', {
             data: model,
             type: 'polarArea',

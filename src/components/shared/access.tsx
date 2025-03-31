@@ -6,7 +6,7 @@ import { i18n } from "i18next";
 
 class Login extends React.Component<any> {
     static contextType = AppContext;
-    context!: React.ContextType<typeof AppContext>;
+    declare context: React.ContextType<typeof AppContext>;
 
     onLoggedIn: Function;
     onError: Function;
@@ -58,9 +58,9 @@ class Login extends React.Component<any> {
         var key = event.target.name;
         var value = event.target.value;
 
-        var model = this.context.get("model");
+        //var model = this.context.get("model");
 
-        model.sponsor[key] = value;
+        //model.sponsor[key] = value;
 
         //this.context.updateAppContext(model);
     }
@@ -70,11 +70,12 @@ class Login extends React.Component<any> {
         if(!form.checkValidity()) 
             return;
         
-        var model = this.context.get("model") as SponsorStateModel
-        var body = { 
-            useremail: model.sponsor.useremail,
-            password: model.sponsor.password
-        };
+        // var model = this.context.get("model") as SponsorStateModel
+        // var body = { 
+        //     useremail: model.sponsor.useremail,
+        //     password: model.sponsor.password
+        // };
+        var body = {};
 
         let response = await this.login({data: body});
         if(response.ok)
@@ -125,7 +126,7 @@ class Login extends React.Component<any> {
 
 class Logout extends React.Component<any> {
     static contextType = AppContext;
-    context!: React.ContextType<typeof AppContext>;
+    declare context: React.ContextType<typeof AppContext>;
 
     onLoggedOut: Function;
     onError: Function;

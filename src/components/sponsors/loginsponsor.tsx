@@ -7,7 +7,7 @@ import {SponsorStateModel, SponsorModel } from "../state/sponsor";
 
 class LoginSponsor extends React.Component<any> {
     static contextType = AppContext;
-    context!: React.ContextType<typeof AppContext>;
+    declare context: React.ContextType<typeof AppContext>;
 
     constructor(props) {
         super(props);

@@ -4,8 +4,6 @@ import * as Client from 'react-dom/client';
 
 import App from "./components/app";
 
-import * as serviceWorker from './serviceWorker';
-
 // NOTE: https://www.i18next.com/overview/configuration-options#configuration-options
 
 import i18next from 'i18next';
@@ -30,12 +28,6 @@ i18next
   }).then(() =>{
 
     const root = Client.createRoot(document.querySelector('#appContent'));
-    root.render(<App/>);
-
-    // If you want your app to work offline and load faster, you can change
-    // unregister() to register() below. Note this comes with some pitfalls.
-    // Learn more about service workers: https://bit.ly/CRA-PWA
-    serviceWorker.unregister();
-    
+    root.render(<App/>);    
   });
 

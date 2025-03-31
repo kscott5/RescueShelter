@@ -8,7 +8,6 @@ import * as Members from "../sponsors/index";
 import {Access} from "../shared/access";
 
 class NavLinks extends React.Component {
-    state;
     constructor(props) {
         super(props);        
         

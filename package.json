@@ -6,30 +6,13 @@
     "url": "https://github.com/kscott5/rescueshelter"
   },
   "main": "index.js",
+  "type": "module",
   "author": "Karega K. Scott",
   "license": "GPL-3.0-or-later",
   "private": false,
   "scripts": {
-    "compile": "tsc -p tsconfig.json",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "build": "tsc -b && vite build" ,
+    "start": "vite --port 3000"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
@@ -37,6 +20,7 @@
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@types/react-i18next": "^8.1.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
     "eslint": "^9.23.0",
@@ -44,7 +28,8 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0"
+    "typescript-eslint": "^8.28.0",
+    "vite": "^6.2.3"
   },
   "dependencies": {
     "chart.js": "^4.4.8",
