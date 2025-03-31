@@ -83,7 +83,7 @@ class Login extends React.Component<any> {
     }
 
     render()  {
-        const model = this.context.get("model") as SponsorStateModel
+        const model = new SponsorStateModel();
         const localizer = getI18n();
 
         const defaultView = 
