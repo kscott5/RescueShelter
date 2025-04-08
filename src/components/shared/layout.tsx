@@ -2,11 +2,13 @@ import * as React from "react";
 
 import {NavRoutes} from "./navroutes";
 import {NavLinks} from "./navlinks";
+import {AppContext} from "../state/context";
 
 class Layout extends React.Component {
-    component: React.Component;
+    static contextType = AppContext;
+    declare context: React.ContextType<typeof AppContext>;
     
-     constructor(props) {
+    constructor(props) {
         super(props);
     }
 

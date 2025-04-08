@@ -198,7 +198,9 @@ class Logout extends React.Component<any> {
 } // end Logout
 
 class Access extends React.Component<any> {
-
+    static contextType = AppContext;
+    declare context: React.ContextType<typeof AppContext>;
+    
     constructor(props) {
         super(props);
         
@@ -243,13 +245,12 @@ class Access extends React.Component<any> {
     }
 
     render() {
-        return (<Login onLoggedIn={this.onLoggedIn} onError={this.onError} />)
-        // const loggedIn = React.useContext(AppContext);
-        // return (        
-        //     (!this.context.state.model.loggedIn)? 
-        //         <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
-        //         <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} />
-        // );
+        console.log(`logged in: ${this.context.get("loggedIn")}`);
+        return (        
+            (!this.context.get("loggedIn"))? 
+                <Login onLoggedIn={this.onLoggedIn} onError={this.onError} /> :
+                <Logout onLoggedOut={this.onLoggedOut} onError={this.onError} />
+        );
     }
 }
 

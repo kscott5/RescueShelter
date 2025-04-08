@@ -2,88 +2,62 @@ import * as i18nextReact  from 'react-i18next';
 
 import * as React from 'react';
 import * as ReactRouterDom from 'react-router-dom';
+import AppContext from '../state/context';
 
-class ListAnimals extends React.Component {
-    state = {loggedIn: false, documents:[] };
+function ListAnimals() {
+    const [data, setData] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+    const [options, setOptions] = React.useState({limit: 100, a11y: {lang: 'en'}});
+
+    const localizer = i18nextReact.getI18n();
+    const loggedIn = false;
+    const linkText = (loggedIn)? localizer.t('components.links.edit') : localizer.t('components.links.view');
     
-    constructor(props) {
-        super(props);
-        this.onSponsorClick = this.onSponsorClick.bind(this);        
-    }
-
-    /**
-     * get list of animals
-     * 
-     * @param options any
-     */
-    async getAnimals(options: any = {a11y: {lang: 'en-US'}, limit: 100, phrase: ''}) {
-        try {
-            
-            const fetchObj = fetch(`/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
-
-            let response = await fetchObj;
-            if(!response.ok)
-                return {ok: response.ok, data: response.statusText};
+    React.useEffect(() => {
+        const fetchObj = async() => {
+            try {
+                let response = await fetch(`http://localhost:3303/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
                 
-            return await response.json();
-        } catch(error) {
-            console.log(`ERROR with getAnimals: ${error}`);
-            return {ok: false, data: error}; 
-        }
-    }; // end getAnimals
-
-    async componentDidMount() { 
-        let response = await this.getAnimals();
-        if(response.ok) 
-            this.setState(response.data);
-        else
-            this.setState({message: response.data});
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return (nextProps !== this.props) || 
-            (this.state !== nextState) || 
-            (this.context !== nextContext);
-    }
-        
-    onSponsorClick(event, data) {
-        // data is both {} and a key:value collection
-        // For example:
-        // data.label === "Sponsor"
-        // data["animalId"] === 23
-
-        console.log(data);
-        console.log(data["animinalId"]);        
-    }
-
-    render() {
-        const localizer = i18nextReact.getI18n();
-
-        const linkText = (this.state.loggedIn)? localizer.t('components.links.edit') : localizer.t('components.links.view');
-        const documents = this.state.documents;
-
-        const documentItems = React.Children.map(documents, document =>
-            <div key={document._id}>
-                <span>{document.name}</span>
-                <span>{document.description}</span>
-                {
-                    (document.image.contenttype == 'icon')?
-                    (<i className={document.image.content + ' ui massive ' + document.image.contenttype}/>) :
-                    ('&nbsp;')
+                if(!response.ok) {
+                    setError(response.statusText);
+                } else {
+                    let results = await response.json();
+                    let documents = results.data.documents.map((document) =>
+                        <div key={document._id}>
+                            <span>{document.name}</span>
+                            <span>{document.description}</span>
+                            {
+                                (document.image.contenttype == 'icon')?
+                                (<i className={document.image.content + ' ui massive ' + document.image.contenttype}/>) :
+                                ('&nbsp;')
+                            }
+                            <ReactRouterDom.Link to={`/animal/${document._id}`}>{linkText}</ReactRouterDom.Link>        
+                        </div>
+                    );
+                
+                    setData(documents);
                 }
-                <ReactRouterDom.Link to={`/animal/${document._id}`}>{linkText}</ReactRouterDom.Link>        
-            </div>
-        );
+            } catch(error) {
+                setError(`sponsor api ${error}`);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchObj();
+    }, [ /* params */]); // end useEffect
+
+    return (
+        <div className="ui containter">
+            <h2>{localizer.t('components.animals.headings.animal_list')}</h2>
+            {(loggedIn)? (<ReactRouterDom.Link to="/animal">{localizer.t('components.links.new')}</ReactRouterDom.Link>) : <div/>}
+            {(loading)? <p>loading...</p> : <div/>}
+            {(error)? <p>{error}</p> : <div/>}
+            {data}
+        </div>
         
-        return (
-            <div className="ui containter">
-                <h2>{localizer.t('components.animals.headings.h2')}</h2>
-                {(this.state.loggedIn)? (<ReactRouterDom.Link to="/animal">{localizer.t('components.links.new')}</ReactRouterDom.Link>) : <div/>}
-                {documentItems}
-            </div>
-            
-        );
-    }
+    );
 }
 
 export {ListAnimals as default, ListAnimals};

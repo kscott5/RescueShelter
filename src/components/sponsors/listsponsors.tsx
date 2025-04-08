@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as i18nextReact  from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Container} from 'semantic-ui-react';
 
@@ -21,67 +22,47 @@ const a11y = {
     }
 };
 
-class ListSponsors extends React.Component {
-    state = { documents: [], pages: 1, pageIndex: 1};
+function ListSponsors() {
+    const [data, setData] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+    
+    const [options, setOptions] = React.useState({a11y: {lang: 'en-US'}, limit: 100});
 
-    constructor(props) {
-        super(props);
-    }
+    const localizer = i18nextReact.getI18n();
 
-    /**
-     * get list of animal sponsors
-     * 
-     * @param options: any 
-     */
-    async getSponsors(options: any = {a11y: {lang: 'en-US'}, limit: 100}) {
-        try {
-            const fetchObj = fetch(`/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
+    React.useEffect(()=> {
+        const fetchObj = async () => {
+            let response = await fetch(`https://localhost:3303/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
 
-            let response = await fetchObj;
-            if(!response.ok)
-                return {ok: response.ok, data: response.statusText};
-                
-            return await response.json();
-        } catch(error) {
-            console.log(`[ERROR] getSponsors: ${error}`);
-            return {ok: false, data: error}; 
+            if(!response.ok) {
+                setError(response.statusText);
+            } else {
+                let results = await response.json();
+                let documents = results?.data.documents.map((document) => {
+                    <div key={document._id}>
+                        <span>{document.username}</span>
+                        <span>{document.useremail} </span>
+                        
+                        <Link to={`/sponsor/${document._id}`}>{a11y.links.view}</Link>
+                    </div>
+                });
+
+                setData(documents);
+            }
         }
-    } // end getSponsors
-
-
-    async componentDidMount() {
-        let response = await this.getSponsors();
-        if(response.ok) 
-            this.setState(response.data);
-        else
-            this.setState({message: response.data});
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return (nextProps !== this.props) || 
-            (this.state !== nextState) || 
-            (this.context !== nextContext);
-    }
-        
-    render() {
-        
-        const documentItems = this.state.documents.map((document)=>
-            <div key={document._id}>
-                <span>{document.username}</span>
-                <span>{document.useremail} </span>
-                
-                <Link to={`/sponsor/${document._id}`}>{a11y.links.view}</Link>
-            </div>
-        );
-        
-        return (
-            <Container>
-                <h2>{a11y.headings.h2}</h2>
-                {documentItems}
-                <Link to="/sponsor">{a11y.links.new}</Link>
-            </Container>
-        );
-    }
+        fetchObj();
+    }, [/* params */]); // end React.useEffect
+    
+    return (
+        <Container>
+            <h2></h2>
+            {(loading)? <p>{localizer.t('components.loading.fetch.api.data')}</p> : <div/>}
+            {(error)? <p> {error}</p> : <p/>}
+            {data}
+            <Link to="/sponsor">{a11y.links.new}</Link>
+        </Container>
+    );
 }
 
 export {ListSponsors as default, ListSponsors as ListSponsors};

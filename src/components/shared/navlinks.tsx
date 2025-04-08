@@ -5,9 +5,14 @@ import {Segment, Container, Menu, Dropdown} from "semantic-ui-react";
 
 import * as Animals from "../animals/index";
 import * as Members from "../sponsors/index";
+
 import {Access} from "../shared/access";
+import {AppContext} from "../state/context";
 
 class NavLinks extends React.Component {
+    static contextType = AppContext;
+    declare context: React.ContextType<typeof AppContext>;
+    
     constructor(props) {
         super(props);        
         
@@ -25,7 +30,8 @@ class NavLinks extends React.Component {
                 style={{ minHeight: 50, padding: '1em 0em' }}>
                 
                 <div className="ui row">
-                <Container className="left float">                    
+                <Container className="left float">    
+                                    
                     <Menu id="menu" name="menu" compact inverted pointing secondary size='large'>
                         <Menu.Item id='home' name='home' as='div' active onClick={this.onMenuItemClicked}><i className="home icon"></i><Link to="/">Home</Link></Menu.Item>
                         <Menu.Item id='animals' name='animals' as='div' onClick={this.onMenuItemClicked}><i className="paw icon"></i><Link to="/animals">Animals</Link></Menu.Item>
