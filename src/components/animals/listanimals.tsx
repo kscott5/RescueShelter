@@ -2,13 +2,9 @@ import * as i18nextReact  from 'react-i18next';
 
 import * as React from 'react';
 import * as ReactRouterDom from 'react-router-dom';
-import AppContext from '../state/context';
 
 function ListAnimals() {
-    const [data, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState(null);
-    const [options, setOptions] = React.useState({limit: 100, a11y: {lang: 'en'}});
+    const [model, setModel] = React.useState({ data: null, loading: true, error: null, options: {limit: 100, a11y: {lang: 'en'}}});
 
     const localizer = i18nextReact.getI18n();
     const loggedIn = false;
@@ -16,32 +12,25 @@ function ListAnimals() {
     
     React.useEffect(() => {
         const fetchObj = async() => {
-            try {
-                let response = await fetch(`http://localhost:3303/api/report/animals?limit=${options.limit}&lang=${options.a11y.lang}`);
-                
-                if(!response.ok) {
-                    setError(response.statusText);
-                } else {
-                    let results = await response.json();
-                    let documents = results.data.documents.map((document) =>
-                        <div key={document._id}>
-                            <span>{document.name}</span>
-                            <span>{document.description}</span>
-                            {
-                                (document.image.contenttype == 'icon')?
-                                (<i className={document.image.content + ' ui massive ' + document.image.contenttype}/>) :
-                                ('&nbsp;')
-                            }
-                            <ReactRouterDom.Link to={`/animal/${document._id}`}>{linkText}</ReactRouterDom.Link>        
-                        </div>
-                    );
-                
-                    setData(documents);
-                }
-            } catch(error) {
-                setError(`sponsor api ${error}`);
-            } finally {
-                setLoading(false);
+            let response = await fetch(`/api/report/animals?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
+            
+            if(!response.ok) {
+                setModel({...model, loading: false, error: response.statusText});
+            } else {
+                let results = await response.json();
+                let documents = results.data.documents.map((document) =>
+                    <div key={document._id}>
+                        <span>{document.name}</span>
+                        <span>{document.description}</span>
+                        {
+                            (document.image.contenttype == 'icon')?
+                            (<i className={document.image.content + ' ui massive ' + document.image.contenttype}/>) :
+                            ('&nbsp;')
+                        }
+                        <ReactRouterDom.Link to={`/animal/${document._id}`}>{linkText}</ReactRouterDom.Link>        
+                    </div>
+                );
+                setModel({...model, loading: false, data: documents});
             }
         };
 
@@ -52,9 +41,9 @@ function ListAnimals() {
         <div className="ui containter">
             <h2>{localizer.t('components.animals.headings.animal_list')}</h2>
             {(loggedIn)? (<ReactRouterDom.Link to="/animal">{localizer.t('components.links.new')}</ReactRouterDom.Link>) : <div/>}
-            {(loading)? <p>loading...</p> : <div/>}
-            {(error)? <p>{error}</p> : <div/>}
-            {data}
+            {(model.loading)? <p>loading...</p> : <div/>}
+            {(model.error)? <p>{model.error}</p> : <div/>}
+            {model.data}
         </div>
         
     );

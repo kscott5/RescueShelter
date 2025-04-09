@@ -20,23 +20,19 @@ const a11y = {
     },
     forms: {
     }
-};
+}; 
 
 function ListSponsors() {
-    const [data, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState(null);
+    const [model, setModel] = React.useState({ data: null, loading: true, error: null, options: {limit: 100, a11y: {lang: 'en'}}});
     
-    const [options, setOptions] = React.useState({a11y: {lang: 'en-US'}, limit: 100});
-
     const localizer = i18nextReact.getI18n();
 
     React.useEffect(()=> {
         const fetchObj = async () => {
-            let response = await fetch(`https://localhost:3303/api/report/sponsors?limit=${options.limit}&lang=${options.a11y.lang}`);
+            let response = await fetch(`/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
 
             if(!response.ok) {
-                setError(response.statusText);
+                setModel({...model, loading: false, error: response.statusText});
             } else {
                 let results = await response.json();
                 let documents = results?.data.documents.map((document) => {
@@ -48,7 +44,7 @@ function ListSponsors() {
                     </div>
                 });
 
-                setData(documents);
+                setModel({...model, loading: false, data: documents});     
             }
         }
         fetchObj();
@@ -57,9 +53,9 @@ function ListSponsors() {
     return (
         <Container>
             <h2></h2>
-            {(loading)? <p>{localizer.t('components.loading.fetch.api.data')}</p> : <div/>}
-            {(error)? <p> {error}</p> : <p/>}
-            {data}
+            {(model.loading)? <p>{localizer.t('components.loading.fetch.api.data')}</p> : <div/>}
+            {(model.error)? <p> {model.error}</p> : <p/>}
+            {model.data}
             <Link to="/sponsor">{a11y.links.new}</Link>
         </Container>
     );
