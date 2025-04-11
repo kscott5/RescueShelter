@@ -24,19 +24,23 @@ function ListAnimals() {
                 setModel({...model, ok: response.ok, message: localizer.t(`components.http.get.error`)});
             } else {
                 let results = await response.json();
-                let items = results.data.documents.map((item) =>
-                    <div key={item._id}>
-                        <span>{item.name}</span>
-                        <span>{item.description}</span>
-                        {
-                            (item.image.contenttype == 'icon')?
-                            (<i className={item.image.content + ' ui massive ' + item.image.contenttype}/>) :
-                            ('&nbsp;')
-                        }
-                        <ReactRouterDom.Link to={`/animal/${item._id}`}>{linkText}</ReactRouterDom.Link>        
-                    </div>
+                
+                let elements = [];
+                results.data.documents.map((element) =>
+                    elements.push(
+                        <div key={element._id}>
+                            <span>{element.name}</span>
+                            <span>{element.description}</span>
+                            {
+                                (element.image?.contenttype == 'icon')?
+                                (<i className={element.image.content + ' ui massive ' + element.image.contenttype}/>) :
+                                ('&nbsp;')
+                            }
+                            <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
+                        </div>
+                    )
                 );
-                setModel({...model, ok: response.ok, message:'', data: items});
+                setModel({...model, ok: response.ok, message:'', data: elements});
             }
         };
 

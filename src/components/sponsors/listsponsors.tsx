@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as i18nextReact  from 'react-i18next';
-import {Link} from 'react-router-dom';
-import {Container} from 'semantic-ui-react';
+import * as ReactRouterDom from 'react-router-dom';
 
 function ListSponsors() {
     const localizer = i18nextReact.getI18n();
@@ -9,6 +8,10 @@ function ListSponsors() {
         data: null, ok: true,
         message: localizer.t('components.http.get.loading'), 
         options: {limit: 100, a11y: {lang: 'en'}}});
+
+    const loggedIn = false;
+    const linkText = (loggedIn)? localizer.t('components.links.edit') : 
+        localizer.t('components.links.view');
 
     React.useEffect(()=> {
         const httpGet = async () => {
@@ -19,27 +22,30 @@ function ListSponsors() {
                 setModel({...model, ok: response.ok, message: localizer.t('components.http.get.error')});
             } else {
                 let results = await response.json();
-                let items = results?.data.documents.map((item) => {
-                    <div key={item._id}>
-                        <span>{item.username}</span>
-                        <span>{item.useremail} </span>
-                        
-                        <Link to={`/sponsor/${item._id}`}>{a11y.links.view}</Link>
-                    </div>
+                
+                let elements = []; 
+                results.data.documents.map((element) => {
+                    elements.push(
+                        <div key={element._id}>
+                            <span>{element.username}</span>
+                            <span>{element.useremail} </span>
+                            <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
+                        </div>);
                 });
 
-                setModel({...model, ok: response.ok, message: '', data: items});     
+                setModel({...model, ok: response.ok, message: '', data: elements});
             }
-        }
+        };
+
         httpGet();
     }, [/* params */]); // end React.useEffect
     
     return (
-        <Container>
+        <div className="ui containter">
             <div className={(model.ok)? "ui": "ui error"}><p>{model.message}</p></div>
+            <ReactRouterDom.Link to="/sponsor">{localizer.t('components.links.new')}</ReactRouterDom.Link>
             {model.data}
-            <Link to="/sponsor">{a11y.links.new}</Link>
-        </Container>
+        </div>
     );
 } // end ListSponsors
 
