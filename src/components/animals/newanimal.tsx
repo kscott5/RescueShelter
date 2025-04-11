@@ -88,7 +88,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>                                
                             <input id='name' onChange={e => onChange(e)} name='name' 
                             required placeholder={localizer.t('components.animal.forms.name.placeholder')} 
-                            type='text' value={model.data.name}/>
+                            type='text' value={model.data?.name}/>
                         </div>
                     </div>
                     <div className="field">
@@ -118,7 +118,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>
                             <input id='sponsor' onChange={e =>onChange(e)} name='sponsor'
                             placeholder={localizer.t('components.animal.forms.sponsor.placeholder')} 
-                            type='text'  value={model.data.sponsor}/>
+                            type='text'  value={model.data?.sponsor}/>
                         </div>
                     </div>
                     <div className="field">
