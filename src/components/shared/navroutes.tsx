@@ -29,8 +29,8 @@ class NavRoutes extends React.Component {
                     
                     <Route  path="/login" element={<Sponsors.LoginSponsorView/>} />
 
-                    <Route  path="/animal/reports/:reportType" element={<Reports.ChartJsReport/>}/>
-                    <Route  path="/sponsor/reports/:reportType" element={<Reports.ChartJsReport/>}/>
+                    <Route  path="/report/animals/categories" element={<Reports.ChartJsReport/>}/>
+                    <Route  path="/report/sponsors" element={<Reports.ChartJsReport/>}/>
                 </Routes>
                 </Container>
             </Segment>
