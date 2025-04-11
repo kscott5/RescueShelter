@@ -3,62 +3,44 @@ import * as i18nextReact  from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Container} from 'semantic-ui-react';
 
-const a11y = {
-    lang: 'en',
-    titles: {
-        t1: ''
-    },
-    headings: {
-        h2: 'Rescure Shelter needs sponsors!'
-    },
-    buttons: {
-    },
-    links: {
-        new: 'New',
-        edit: 'Edit',
-        view: 'View'
-    },
-    forms: {
-    }
-}; 
-
 function ListSponsors() {
-    const [model, setModel] = React.useState({ data: null, loading: true, error: null, options: {limit: 100, a11y: {lang: 'en'}}});
-    
     const localizer = i18nextReact.getI18n();
+    const [model, setModel] = React.useState({
+        data: null, ok: true,
+        message: localizer.t('components.http.get.loading'), 
+        options: {limit: 100, a11y: {lang: 'en'}}});
 
     React.useEffect(()=> {
-        const fetchObj = async () => {
+        const httpGet = async () => {
             let response = await fetch(`/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
 
             if(!response.ok) {
-                setModel({...model, loading: false, error: response.statusText});
+                console.debug(response.statusText);
+                setModel({...model, ok: response.ok, message: localizer.t('components.http.get.error')});
             } else {
                 let results = await response.json();
-                let documents = results?.data.documents.map((document) => {
-                    <div key={document._id}>
-                        <span>{document.username}</span>
-                        <span>{document.useremail} </span>
+                let items = results?.data.documents.map((item) => {
+                    <div key={item._id}>
+                        <span>{item.username}</span>
+                        <span>{item.useremail} </span>
                         
-                        <Link to={`/sponsor/${document._id}`}>{a11y.links.view}</Link>
+                        <Link to={`/sponsor/${item._id}`}>{a11y.links.view}</Link>
                     </div>
                 });
 
-                setModel({...model, loading: false, data: documents});     
+                setModel({...model, ok: response.ok, message: '', data: items});     
             }
         }
-        fetchObj();
+        httpGet();
     }, [/* params */]); // end React.useEffect
     
     return (
         <Container>
-            <h2></h2>
-            {(model.loading)? <p>{localizer.t('components.loading.fetch.api.data')}</p> : <div/>}
-            {(model.error)? <p> {model.error}</p> : <p/>}
+            <div className={(model.ok)? "ui": "ui error"}><p>{model.message}</p></div>
             {model.data}
             <Link to="/sponsor">{a11y.links.new}</Link>
         </Container>
     );
-}
+} // end ListSponsors
 
 export {ListSponsors as default, ListSponsors as ListSponsors};
