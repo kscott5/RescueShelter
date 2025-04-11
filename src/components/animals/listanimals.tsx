@@ -6,7 +6,7 @@ import * as ReactRouterDom from 'react-router-dom';
 function ListAnimals() {
     const localizer = i18nextReact.getI18n();
     const [model, setModel] = React.useState({ 
-        data: null, ok: true, 
+        data: [/*Array of HTML elements <div/> */], ok: true, 
         message: localizer.t(`components.http.get.loading`), 
         options: {limit: 100, a11y: {lang: 'en'}}
     });
@@ -27,7 +27,7 @@ function ListAnimals() {
                 
                 let elements = [];
                 results.data.documents.map((element) =>
-                    elements.push(
+                    elements.push( 
                         <div key={element._id}>
                             <span>{element.name}</span>
                             <span>{element.description}</span>
@@ -40,6 +40,7 @@ function ListAnimals() {
                         </div>
                     )
                 );
+
                 setModel({...model, ok: response.ok, message:'', data: elements});
             }
         };

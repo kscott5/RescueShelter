@@ -5,7 +5,7 @@ import * as ReactRouterDom from 'react-router-dom';
 function ListSponsors() {
     const localizer = i18nextReact.getI18n();
     const [model, setModel] = React.useState({
-        data: null, ok: true,
+        data: [/*Array of HTML elements <div/> */], ok: true, 
         message: localizer.t('components.http.get.loading'), 
         options: {limit: 100, a11y: {lang: 'en'}}});
 
