@@ -6,6 +6,4 @@ import {ListSponsors} from "./listsponsors";
 
 export function ListSponsorsView() { return <ListSponsors/>;}
 export function LoginSponsorView() { return <LoginSponsor/>;}
-export function NewEditSponsorView(props) {
-     return <NewSponsor props={props} sponsorId={props.match.params.id||0}/>;
-}
+export function NewEditSponsorView() {return <NewSponsor/>;}
