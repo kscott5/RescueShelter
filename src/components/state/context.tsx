@@ -1,5 +1,12 @@
 import * as React from "react";
 
-var AppContext = React.createContext(new Map<string,any>());
+export const AppContext = React.createContext({
+    loggedIn: false,
+    useremail: '',
+    username:'',
+    firstname: '',
+    lastname: '',
+    token: ''
+});
 
-export {AppContext, AppContext as default};
+export {AppContext as default};
