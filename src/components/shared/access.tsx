@@ -47,7 +47,7 @@ function Access() {
         const httpPost = async ()=> {
             const response = await fetch(`/api/manage/secure/deauth`, { 
                 method: `POST`,
-                body: `{\"useremail\": \"${model.useremail}\", \"token\": \"${context.token}\"}`,
+                body: `{\"useremail\": \"${context.useremail}\", \"token\": \"${context.token}\"}`,
                 headers: {
                     'content-type': 'application/json'
                 }
