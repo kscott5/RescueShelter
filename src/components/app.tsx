@@ -22,23 +22,25 @@ function App() {
         document.querySelector("title").innerText = 
             localizer.t('head.title', title);
 
+        
+        // @ts-ignore
         document.querySelector("meta[property='og:description']").content = 
             localizer.t('head.og.description', og.description);
-
+        // @ts-ignore
         document.querySelector("meta[property='og:determiner']").content = 
             localizer.t('head.og.determiner', og.determiner);
-
+        // @ts-ignore
         document.querySelector("meta[property='og:locale']").content = 
             localizer.t('head.og.localizer', og.locale);
-
+        // @ts-ignore
         document.querySelector("meta[property='og:site_name']").content = 
             localizer.t('head.og.site_name', og.siteName);
-
+        // @ts-ignore
         document.querySelector("meta[property='og:title']").content = 
             localizer.t('head.og.title', og.title);
-
+        // @ts-ignore
         document.querySelector("meta[property='og:url']").content = 
-            localizer.t('head.og.url', og.url);
+            localizer.t('head.og.url', og.url);        
     }, [context]);
 
     return (
