@@ -1,6 +1,5 @@
 /*
   https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
-  !important avoid. use CSS at rule with @import
 */
 
 @import 'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css';
@@ -9,7 +8,7 @@
   display: none;
 }
 
-.ui.inverted.segment {
+.ui.inverted.segment, .menu.transition.visible {
   background-color: #71a6da;
 }
 
