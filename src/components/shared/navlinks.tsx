@@ -9,10 +9,12 @@ import * as Members from "../sponsors/index";
 import {Access} from "../shared/access";
 
 function NavLinks() {
-    function onMenuItemClicked(event, data) {
+    const HandleMenuClick = React.useCallback((event,data) => {
+        console.debug("onMenuItemClick");
+        
         document.querySelector(".active").classList.remove("active");
         document.querySelector(`div#${data.id}`).classList.add("active");
-    }
+    },[]);
 
     return (            
         <Segment inverted vertical textAlign='center' 
@@ -22,9 +24,9 @@ function NavLinks() {
             <Container className="left float">    
                                 
                 <Menu id="menu" name="menu" compact inverted pointing secondary size='large'>
-                    <Menu.Item id='home' name='home' as='div' active onClick={onMenuItemClicked}><i className="home icon"></i><Link to="/">Home</Link></Menu.Item>
-                    <Menu.Item id='animals' name='animals' as='div' onClick={onMenuItemClicked}><i className="paw icon"></i><Link to="/animals">Animals</Link></Menu.Item>
-                    <Menu.Item id='sponsors' name='sponsors' as='div' onClick={onMenuItemClicked}><i className="users icon"></i><Link to="/sponsors">Sponsors</Link></Menu.Item>
+                    <Menu.Item id='home' name='home' as='div' active data-id="home" onClick={HandleMenuClick}><i className="home icon"></i><Link to="/">Home</Link></Menu.Item>
+                    <Menu.Item id='animals' name='animals' as='div' data-id="animals" onClick={HandleMenuClick}><i className="paw icon"></i><Link to="/animals">Animals</Link></Menu.Item>
+                    <Menu.Item id='sponsors' name='sponsors' as='div' data-id="sponsors" onClick={HandleMenuClick}><i className="users icon"></i><Link to="/sponsors">Sponsors</Link></Menu.Item>
                     <Menu.Item id='reports' name='reports' as='div'>
                         <i className='chart line icon'></i>
                         <Dropdown text='Reports'>
