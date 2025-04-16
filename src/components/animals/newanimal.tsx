@@ -5,7 +5,13 @@ import * as React from "react";
 import { Navigate } from "react-router";
 
 function NewAnimal() {
-    const [model, setModel] = React.useState({title: '', message:'', ok: true, data: {}});
+    const [model, setModel] = React.useState({title: '', message:'', ok: true,
+        data: {
+            _id:'', name:'', description:'', category:'',
+            category_id: -1, endangered: false, sponsors:[], 
+            data: [], image: {content:'', contenttype: ''}
+        }
+    });
     const localizer = i18nextReact.getI18n();
 
     function onChange(event) {
@@ -88,7 +94,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>                                
                             <input id='name' onChange={e => onChange(e)} name='name' 
                             required placeholder={localizer.t('components.animal.forms.name.placeholder')} 
-                            type='text' value={model.data?.name}/>
+                            type='text' value={model.data.name}/>
                         </div>
                     </div>
                     <div className="field">
@@ -96,7 +102,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>
                             <textarea id='description' onChange={e => onChange(e)} name='description'
                             placeholder={localizer.t('components.animal.forms.description.placeholder')} 
-                            value={model.data?.description}/>
+                            value={model.data.description}/>
                         </div>
                     </div>
                     <div className="field">
@@ -104,7 +110,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>
                             <input id='image.content' onChange={e =>onChange(e)} name='image.content'
                             placeholder={localizer.t('components.animal.forms.imageUrl.placeholder')} type='text' 
-                            value={model.data?.image?.content}/>
+                            value={model.data.image.content}/>
                         </div>
                     </div>
                     <div className="inline field">
@@ -118,7 +124,7 @@ function NewAnimal() {
                         <div className={"ui field input " + 'formState.textCss'}>
                             <input id='sponsor' onChange={e =>onChange(e)} name='sponsor'
                             placeholder={localizer.t('components.animal.forms.sponsor.placeholder')} 
-                            type='text'  value={model.data?.sponsor}/>
+                            type='text'  value={model.data.sponsors}/>
                         </div>
                     </div>
                     <div className="field">
