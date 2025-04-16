@@ -56,8 +56,7 @@ function ListAnimals() {
         HandleSearch();
     }, [/* dependency list */]); // end useEffect
 
-    return (
-        <div className="ui containter">
+    return <div className="ui containter">
             <h2>{localizer.t('components.animals.headings.animal_list')}</h2>
             {(loggedIn)? (<ReactRouterDom.Link to="/animal">{localizer.t('components.links.new')}</ReactRouterDom.Link>) : <div/>}
             <div className={(model.ok)? "ui": "ui error"}>{model.message}</div>
@@ -123,9 +122,7 @@ function ListAnimals() {
                 </form>
             </div>
             {model.data}
-        </div>
-        
-    );
+        </div>;
 }
 
 export {ListAnimals as default, ListAnimals};

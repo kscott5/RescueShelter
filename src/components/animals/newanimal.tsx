@@ -81,64 +81,63 @@ function NewAnimal() {
         httpGet();
     }, [ /* params */]); // end useEffect
     
-    if(false /*model.loggedIn*/)
-        return (<Navigate to={"/login?redirectUrl=/animal"} replace/>);
-    else
-        return (
-                <form id="animalForm" className="ui form">
-                    <legend className="ui diving header">{model.title}</legend>
-                    
-                    <div className={(model.ok)? "ui": "ui error"}><p>{model.message}</p></div>
-                    <div className="field">
-                        <label htmlFor="name">{localizer.t('components.animal.forms.name.label')}</label>
-                        <div className={"ui field input " + 'formState.textCss'}>                                
-                            <input id='name' onChange={e => onChange(e)} name='name' 
-                            required placeholder={localizer.t('components.animal.forms.name.placeholder')} 
-                            type='text' value={model.data.name}/>
-                        </div>
+    if(false /*model.loggedIn*/) {
+        return <Navigate to={"/login?redirectUrl=/animal"} replace/>;
+    } else {
+        return <form id="animalForm" className="ui form">
+                <legend className="ui diving header">{model.title}</legend>
+                
+                <div className={(model.ok)? "ui": "ui error"}><p>{model.message}</p></div>
+                <div className="field">
+                    <label htmlFor="name">{localizer.t('components.animal.forms.name.label')}</label>
+                    <div className={"ui field input " + 'formState.textCss'}>                                
+                        <input id='name' onChange={e => onChange(e)} name='name' 
+                        required placeholder={localizer.t('components.animal.forms.name.placeholder')} 
+                        type='text' value={model.data.name}/>
                     </div>
-                    <div className="field">
-                        <label htmlFor='description'>{localizer.t('components.animal.forms.description.label')}</label>
-                        <div className={"ui field input " + 'formState.textCss'}>
-                            <textarea id='description' onChange={e => onChange(e)} name='description'
-                            placeholder={localizer.t('components.animal.forms.description.placeholder')} 
-                            value={model.data.description}/>
-                        </div>
+                </div>
+                <div className="field">
+                    <label htmlFor='description'>{localizer.t('components.animal.forms.description.label')}</label>
+                    <div className={"ui field input " + 'formState.textCss'}>
+                        <textarea id='description' onChange={e => onChange(e)} name='description'
+                        placeholder={localizer.t('components.animal.forms.description.placeholder')} 
+                        value={model.data.description}/>
                     </div>
-                    <div className="field">
-                        <label htmlFor='imageSrc'>{localizer.t('components.animal.forms.imageUrl.labe')}</label>
-                        <div className={"ui field input " + 'formState.textCss'}>
-                            <input id='image.content' onChange={e =>onChange(e)} name='image.content'
-                            placeholder={localizer.t('components.animal.forms.imageUrl.placeholder')} type='text' 
-                            value={model.data.image.content}/>
-                        </div>
+                </div>
+                <div className="field">
+                    <label htmlFor='imageSrc'>{localizer.t('components.animal.forms.imageUrl.labe')}</label>
+                    <div className={"ui field input " + 'formState.textCss'}>
+                        <input id='image.content' onChange={e =>onChange(e)} name='image.content'
+                        placeholder={localizer.t('components.animal.forms.imageUrl.placeholder')} type='text' 
+                        value={model.data.image.content}/>
                     </div>
-                    <div className="inline field">
-                        <div className={"ui checkbox " + 'formState.checkboxCss'}>
-                            <input id='endangered' onChange={onChange} name='endangered' type='checkbox' checked={model.data.endangered}/>
-                            <label htmlFor='endangered'>{localizer.t('components.animal.forms.endangered.label')}</label>
-                        </div>
+                </div>
+                <div className="inline field">
+                    <div className={"ui checkbox " + 'formState.checkboxCss'}>
+                        <input id='endangered' onChange={onChange} name='endangered' type='checkbox' checked={model.data.endangered}/>
+                        <label htmlFor='endangered'>{localizer.t('components.animal.forms.endangered.label')}</label>
                     </div>
-                    <div className="field">
-                        <label htmlFor='sponsor'>{localizer.t('components.animal.forms.sponsor.label')}</label>
-                        <div className={"ui field input " + 'formState.textCss'}>
-                            <input id='sponsor' onChange={e =>onChange(e)} name='sponsor'
-                            placeholder={localizer.t('components.animal.forms.sponsor.placeholder')} 
-                            type='text'  value={model.data.sponsors}/>
-                        </div>
+                </div>
+                <div className="field">
+                    <label htmlFor='sponsor'>{localizer.t('components.animal.forms.sponsor.label')}</label>
+                    <div className={"ui field input " + 'formState.textCss'}>
+                        <input id='sponsor' onChange={e =>onChange(e)} name='sponsor'
+                        placeholder={localizer.t('components.animal.forms.sponsor.placeholder')} 
+                        type='text'  value={model.data.sponsors}/>
                     </div>
-                    <div className="field">
-                        <h3>{localizer.t('components.headings.sponsors')}</h3>                                
-                        <div className="ui field input">
-                            {/* {sponsors}     */}
-                        </div>
+                </div>
+                <div className="field">
+                    <h3>{localizer.t('components.headings.sponsors')}</h3>                                
+                    <div className="ui field input">
+                        {/* {sponsors}     */}
                     </div>
-                    <div className="field">
-                        <button id='addanimal' name='addanimal' className={"ui button " + 'formState.buttonCss'} type="button" 
-                        onClick={e => onSaveNewAnimal(e)}>{localizer.t('components.buttons.save')}</button>
-                    </div>
-                </form>
-        );
+                </div>
+                <div className="field">
+                    <button id='addanimal' name='addanimal' className={"ui button " + 'formState.buttonCss'} type="button" 
+                    onClick={e => onSaveNewAnimal(e)}>{localizer.t('components.buttons.save')}</button>
+                </div>
+            </form>;
+    }
 }
 
 export {NewAnimal as default, NewAnimal};
