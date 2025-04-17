@@ -8,7 +8,6 @@ import '../styles/index.css'
 import Layout from './shared/layout'
 
 import AppContext from './state/context';
-import OpenGraph from "./state/opengraph";
 
 function App() {
     const localizer = i18nextReact.getI18n();
@@ -17,7 +16,15 @@ function App() {
     const title = 'Rescue Shelter: Home Page';
 
     React.useEffect(() => {
-        const og = new OpenGraph();
+        const og = {
+            description: '',
+            determiner: '',
+            locale: 'en_US',
+            siteName: 'Rescue Shelter',
+            title: 'Rescue Shelter: Single Page Application, SPA',
+            type: 'website',
+            url: 'http://localhost:3301'
+        };
 
         document.querySelector("title").innerText = 
             localizer.t('head.title', title);
@@ -43,13 +50,11 @@ function App() {
             localizer.t('head.og.url', og.url);        
     }, [context]);
 
-    return (
-        <AppContext.Provider value={context}>
-            <BrowserRouter>
-                <Layout/>
-            </BrowserRouter>
-        </AppContext.Provider>
-    );
+    return <AppContext.Provider value={context}>
+        <BrowserRouter>
+            <Layout/>
+        </BrowserRouter>
+    </AppContext.Provider>;
 }
 
 export { App as default, App };
