@@ -8,7 +8,7 @@ function ListAnimals() {
     const [model, setModel] = React.useState({ 
         data: [/*Array of HTML elements <div/> */], ok: true, 
         message: localizer.t(`components.http.get.loading`), 
-        options: {category_id: 5, keywords: '', limit: 100, endangered: false, a11y: {lang: 'en'}}
+        options: {categoryid: -1, keywords: '', page: 1, limit: 100, endangered: false, a11y: {lang: 'en'}}
     });
 
     const loggedIn = false;
@@ -16,7 +16,12 @@ function ListAnimals() {
     
     const HandleSearch = React.useCallback(async () => {
         setModel({...model, ok:true, message: localizer.t('component.http.get.loading')});
-        let response = await fetch(`/api/report/animals`,
+        let params = `?page=${model.options.page}`+
+                     `&limit=${model.options.limit}`+
+                     `&categoryid=${model.options.categoryid}`+
+                     `&endangered=${model.options.endangered}`;
+
+        let response = await fetch(`/api/report/animals${params}`,
             {
                 method: 'POST',
                 body: JSON.stringify(model.options),
@@ -69,10 +74,11 @@ function ListAnimals() {
                             aria-label={localizer.t("component.search.option.category")}>
                                 {localizer.t("component.search.option.category")}
                         </label>
-                        <select id="categoryid" defaultValue={model.options.category_id}
-                            aria-label={localizer.t("component.search.option.category_id")}
+                        <select id="categoryid" defaultValue={model.options.categoryid}
+                            aria-label={localizer.t("component.search.option.categoryid")}
                             onChange={(e) => setModel({...model, 
-                                options:{...model.options, category_id: parseInt(e.target.value)}})}>
+                                options:{...model.options, categoryid: parseInt(e.target.value)}})}>
+                            <option value="-1">{localizer.t("component.search.option.all")}</option>
                             <option value="1">{localizer.t("component.search.option.invertebrates")}</option>
                             <option value="2">{localizer.t("component.search.option.amphibians")}</option>
                             <option value="3">{localizer.t("component.search.option.birds")}</option>
