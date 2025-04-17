@@ -27,9 +27,15 @@ function ListSponsors() {
                 results.data.documents.map((element) => {
                     elements.push(
                         <div key={element._id}>
-                            <span>{element.username}</span>
-                            <span>{element.useremail} </span>
-                            <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
+                            <div>
+                                <span>{element.username}</span>
+                            </div>
+                            <div>
+                                <span>{element.useremail} </span>
+                            </div>
+                            <div>
+                                <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
+                            </div>
                         </div>);
                 });
 

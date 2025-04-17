@@ -8,69 +8,61 @@ function Access() {
     const context = React.useContext(AppContext);
     const [model, setModel] = React.useState({loggedIn: false, message: '', useremail:'', password: ''});
 
-    const LoginHandler = React.useCallback(() => {        
-        const httpPost = async ()=> {
-            const response = await fetch(`/api/manage/secure/auth`, { 
-                method: `POST`,
-                body: `{\"useremail\": \"${model.useremail}\", \"password\": \"${model.password}\"}`,
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-    
-            if(!response.ok) {
-                console.debug(`Login error: ${response.statusText}`);
-                setModel({...model, password:'', message: localizer.t('components.login.error')});
-                return;
+    const LoginHandler = async ()=> {
+        const response = await fetch(`/api/manage/secure/auth`, { 
+            method: `POST`,
+            body: `{\"useremail\": \"${model.useremail}\", \"password\": \"${model.password}\"}`,
+            headers: {
+                'content-type': 'application/json'
             }
-    
-            const results = await response.json();
-            if(results.data?.sponsor == undefined) {
-                console.debug(`Login error: ${results?.message || results.data}`);
-                setModel({...model, password:'', message: localizer.t('components.login.error')});
-            } else {
-                setModel({...model, loggedIn: true, password: '', useremail:'', message:''});
-                
-                context.loggedIn = true;
-                context.token = results.data.token;
-                context.useremail = results.data.sponsor.useremail;
-                context.username = results.data.sponsor.username;
-                context.firstname = results.data.sponsor.firstname;
-                context.lastname = results.data.sponsor.lastname;                
-            } //end if-else results
-        }
-    
-        httpPost();
-    },[model]);
+        });
 
-    const LogoutHandler = React.useCallback(() => {
-        const httpPost = async ()=> {
-            const response = await fetch(`/api/manage/secure/deauth`, { 
-                method: `POST`,
-                body: `{\"useremail\": \"${context.useremail}\", \"token\": \"${context.token}\"}`,
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-    
-            if(!response.ok) {
-                console.debug(`Logout error: ${response.statusText}`);
-                setModel({...model, useremail:'', password:'', message: localizer.t('components.login.error')});
-                return;
+        if(!response.ok) {
+            console.debug(`Login error: ${response.statusText}`);
+            setModel({...model, password:'', message: localizer.t('components.login.error')});
+            return;
+        }
+
+        const results = await response.json();
+        if(results.data?.sponsor == undefined) {
+            console.debug(`Login error: ${results?.message || results.data}`);
+            setModel({...model, password:'', message: localizer.t('components.login.error')});
+        } else {
+            setModel({...model, loggedIn: true, password: '', useremail:'', message:''});
+            
+            context.loggedIn = true;
+            context.token = results.data.token;
+            context.useremail = results.data.sponsor.useremail;
+            context.username = results.data.sponsor.username;
+            context.firstname = results.data.sponsor.firstname;
+            context.lastname = results.data.sponsor.lastname;                
+        } //end if-else results
+    };
+
+    const LogoutHandler = async ()=> {
+        const response = await fetch(`/api/manage/secure/deauth`, { 
+            method: `POST`,
+            body: `{\"useremail\": \"${context.useremail}\", \"token\": \"${context.token}\"}`,
+            headers: {
+                'content-type': 'application/json'
             }
-    
-            setModel({...model, loggedIn: false});
-            context.loggedIn = false;
-            context.token = '';
-            context.useremail = '';
-            context.username = '';
-            context.firstname = '';
-            context.lastname = '';
-        }
-    
-        httpPost();
-    }, [model]);
+        });
 
+        if(!response.ok) {
+            console.debug(`Logout error: ${response.statusText}`);
+            setModel({...model, useremail:'', password:'', message: localizer.t('components.login.error')});
+            return;
+        }
+
+        setModel({...model, loggedIn: false});
+        context.loggedIn = false;
+        context.token = '';
+        context.useremail = '';
+        context.username = '';
+        context.firstname = '';
+        context.lastname = '';
+    };
+    
     const loginView = 
         (<form id="loginForm" className="ui form">
             <div>{model.message}</div>

@@ -6,6 +6,8 @@ import {Segment, Container, Menu, Dropdown} from "semantic-ui-react";
 import * as Animals from "../animals/index";
 import * as Members from "../sponsors/index";
 
+import {Login} from "../shared/login";
+import {Logout} from "../shared/logout";
 import {Access} from "../shared/access";
 
 function NavLinks() {
@@ -44,7 +46,7 @@ function NavLinks() {
                 </Menu>
             </Container>
             <Container className="right float">
-                <Access/>                    
+                <Access/>
             </Container>
             </div>
         </Segment>

@@ -7,35 +7,27 @@ import {Segment, Container, Image} from "semantic-ui-react";
 import * as Animals from "../animals/index";
 import * as Sponsors from "../sponsors/index";
 import * as Reports from "../reports/index";
-import { AppContext } from "../state/context";
 
-class NavRoutes extends React.Component {
-    static contextType = AppContext;
-    declare context: React.ContextType<typeof AppContext>;
-    
-    render() {
-        return (
-            <Segment>
-                <Container>
-                <Routes>
-                    <Route  path="/" element={<image href="{home}" className="ui image"/>} />
-                    <Route  path="/animals" element={<Animals.ListAnimalsView/>}/>
-                    <Route  path="/animal" element={<Animals.NewEditAnimalView/>}/>
-                    <Route  path="/animal/:id" element={<Animals.NewEditAnimalView/>}/>
+function NavRoutes() {
+    return <Segment>
+        <Container>
+        <Routes>
+            <Route  path="/" element={<image href="{home}" className="ui image"/>} />
+            <Route  path="/animals" element={<Animals.ListAnimalsView/>}/>
+            <Route  path="/animal" element={<Animals.NewEditAnimalView/>}/>
+            <Route  path="/animal/:id" element={<Animals.NewEditAnimalView/>}/>
 
-                    <Route  path="/sponsors" element={<Sponsors.ListSponsorsView/>}/>
-                    <Route  path="/sponsor" element={<Sponsors.NewEditSponsorView/>}/>
-                    <Route  path="/sponsor/:id" element={<Sponsors.NewEditSponsorView/>}/>
-                    
-                    <Route  path="/login" element={<Sponsors.LoginSponsorView/>} />
+            <Route  path="/sponsors" element={<Sponsors.ListSponsorsView/>}/>
+            <Route  path="/sponsor" element={<Sponsors.NewEditSponsorView/>}/>
+            <Route  path="/sponsor/:id" element={<Sponsors.NewEditSponsorView/>}/>
+            
+            <Route  path="/login" element={<Sponsors.LoginSponsorView/>} />
 
-                    <Route  path="/report/animals/categories" element={<Reports.ChartJsReport/>}/>
-                    <Route  path="/report/sponsors" element={<Reports.ChartJsReport/>}/>
-                </Routes>
-                </Container>
-            </Segment>
-        );
-    }
+            <Route  path="/report/animals/categories" element={<Reports.ChartJsReport/>}/>
+            <Route  path="/report/sponsors" element={<Reports.ChartJsReport/>}/>
+        </Routes>
+        </Container>
+    </Segment>;
 }
 
 export {NavRoutes as default, NavRoutes};

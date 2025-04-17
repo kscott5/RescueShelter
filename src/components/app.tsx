@@ -7,7 +7,7 @@ import {BrowserRouter} from 'react-router-dom';
 import '../styles/index.css'
 import Layout from './shared/layout'
 
-import AppContext from './state/context';
+import {AppContext} from './state/context';
 
 function App() {
     const localizer = i18nextReact.getI18n();
@@ -51,10 +51,10 @@ function App() {
     }, [context]);
 
     return <AppContext.Provider value={context}>
-        <BrowserRouter>
-            <Layout/>
-        </BrowserRouter>
-    </AppContext.Provider>;
+            <BrowserRouter>
+                <Layout/>
+            </BrowserRouter>
+        </AppContext.Provider>;
 }
 
 export { App as default, App };
