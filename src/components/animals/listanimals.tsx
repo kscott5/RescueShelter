@@ -24,7 +24,7 @@ function ListAnimals() {
         let response = await fetch(`/api/report/animals${params}`,
             {
                 method: 'POST',
-                body: JSON.stringify(model.options),
+                body: JSON.stringify({options: model.options}),
                 headers: {
                     'content-type': 'application/json'
                 }
