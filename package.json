@@ -11,9 +11,9 @@
   "license": "GPL-3.0-or-later",
   "private": false,
   "scripts": {
-    "build": "tsc -b && vite build",
-    "dev": "vite --port 3000 --debug",
-    "start": "npm run build && docker run --rm --name httpd_prod0 -p 8080:80 -v ./dist:/usr/local/apache2/htdocs/ httpd"
+    "build": "tsc -b && vite build", 
+    "start": "vite --port 3000 --debug",
+    "httpd": "npm run build && docker run --rm --name httpd_prod0 -p 8080:80 -v ./dist:/usr/local/apache2/htdocs/ httpd"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
