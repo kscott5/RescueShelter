@@ -65,7 +65,7 @@ function NewAnimal() {
         const httpGet = async()=> {
             const path = document.location.pathname.split('/');
             try {
-                const response = await fetch(`/api/report/animals/${path[path.length-1]}`);
+                const response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/animals/${path[path.length-1]}`);
                 
                 if(!response.ok) {
                     setModel({...model, ok: false, message: response.statusText});
