@@ -38,7 +38,7 @@ function ListAnimals() {
             let results = await response.json();
             
             let elements = [];
-            results.data.documents.map((element) =>
+            (results.data.documents+[]).map((element) =>
                 elements.push( 
                     <div key={element._id}>
                         <span>{element.name}</span>

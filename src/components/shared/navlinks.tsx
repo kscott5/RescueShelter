@@ -46,7 +46,9 @@ function NavLinks() {
                 </Menu>
             </Container>
             <Container className="right float">
-                <Access/>
+        
+                <div id="gsSignInApp"></div>
+                
             </Container>
             </div>
         </Segment>

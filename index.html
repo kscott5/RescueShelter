@@ -2,13 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <title>Rescue Shelter App</title>
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+    -->
+    <link rel="manifest" href="/manifest.json" />
+
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Migration from create-react-app with Vite"
-    />
+    <meta name="description" content="Migration from create-react-app with Vite" />
 
     <meta property="og:description" content="description" />
     <meta property="og:determiner" content="determiner" />
@@ -17,15 +20,79 @@
     <meta property="og:title" content="title" />
     <meta property="og:url" content="url" />
 
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    <!-- requires annaul membership subsrciption
+      https://jwt.io
+      https://developer.apple.com/documentation/signinwithapple
+
+    <meta name="appleid-signin-client-id" content="[CLIENT_ID]">
+    <meta name="appleid-signin-scope" content="[SCOPES]">
+    <meta name="appleid-signin-redirect-uri" content="[REDIRECT_URI]">
+    <meta name="appleid-signin-state" content="[STATE]">
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     -->
-    <link rel="manifest" href="/manifest.json" />
-    <title>Rescue Shelter App</title>
-    <script lang="js" type="module" src="/src/index.tsx"/>
+
+    <script lang="js" type="module" src="/src/index.tsx"></script>
+
+    <script src="https://accounts.google.com/gsi/client"></script>
     <script>
-      console.log("Scripting");
+      function gsCredentialCallback(credential) {
+
+      }
+
+      function gsButtonClicked() {
+
+      }
+
+      window.onGoogleLibraryLoad = () => {
+          google.accounts.id.initialize({
+            client_id: '376504285036-7u3bjifr08917k18qr7euou8k1kpu6oo.apps.googleusercontent.com',
+            callback: gsCredentialCallback,
+            use_fedcm_for_prompt: true
+          });
+
+          google.accounts.id.renderButton(
+            document.getElementById("gsSignInApp"),
+            { /** @type{!GsiButtonConfiguration} */
+              type: 'standard',
+              theme: 'outline',
+              size: 'medium',
+              text: 'signin_with',
+              shape:'circular',
+              logo_alignment: 'left',
+              width: '100',
+              click_listener: gsButtonClicked
+            }
+          );
+       };
+
+       (()=>{
+          console.debug("verify passkey compatiblity");
+
+          // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
+          // `isUserVerifyingPlatformAuthenticatorAvailable` means the feature detection is usable.  
+          // `isConditionalMediationAvailable` means the feature detection is usable.  
+          if (window.PublicKeyCredential &&  
+              PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&  
+              PublicKeyCredential.isConditionalMediationAvailable) {  
+            // Check if user verifying platform authenticator is available.  
+            console.debug("passkey compatible available");
+            Promise.all([  
+              PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(),  
+              PublicKeyCredential.isConditionalMediationAvailable(),  
+            ]).then(results => {  
+              console.debug("passkey promoise results");
+              if (results.every(r => r === true)) {  
+                console.debug("Display \"Create a new passkey\" button");
+                alert("passkey enabled on this device");
+              }  else {
+                console.debug("Passkey not enabled on this device");
+              }
+            }).catch(e=>{console.debug(e);});  
+          }  else {
+            console.debug("not available: public key ")
+          }
+
+       })();
     </script>
   </head>
   <body>

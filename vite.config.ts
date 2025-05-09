@@ -7,13 +7,13 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/report': {
-        target: 'http://localhost:3303/api/report',
+        target: 'https://localhost:3303/api/report',
         changeOrigin: true,
         rewriteWsOrigin: true,
         rewrite: (path)=> path.replace(/\/api\/report/,'')
       },
       '/api/manage': {
-        target: 'http://localhost:3302/api/manage',
+        target: 'https://localhost:3302/api/manage',
         changeOrigin: true,
         rewriteWsOrigin: true,
         rewrite: (path)=> path.replace(/\/api\/manage/,'')
