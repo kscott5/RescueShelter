@@ -15,7 +15,7 @@ function ListSponsors() {
 
     React.useEffect(()=> {
         const httpGet = async () => {
-            let response = await fetch(`/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
+            let response = await fetch(`${import.meta.env.VITE_SECURE_API_URI}/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
 
             if(!response.ok) {
                 console.debug(response.statusText);
@@ -23,9 +23,7 @@ function ListSponsors() {
             } else {
                 let results = await response.json();
                 
-                let elements = []; 
-                results.data.documents.map((element) => {
-                    elements.push(
+                let elements = [...results.data.documents].map((element) => {
                         <div key={element._id}>
                             <div>
                                 <span>{element.username}</span>
@@ -36,7 +34,7 @@ function ListSponsors() {
                             <div>
                                 <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
                             </div>
-                        </div>);
+                        </div>
                 });
 
                 setModel({...model, ok: response.ok, message: '', data: elements});
