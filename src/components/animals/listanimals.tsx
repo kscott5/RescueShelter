@@ -21,7 +21,7 @@ function ListAnimals() {
                      `&categoryid=${model.options.categoryid}`+
                      `&endangered=${model.options.endangered}`;
 
-        let response = await fetch(`/api/report/animals${params}`,
+        let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/animals${params}`,
             {
                 method: 'POST',
                 body: JSON.stringify({options: model.options}),
@@ -37,20 +37,17 @@ function ListAnimals() {
         } else {
             let results = await response.json();
             
-            let elements = [];
-            (results.data.documents+[]).map((element) =>
-                elements.push( 
-                    <div key={element._id}>
-                        <span>{element.name}</span>
-                        <span>{element.description}</span>
-                        {
-                            (element.image?.contenttype == 'icon')?
-                            (<i className={element.image.content + ' ui massive ' + element.image.contenttype}/>) :
-                            ('&nbsp;')
-                        }
-                        <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
-                    </div>
-                )
+            let elements = [...results.data.documents].map((element) =>
+                <div key={element._id}>
+                    <span>{element.name}</span>
+                    <span>{element.description}</span>
+                    {
+                        (element.image?.contenttype == 'icon')?
+                        (<i className={element.image.content + ' ui massive ' + element.image.contenttype}/>) :
+                        ('&nbsp;')
+                    }
+                    <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
+                </div>
             );
 
             setModel({...model, ok: response.ok, message:'', data: elements});
