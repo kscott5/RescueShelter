@@ -4,21 +4,12 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    proxy: {
-      '/api/report': {
-        target: 'https://localhost:3303/api/report',
-        changeOrigin: true,
-        rewriteWsOrigin: true,
-        rewrite: (path)=> path.replace(/\/api\/report/,'')
-      },
-      '/api/manage': {
-        target: 'https://localhost:3302/api/manage',
-        changeOrigin: true,
-        rewriteWsOrigin: true,
-        rewrite: (path)=> path.replace(/\/api\/manage/,'')
-      },
-    }
+  preview: {
+    cors: true,
+    https: {
+      key: './localhost.key',
+      cert: './localhost.cert'
+    },
   },
   plugins: [react(), basicSsl()],
 })
