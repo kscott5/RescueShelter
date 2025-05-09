@@ -17,7 +17,7 @@ export function ChartJS()  {
 
         React.useEffect(() => {
             const httpGet = async() => {
-                let response = await fetch(`/api/report/animals/categories`);
+                let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/animals/categories`);
                 
                 if(!response.ok) {
                     setModel({...model, ok: response.ok, message: response.statusText});
