@@ -35,12 +35,12 @@ function ListSponsors() {
     const HandleSearch = async () => {
         setModel({...model, ok:true, message: localizer.t('component.http.get.loading')});
         let params = `?page=${model.options.page}`+
-                        `&limit=${model.options.limit}`;
+                `&limit=${model.options.limit}`;
 
-        let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`,
+        let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/sponsors${params}}`,
             {
                 method: 'POST',
-                body: JSON.stringify(params),
+                body: JSON.stringify(model.options),
                 headers: {
                     'content-type': 'application/json'
                 }
