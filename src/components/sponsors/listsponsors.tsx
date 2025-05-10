@@ -7,47 +7,97 @@ function ListSponsors() {
     const [model, setModel] = React.useState({
         data: [/*Array of HTML elements <div/> */], ok: true, 
         message: localizer.t('components.http.get.loading'), 
-        options: {limit: 100, a11y: {lang: 'en'}}});
+        options: {keywords: '', page: 1, limit: 100, a11y: {lang: 'en'}}
+    });
 
     const loggedIn = false;
     const linkText = (loggedIn)? localizer.t('components.links.edit') : 
         localizer.t('components.links.view');
 
-    React.useEffect(()=> {
-        const httpGet = async () => {
-            let response = await fetch(`${import.meta.env.VITE_SECURE_API_URI}/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`);
+    const GetResponseFrom = (results) => {
+        let elements = [...results.data.documents].map((element) => {
+            <div key={element._id}>
+                <div>
+                    <span>{element.username}</span>
+                </div>
+                <div>
+                    <span>{element.useremail} </span>
+                </div>
+                <div>
+                    <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
+                </div>
+            </div>
+        });
+        
+        return elements;
+    } // end GetResponseFrom
 
-            if(!response.ok) {
-                console.debug(response.statusText);
-                setModel({...model, ok: response.ok, message: localizer.t('components.http.get.error')});
-            } else {
-                let results = await response.json();
-                
-                let elements = [...results.data.documents].map((element) => {
-                        <div key={element._id}>
-                            <div>
-                                <span>{element.username}</span>
-                            </div>
-                            <div>
-                                <span>{element.useremail} </span>
-                            </div>
-                            <div>
-                                <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
-                            </div>
-                        </div>
-                });
+    const HandleSearch = async () => {
+        setModel({...model, ok:true, message: localizer.t('component.http.get.loading')});
+        let params = `?page=${model.options.page}`+
+                        `&limit=${model.options.limit}`;
 
-                setModel({...model, ok: response.ok, message: '', data: elements});
+        let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/sponsors?limit=${model.options.limit}&lang=${model.options.a11y.lang}`,
+            {
+                method: 'POST',
+                body: JSON.stringify(params),
+                headers: {
+                    'content-type': 'application/json'
+                }
             }
-        };
+        );
 
-        httpGet();
+        console.debug(`search with ${JSON.stringify(params)} ${response.statusText}`);
+        setModel({...model, ok: response.ok, 
+            message: (response.ok)? /*empty*/ '' : localizer.t('components.http.get.error'),
+            data: GetResponseFrom(await response.json())
+        });
+    };
+
+    React.useEffect(()=> {
+        HandleSearch();
     }, [/* params */]); // end React.useEffect
-    
+
+
     return (
         <div className="ui containter">
             <div className={(model.ok)? "ui": "ui error"}><p>{model.message}</p></div>
             <ReactRouterDom.Link to="/sponsor">{localizer.t('components.links.new')}</ReactRouterDom.Link>
+
+            <div>
+            <form id="search" name="search" className='ui form'>
+                    <div><h3>{localizer.t("component.search.options")}</h3></div>
+                    <div className="ui field input">
+                        <label className="ui field label" htmlFor="keywords" 
+                            aria-label={localizer.t("component.search.option.keywords")}>
+                                {localizer.t("component.search.option.keywords")}
+                        </label>
+                        <input id="keywords" type="text" defaultValue={model.options.keywords}
+                            onChange={(e) => setModel({...model, 
+                                options:{...model.options, keywords: e.target.value}})}/>
+                    </div>
+                    <div>
+                        <label className="ui field label" htmlFor="limit" aria-label={localizer.t("component.search.option.limit")}>{localizer.t("component.search.option.limit")}</label>
+                        <select id="limit" defaultValue={model.options.limit} 
+                            onChange={(e) => setModel({...model, 
+                                options:{...model.options, limit: parseInt(e.target.value)}})}>
+                            <option value="25">25</option>
+                            <option value="50" >50</option>
+                            <option value="100">100</option>
+                            <option value="125">125</option>
+                            <option value="200">200</option>
+                        </select>
+                    </div>
+                    <div className="ui field input">
+                    <button type="button" className="ui button tiny circular" 
+                        onClick={HandleSearch}
+                        aria-label={localizer.t('components.buttons.login')}>
+                        {localizer.t('components.buttons.search')}
+                    </button>
+
+                    </div>
+                </form>                
+            </div>
             {model.data}
         </div>
     );

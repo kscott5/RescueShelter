@@ -14,7 +14,23 @@ function ListAnimals() {
     const loggedIn = false;
     const linkText = (loggedIn)? localizer.t('components.links.edit') : localizer.t('components.links.view');
     
-    const HandleSearch = React.useCallback(async () => {
+    const GetResponseFrom = (results) => {
+        let elements = [...results.data.documents].map((element) =>
+            <div key={element._id}>
+                <span>{element.name}</span>
+                <span>{element.description}</span>
+                {
+                    (element.image?.contenttype == 'icon')?
+                    (<i className={element.image.content + ' ui massive ' + element.image.contenttype}/>) :
+                    ('&nbsp;')
+                }
+                <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
+            </div>
+        );
+        return elements;
+    } // GetResponseFrom
+
+    const HandleSearch = async () => {
         setModel({...model, ok:true, message: localizer.t('component.http.get.loading')});
         let params = `?page=${model.options.page}`+
                      `&limit=${model.options.limit}`+
@@ -31,28 +47,12 @@ function ListAnimals() {
             }
         );
         
-        if(!response.ok) {                
-            console.error(response.statusText);
-            setModel({...model, ok: response.ok, message: localizer.t(`components.http.get.error`)});
-        } else {
-            let results = await response.json();
-            
-            let elements = [...results.data.documents].map((element) =>
-                <div key={element._id}>
-                    <span>{element.name}</span>
-                    <span>{element.description}</span>
-                    {
-                        (element.image?.contenttype == 'icon')?
-                        (<i className={element.image.content + ' ui massive ' + element.image.contenttype}/>) :
-                        ('&nbsp;')
-                    }
-                    <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
-                </div>
-            );
-
-            setModel({...model, ok: response.ok, message:'', data: elements});
-        }
-    }, [ model ]); // end useCallback
+        console.debug(`search with ${params} ${response.statusText}`);
+        setModel({...model, ok: response.ok, 
+            message: (response.ok)? '' /*message*/ : localizer.t(`components.http.get.error`),
+            data: GetResponseFrom(await response.json())
+        });
+    };
 
     React.useEffect(() => {
         HandleSearch();
