@@ -40,7 +40,7 @@ function ListSponsors() {
         let response = await fetch(`${import.meta.env.VITE_REPORT_API_URI}/api/report/sponsors${params}}`,
             {
                 method: 'POST',
-                body: JSON.stringify(model.options),
+                body: JSON.stringify({options: model.options}),
                 headers: {
                     'content-type': 'application/json'
                 }
