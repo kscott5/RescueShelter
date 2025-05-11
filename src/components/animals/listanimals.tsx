@@ -15,8 +15,8 @@ function ListAnimals() {
     const linkText = (loggedIn)? localizer.t('components.links.edit') : localizer.t('components.links.view');
     
     const GetResponseFrom = (results) => {
-        let elements = [...results.data.documents].map((element) =>
-            <div key={element._id}>
+        return [...results.data.documents].map((element,index) => {
+            return <div key={element._id}>
                 <span>{element.name}</span>
                 <span>{element.description}</span>
                 {
@@ -25,9 +25,8 @@ function ListAnimals() {
                     ('&nbsp;')
                 }
                 <ReactRouterDom.Link to={`/animal/${element._id}`}>{linkText}</ReactRouterDom.Link>   
-            </div>
-        );
-        return elements;
+            </div>;
+        });
     } // GetResponseFrom
 
     const HandleSearch = async () => {

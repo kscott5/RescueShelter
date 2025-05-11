@@ -15,8 +15,8 @@ function ListSponsors() {
         localizer.t('components.links.view');
 
     const GetResponseFrom = (results) => {
-        let elements = [...results.data.documents].map((element) => {
-            <div key={element._id}>
+        return [...results.data.documents].map((element,index) => {
+            return <div key={element._id}>
                 <div>
                     <span>{element.username}</span>
                 </div>
@@ -26,10 +26,8 @@ function ListSponsors() {
                 <div>
                     <ReactRouterDom.Link to={`/sponsor/${element._id}`}>{linkText}</ReactRouterDom.Link>
                 </div>
-            </div>
+            </div>;
         });
-        
-        return elements;
     } // end GetResponseFrom
 
     const HandleSearch = async () => {
@@ -54,7 +52,7 @@ function ListSponsors() {
         });
     };
 
-    React.useEffect(()=> {
+    React.useEffect( () => {
         HandleSearch();
     }, [/* params */]); // end React.useEffect
 
