@@ -25,8 +25,9 @@
     <script src="https://accounts.google.com/gsi/client"></script>
     <script>
       async function gsCredentialCallback(res) {
+        console.debug(res.credential);
         var response = await fetch(`%VITE_SECURE_API_URI%/api/oauth/gs/verify`, {
-          method: 'PUT',
+          method: 'POST',
           headers: {
             'content-type': 'application/json'
           },
