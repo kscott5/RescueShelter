@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.url="https://githhub.com/kscott5/rescueshelter"
 LABEL org.opencontainers.image.source="https://githhub.com/kscott5/rescueshelter"
 LABEL org.opencontainers.image.version="v2.0.1"
 
-EXPOSE 80
+EXPOSE 80 443 3000
 
 RUN mkdir /app  && \
     mkdir /app/html && \
