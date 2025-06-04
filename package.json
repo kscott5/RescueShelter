@@ -13,7 +13,11 @@
   "scripts": {
     "build": "tsc -b && vite build", 
     "start": "vite --port 3000 --debug",
-    "docker.build": "docker build -t rescueshelter/web:latest --no-cache ."
+    "docker.rmi": "docker rmi rescueshelter/web:latest",
+    "docker.network": "docker network create rescueshelter",
+    "docker.build": "docker build -t rescueshelter/web:latest --no-cache .",
+    "docker.reports": "docker run -d --rm --name web --network rescueshelter -p 3303:3303 rescueshelter/web:latest"
+    
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
