@@ -1,7 +1,6 @@
 
-import * as React from 'react';
-import * as Client from 'react-dom/client';
-
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import App from "./components/app";
 
 // NOTE: https://www.i18next.com/overview/configuration-options#configuration-options
@@ -27,7 +26,7 @@ i18next
     }
   }).then(() =>{
 
-    const root = Client.createRoot(document.querySelector('#appContent'));
+    const root = ReactDOM.createRoot(document.querySelector('#appContent'));
     root.render(<App/>);    
   });
 
